@@ -4,12 +4,19 @@
   roles:
     - common
     - tower
+  vars:
+    enable_repos:
+      - rhel-7-server-rpms
+      - rhel-7-server-extras-rpms
+      - rhel-7-server-optional-rpms
+      - cf-me-5.10-for-rhel-7-rpms 
+      - rhel-server-rhscl-7-rpms
   tasks:
-    #- include_tasks: roles/common/tasks/predeploy.yaml
-    #- include_tasks: roles/common/tasks/manage_repo.yaml
+    - include_tasks: roles/common/tasks/predeploy.yaml
+    - include_tasks: roles/common/tasks/manage_repo.yaml
     - include_tasks: roles/tower/tasks/download.yaml
-    #- include_tasks: roles/tower/tasks/install.yaml
-    #- include_tasks: roles/tower/tasks/setup_towercli.yaml
-    #- include_tasks: roles/tower/tasks/create_project.yaml
-    #- include_tasks: roles/tower/tasks/create_inventory.yaml
-    #- include_tasks: roles/tower/tasks/create_jobs_templates.yaml
+    - include_tasks: roles/tower/tasks/install.yaml
+    - include_tasks: roles/tower/tasks/setup_towercli.yaml
+    - include_tasks: roles/tower/tasks/create_project.yaml
+    - include_tasks: roles/tower/tasks/create_inventory.yaml
+    - include_tasks: roles/tower/tasks/create_jobs_templates.yaml

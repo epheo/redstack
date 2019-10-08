@@ -26,7 +26,7 @@
     echo enabled=1 >> /etc/yum.repos.d/rhel7.repo; \
     echo gpgcheck=0 >> /etc/yum.repos.d/rhel7.repo; \
     echo '' >> /etc/yum.repos.d/rhel7.repo;
-  loop: "{{ rhel7_repos }}"
+  loop: "{{ enable_repos }}"
   when: release.stdout == "7"
 
 - file:
@@ -43,7 +43,7 @@
     echo enabled=1 >> /etc/yum.repos.d/rhel8.repo; \
     echo gpgcheck=0 >> /etc/yum.repos.d/rhel8.repo; \
     echo '' >> /etc/yum.repos.d/rhel8.repo;
-  loop: "{{ rhel8_repos }}"
+  loop: "{{ enable_repos }}"
   when: release.stdout == "8"
 
 - include_tasks: update.yaml

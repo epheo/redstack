@@ -92,7 +92,6 @@ ENV_PATH: '/home/stack/templates/environments'
 CEPH_NAMESPACE: 'registry.access.redhat.com/rhceph'
 CEPH_IMAGE: 'rhceph-3-rhel7'
 
-
 ssl:
   countryname: 'FR'
   provincename: 'Paris'
@@ -101,5 +100,3 @@ ssl:
   orgunit: 'eu'
   commonname: 'lab'
   emailaddress: 'lab@epheo.eu'
-
-

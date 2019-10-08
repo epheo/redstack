@@ -19,4 +19,5 @@
     - prepare_repository
     - prepare_tower
     - prepare_undercloud
+    - delete_undercloud
     - prepare_overcloud
