@@ -39,7 +39,7 @@
 
 - name: Creating an SSL/TLS Certificate Signing Request
   template:
-    src: undercloud/templates/openssl.cnf.j2
+    src: director/templates/openssl.cnf.j2
     dest: /home/stack/ssl/openssl.cnf
 
 - name: Generating certificate signing request
