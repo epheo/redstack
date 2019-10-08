@@ -1,2 +1,4 @@
 ---
 
+tower_url: '10.42.1.16'
+#tower_url: "{{ hostvars.rhtower.ansible_host }}"

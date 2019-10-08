@@ -1,0 +1,33 @@
+---
+
+- name: Create tower organization
+  tower_organization:
+    name: "{{ customer_name }}"
+    description: "{{ customer_name }} organization"
+    state: present
+    tower_host: localhost
+    tower_username: "{{ tower.user }}"
+    tower_password: "{{ tower.password }}"
+
+# - name: Add tower user
+#   tower_user:
+#     username: jdoe
+#     password: foobarbaz
+#     email: jdoe@example.org
+#     first_name: John
+#     last_name: Doe
+#     state: present
+#     tower_config_file: "~/tower_cli.cfg"
+
+- name: Add tower project
+  tower_project:
+    name: "RedStack"
+    description: "Foo bar project"
+    scm_type: git
+    scm_url: https://github.com/epheo/redstack.git
+    organization: "{{ customer_name }}"
+    state: present
+    scm_update_on_launch: yes
+    tower_host: localhost
+    tower_username: "{{ tower.user }}"
+    tower_password: "{{ tower.password }}"

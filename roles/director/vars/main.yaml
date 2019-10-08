@@ -1,7 +1,5 @@
 ---
 
-customer_name: epheo
-
 enable_ceph: False
 enable_ceph_external: True
 enable_nfvi: False
@@ -18,7 +16,6 @@ enable_fencing: False
 undercloud_ip: '10.196.196.100'
 dns_ip: '10.194.55.202'
 ntp_ip: '10.80.8.8'
-
 
 # saf_route: ''
 # saf_port: ''

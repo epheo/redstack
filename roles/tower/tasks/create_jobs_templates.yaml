@@ -1,0 +1,22 @@
+---
+
+- name: Create job template
+  tower_job_template:
+    name: "{{ item }}"
+    job_type: "run"
+    inventory: "{{ customer_name }}"
+    project: "RedStack"
+    playbook: "{{ item }}.yaml"
+    credential: "id_rsa"
+    state: "present"
+    extra_vars_path: secrets/kvm.yaml
+    tower_host: localhost
+    tower_username: "{{ tower.user }}"
+    tower_password: "{{ tower.password }}"
+  loop:
+    - prepare_hypervisor
+    - prepare_hypervisor_guests
+    - prepare_repository
+    - prepare_tower
+    - prepare_undercloud
+    - prepare_overcloud

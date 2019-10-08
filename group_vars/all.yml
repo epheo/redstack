@@ -1,5 +1,7 @@
 ---
 
+customer_name: epheo
+
 rhel7_repos:
   - rhel-7-fast-datapath-rpms
   - rhel-7-server-extras-rpms

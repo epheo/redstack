@@ -1,2 +1,4 @@
+---
+
 repo_url: '10.42.1.16'
 #repo_url: "{{ hostvars.rhrepo.ansible_host }}"

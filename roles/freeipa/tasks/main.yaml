@@ -1,7 +1,7 @@
 ---
 
 - name: Install needed packages
-  yum:
+  package:
     state: latest
     name: ['ipa-server', 'ipa-server-dns']
     

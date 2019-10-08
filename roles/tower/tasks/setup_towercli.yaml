@@ -1,0 +1,25 @@
+---
+
+- name: Install Pre Requirements
+  become: yes
+  package:
+    state: latest
+    name:
+      - python-click
+      - python-colorama
+      - python-requests
+      - python-six
+      - PyYAML
+      - unzip
+
+- name: Unarchive Tower CLI https://github.com/ansible/tower-cli/archive/master.zip
+  unarchive:
+    src: downloads/tower-cli.zip
+    dest: ~/
+
+- name: Install Tower CLI
+  become: yes
+  shell: cd tower-cli-master && python setup.py install
+
+- name: Set SSL check to False
+  shell: tower-cli config verify_ssl false

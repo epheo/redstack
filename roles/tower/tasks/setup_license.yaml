@@ -1,0 +1,12 @@
+---
+
+- name: setup the license
+  uri:
+    url: "https://{{ repo_url }}/api/v2/config/"
+    user: "{{ tower.user }}"
+    password: "{{ tower.password }}"
+    method: POST
+    body_format: json
+    body: "{{ tower.license }}"
+    validate_certs: False
+    force_basic_auth: yes
