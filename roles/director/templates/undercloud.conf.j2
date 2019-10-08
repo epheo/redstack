@@ -18,9 +18,9 @@ store_events = true
 enable_tempest = true
 
 [ctlplane-subnet]
-cidr = 10.196.196.0/24
-dhcp_start = 10.196.196.101
-dhcp_end = 10.196.196.150
-inspection_iprange = 10.196.196.50,10.196.196.97
-gateway = 10.196.196.1
+cidr = {{ ctlplane_net.subnet }}
+dhcp_start = {{ ctlplane_net.dhcp_start }}
+dhcp_end = {{ ctlplane_net.dhcp_end }}
+inspection_iprange = {{ ctlplane_net.inspection_iprange }}
+gateway = {{ ctlplane_net.gateway }}
 masquerade = true

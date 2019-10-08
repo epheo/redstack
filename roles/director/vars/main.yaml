@@ -27,6 +27,13 @@ redis_vip: 10.196.198.51
 # storage_vip: ''
 # storagemgmt_vip: ''
 
+ctlplane_net:
+  subnet: '10.196.196.0/24'
+  dhcp_start: '10.196.196.101'
+  dhcp_end: '10.196.196.150'
+  inspection_iprange: '10.196.196.50,10.196.196.97'
+  gateway: '10.196.196.1'
+
 internal_net:
   vlanid: 3782
   subnet: '10.196.198.0/24'

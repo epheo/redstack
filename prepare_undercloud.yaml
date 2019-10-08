@@ -5,7 +5,7 @@
     - common
     - director
   tasks:
-    #- include_tasks: roles/director/tasks/uninstall.yaml
+    - include_tasks: roles/director/tasks/uninstall.yaml
     - include_tasks: roles/common/tasks/predeploy.yaml
     - include_tasks: roles/common/tasks/manage_repo.yaml
     - include_tasks: roles/director/tasks/generate_certs.yaml

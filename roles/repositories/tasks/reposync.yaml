@@ -42,7 +42,7 @@
   register: result
   until: "result.stdout == ''"
   retries: 500
-  delay: 10
+  delay: 20
   ignore_errors: yes
 
 - name: Wait for Sync of Rhel 7 repositories to finish
@@ -51,7 +51,7 @@
   register: result
   until: "result.stdout == ''"
   retries: 500
-  delay: 10
+  delay: 20
   ignore_errors: yes
 
 - name: Set SELinux context

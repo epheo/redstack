@@ -2,10 +2,8 @@
 
 - name: Download and unarchive Ansible Tower Installer
   unarchive:
-    #src: https://releases.ansible.com/ansible-tower/setup/ansible-tower-setup-latest.tar.gz
-    src: https://releases.ansible.com/ansible-tower/setup-bundle/ansible-tower-setup-bundle-latest.el7.tar.gz
+    src: downloads/ansible-tower-setup-bundle-latest.el7.tar.gz
     dest: ~/
-    remote_src: yes
 
 - name: Move installer
   shell: mv ansible-tower-setup* tower 
