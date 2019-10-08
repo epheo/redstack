@@ -1,0 +1,29 @@
+---
+  
+- name: Install needed packages
+  package:
+    state: latest
+    name: ntp
+
+- name: replace line
+  lineinfile: 
+    dest: /etc/ntp.conf 
+    regexp: 'restrict 127.0.0.1' 
+    line: 'restrict 10.8.0.0 netmask 255.255.255.0 nomodify notrap'
+
+- firewalld:
+    service: ntp
+    permanent: yes
+    state: enabled
+
+- name: enable service httpd and ensure it is not masked
+  systemd:
+    name: ntpd
+    enabled: yes
+    masked: no
+
+- name: restart service ntp, in all cases, also issue daemon-reload to pick up config changes
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: ntpd

@@ -1,0 +1,51 @@
+---
+
+- name: Download and unarchive Ansible Tower Installer
+  unarchive:
+    #src: https://releases.ansible.com/ansible-tower/setup/ansible-tower-setup-latest.tar.gz
+    src: https://releases.ansible.com/ansible-tower/setup-bundle/ansible-tower-setup-bundle-latest.el7.tar.gz
+    dest: ~/
+    remote_src: yes
+
+- name: Move installer
+  shell: mv ansible-tower-setup* tower 
+  ignore_errors: true
+
+- name: Set passwords
+  lineinfile:
+    path: tower/inventory
+    regexp: ^admin_password
+    line: admin_password='{{ tower.password }}'
+
+- name: Set passwords
+  lineinfile:
+    path: tower/inventory
+    regexp: ^pg_password
+    line: pg_password='{{ tower.password }}'
+
+- name: Set passwords
+  lineinfile:
+    path: tower/inventory
+    regexp: ^rabbitmq_password
+    line: rabbitmq_password='{{ tower.password }}'
+
+- name: Install needed packages
+  become: yes
+  package:
+    state: latest
+    name: 'ansible'
+    
+- name: Run installer
+  become: yes
+  shell: cd tower && ansible-playbook -i inventory install.yml
+
+- name: setup the license
+  uri:
+    url: "https://{{ repo_url }}/api/v2/config/"
+    user: "{{ tower.user }}"
+    password: "{{ tower.password }}"
+    method: POST
+    body_format: json
+    body: "{{ tower.license }}"
+    validate_certs: False
+    force_basic_auth: yes

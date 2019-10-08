@@ -1,0 +1,80 @@
+---
+
+- name: Install packages
+  package:
+    state: latest
+    name: python2-virtualbmc
+
+- name: Create etc directory
+  file:
+    path: /etc/virtualbmc/
+    state: directory
+
+- name: Create conf file
+  copy:
+    src: ../files/virtualbmc.conf
+    dest: /etc/virtualbmc/
+
+- name: Create log file
+  file:
+    path: /var/log/virtualbmc.log
+    state: file
+
+- name: Disable SSH StrictHostKeyChecking
+  copy:
+    dest: "~/.ssh/config"
+    content: |
+      Host *
+        StrictHostKeyChecking no
+
+- name: Configure vbmc ports
+  shell: |
+    if [ -z "$(vbmc list |grep \ {{ item.name }}\ )" ]; then
+      vbmc add {{ item.name  }} --port {{ item.port }} --username {{ vbmc_username }} --password {{ vbmc_password }} --libvirt-uri qemu:///system
+    fi
+  loop: "{{ vbmc_ports }}"
+
+- name: Create vbmc-ports.service
+  copy:
+    dest: "/etc/systemd/system/vbmc-ports.service"
+    content: |
+      [Unit]
+      Description=Manage pre-configured vbmc ports
+      After=network.target
+      [Service]
+      Type=forking
+      ExecStart=/usr/local/sbin/vbmc-ports.sh
+      TimeoutStartSec=0
+      [Install]
+      WantedBy=default.target
+
+- name: Create file vbmc-ports.sh
+  shell: |
+    touch /usr/local/sbin/vbmc-ports.sh
+    echo '#!/bin/bash' > /usr/local/sbin/vbmc-ports.sh
+
+- name: Configure vbmc-ports.sh content
+  shell: "echo 'vbmc start {{ item.name  }}' >> /usr/local/sbin/vbmc-ports.sh"
+  loop: "{{ vbmc_ports }}"
+
+- name: Enable vbmc service
+  shell: |
+    chmod +x /usr/local/sbin/vbmc-ports.sh
+
+- name: restart vbmc-ports service 
+  become: yes
+  systemd:
+    state: started
+    daemon_reload: yes
+    enabled: yes
+    name: vbmc-ports
+
+- name: Open IPTABLES vbmc ports
+  shell: "iptables -I INPUT -p udp --dport {{ item.port }} -m state --state NEW  -j ACCEPT"
+  loop: "{{ vbmc_ports }}"
+
+- name: Enable forwarding
+  shell: "iptables -I FORWARD 1  -d 0.0.0.0/0 -j ACCEPT"
+
+- name: Save IPTABLES
+  shell: "iptables-save |sudo tee /etc/sysconfig/iptables"

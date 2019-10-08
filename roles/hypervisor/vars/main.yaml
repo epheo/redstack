@@ -1,0 +1,234 @@
+---
+
+guests_rootimg:
+  - localpath: ~/kvm-images/rhel-server-7.7-x86_64-kvm.qcow2 
+    name: rhel-7.7.qcow2 
+  - localpath: ~/kvm-images/rhel-8.0-update-3-x86_64-kvm.qcow2
+    name: rhel-8.0.qcow2 
+  - localpath: ~/kvm-images/Fedora-Cloud-Base-30-1.2.x86_64.qcow2
+    name: fedora-30.qcow2 
+guests_rootdisk_pool: ssd
+guests_rootdisk_pool_path: '/var/lib/libvirt/ssd'
+guests_rootdisk_size: 100
+
+vbmc_username: root
+vbmc_ports:
+  - { name: controller-0 , port: 6231 }
+  - { name: controller-1 , port: 6232 }
+  - { name: controller-2 , port: 6233 }
+  - { name: compute-0 , port: 6234 }
+  - { name: compute-1 , port: 6235 }
+  - { name: ceph-0 , port: 6236 }
+  - { name: ceph-1 , port: 6237 }
+  - { name: ceph-2 , port: 6238 }
+
+libvirt_storage_pools:
+  - name: storage
+    path: '/mnt/data/vm_storage'
+  - name: ssd
+    path: '/var/lib/libvirt/ssd'
+
+libvirt_networks:
+  - name: ctlplane
+    gateway: 10.42.1.1
+    netmask: 255.255.255.0
+    dhcp_start: 10.42.1.10
+    dhcp_end: 10.42.1.50
+  - name: storage
+  - name: storagemgmt
+  - name: internal
+  - name: external
+  - name: tenant
+
+libvirt_guests:
+
+  - name: repository
+    root: rhel-7.7.qcow2 
+    ram: 2048000
+    vcpu: 2
+    volumes:
+      - name: repo-data
+        target: vdb
+        size: 300
+        pool: storage
+    networks:
+      - ctlplane
+
+  - name: director
+    root: rhel-7.7.qcow2 
+    ram: 16384000
+    vcpu: 6
+    networks:
+      - ctlplane
+      - external
+
+  - name: director8
+    root: rhel-8.0.qcow2 
+    ram: 16384000
+    vcpu: 6
+    networks:
+      - ctlplane
+      - external
+
+  - name: controller-0
+    ram: 20480000
+    vcpu: 4
+    volumes:
+      - name: controller0-root
+        target: vda
+        size: 100
+        pool: ssd
+      - name: controller0-data
+        target: vdb
+        size: 100
+        pool: storage
+    networks:
+      - ctlplane
+      - external
+      - storage
+      - storagemgmt
+      - internal
+
+  - name: controller-1
+    ram: 20480000
+    vcpu: 4
+    volumes:
+      - name: controller1-root
+        target: vda
+        size: 100
+        pool: ssd
+      - name: controller1-data
+        target: vdb
+        size: 100
+        pool: storage
+    networks:
+      - ctlplane
+      - external
+      - storage
+      - storagemgmt
+      - internal
+
+  - name: controller-2
+    ram: 20480000
+    vcpu: 4
+    volumes:
+      - name: controller2-root
+        target: vda
+        size: 100
+        pool: ssd
+      - name: controller2-data
+        target: vdb
+        size: 100
+        pool: storage
+    networks:
+      - ctlplane
+      - external
+      - storage
+      - storagemgmt
+      - internal
+
+  - name: compute-0
+    ram: 20480000
+    vcpu: 4
+    volumes:
+      - name: compute0-root
+        target: vda
+        size: 100
+        pool: ssd
+      - name: compute0-data
+        target: vdb
+        size: 100
+        pool: storage
+    networks:
+      - ctlplane
+      - storage
+      - storagemgmt
+      - internal
+
+  - name: compute-1
+    ram: 20480000
+    vcpu: 4
+    volumes:
+      - name: compute1-root
+        target: vda
+        size: 100
+        pool: ssd
+      - name: compute1-data
+        target: vdb
+        size: 100
+        pool: storage
+    networks:
+      - ctlplane
+      - storage
+      - storagemgmt
+      - internal
+
+  - name: ceph-0
+    ram: 8192000
+    vcpu: 1
+    volumes:
+      - name: ceph0-root
+        target: vda
+        size: 100
+        pool: ssd
+      - name: ceph0-journals
+        target: vdb
+        size: 50
+        pool: ssd
+      - name: ceph0-osd
+        target: vdc
+        size: 200
+        pool: storage
+    networks:
+      - ctlplane
+      - storage
+      - storagemgmt
+
+  - name: ceph-1
+    ram: 8192000
+    vcpu: 1
+    volumes:
+      - name: ceph1-root
+        target: vda
+        size: 100
+        pool: ssd
+      - name: ceph1-journals
+        target: vdb
+        size: 50
+        pool: ssd
+      - name: ceph1-osd
+        target: vdc
+        size: 200
+        pool: storage
+    networks:
+      - ctlplane
+      - storage
+      - storagemgmt
+
+  - name: ceph-2
+    ram: 8192000
+    vcpu: 1
+    volumes:
+      - name: ceph2-root
+        target: vda
+        size: 100
+        pool: ssd
+      - name: ceph2-journals
+        target: vdb
+        size: 50
+        pool: ssd
+      - name: ceph2-osd
+        target: vdc
+        size: 200
+        pool: storage
+    networks:
+      - ctlplane
+      - storage
+      - storagemgmt
+
+  - name: ansible
+    root: rhel-7.7.qcow2 
+    ram: 8192000
+    vcpu: 4
+    networks:
+      - ctlplane

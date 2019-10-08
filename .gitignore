@@ -1,0 +1,4 @@
+*.retry
+secrets/
+inventory*
+!inventory.sample

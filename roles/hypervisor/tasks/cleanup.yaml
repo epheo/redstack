@@ -1,0 +1,37 @@
+---
+
+- name: Cleanup Guests
+  ignore_errors: yes
+  shell: |
+    virsh destroy {{ item.name }}
+    virsh undefine {{ item.name }}
+  loop: '{{ libvirt_guests }}'
+
+- name: Cleanup root Volumes
+  ignore_errors: yes
+  shell: |
+    {% if item.root is sameas true %}
+    virsh vol-delete --pool {{ guests_rootdisk_pool }} {{ item.name }}-root
+    {% else %}
+    true
+    {% endif %}
+  loop: '{{ libvirt_guests }}'
+
+- name: Cleanup Volumes
+  ignore_errors: yes
+  shell: |
+    {% if item.volumes is defined %}
+    {% for vol in item.volumes %}
+    virsh vol-delete --pool {{ vol.pool }} {{ vol.name }}
+    {% endfor %}
+    {% else %}
+    true
+    {% endif %}
+  loop: '{{ libvirt_guests }}'
+
+- name: Cleanup Networks
+  ignore_errors: yes
+  shell: |
+    virsh net-destroy {{ item.name }}
+    virsh net-undefine {{ item.name }}
+  loop: '{{ libvirt_networks }}'

@@ -1,0 +1,52 @@
+---
+- name: Delete password
+  become: yes
+  ignore_errors: yes
+  file:
+    path: /home/stack/undercloud-passwords.conf
+    state: absent
+
+- name: Stop services
+  become: yes
+  ignore_errors: yes
+  shell: |
+    systemctl list-unit-files | grep openstack | awk '{print $1}' | xargs -I {} sudo systemctl stop {}
+    systemctl list-unit-files | grep neutron | awk '{print $1}' | xargs -I {} sudo systemctl stop {}
+    sudo systemctl stop keepalived
+
+- name: Remove data
+  become: yes
+  ignore_errors: yes
+  shell: |
+    rm -rf /var/lib/mysql /var/lib/rabbitmq /etc/keystone /opt/stack/.undercloud-setup /root/stackrc /home/stack/stackrc  /var/opt/undercloud-stack /var/lib/ironic-discoverd/discoverd.sqlite /var/lib/ironic-inspector/inspector.sqlite  /home/stack/.instack /root/tripleo-undercloud-passwords /var/lib/registry
+    dirs="ceilometer heat glance horizon ironic ironic-discoverd keystone neutron nova swift haproxy"; for dir in $dirs; do sudo rm -rf /etc/$dir ; sudo rm -rf /var/log/$dir ;  sudo rm -rf /var/lib/$dir; done
+
+- name: Uninstall Services
+  become: yes
+  ignore_errors: yes
+  shell: |
+    sudo yum remove -y rabbitmq-server mariadb haproxy openvswitch keepalived $(rpm -qa | grep openstack) python-tripleoclient
+
+- name: Restore network config
+  become: yes
+  ignore_errors: yes
+  shell: |
+    sudo rm -rf /etc/sysconfig/network-scripts/ifcfg-br-ctlplane
+    sudo mv  /etc/os-net-config/config.json  /etc/os-net-config/config.json.orig
+    sudo sed -i '/ovs/d ; /OVS/d'  /etc/sysconfig/network-scripts/ifcfg-{{ undercloud_br_nic }}
+
+- name: Delete sql password
+  become: yes
+  ignore_errors: yes
+  file:
+    path: /root/.my.cnf
+    state: absent
+
+- name: "Rebooting ..."
+  shell: sleep 3 && shutdown -r now
+  async: 1
+  poll: 0
+  ignore_errors: true
+
+- name: Wait for machine to restart. If this is baremetal it can take a while...
+  local_action: wait_for host={{ ansible_host }} delay=15 port=22 timeout=240 state=started

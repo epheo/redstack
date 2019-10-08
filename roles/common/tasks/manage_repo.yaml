@@ -1,0 +1,49 @@
+---
+
+- name: Delete repo file
+  become: yes
+  file:
+    state: absent
+    path: /etc/yum.repos.d/redhat.repo
+
+- shell: cat /etc/redhat-release |sed "s/[^0-9]//g" |head -c1
+  register: release
+
+- debug:
+    var: release.stdout
+
+- file:
+    path: /etc/yum.repos.d/rhel7.repo
+    state: absent
+  become: yes
+  
+- name: Generate Rhel-7 repofile
+  become: yes
+  shell: |
+    echo "[{{ item }}]" >> /etc/yum.repos.d/rhel7.repo; \
+    echo name={{ item }} >> /etc/yum.repos.d/rhel7.repo; \
+    echo baseurl=http://{{ repo_url }}/repos/{{ item }}/ >> /etc/yum.repos.d/rhel7.repo; \
+    echo enabled=1 >> /etc/yum.repos.d/rhel7.repo; \
+    echo gpgcheck=0 >> /etc/yum.repos.d/rhel7.repo; \
+    echo '' >> /etc/yum.repos.d/rhel7.repo;
+  loop: "{{ rhel7_repos }}"
+  when: release.stdout == "7"
+
+- file:
+    path: /etc/yum.repos.d/rhel8.repo
+    state: absent
+  become: yes
+  
+- name: Generate Rhel-8 repofile
+  become: yes
+  shell: |
+    echo "[{{ item }}]" >> /etc/yum.repos.d/rhel8.repo; \
+    echo name={{ item }} >> /etc/yum.repos.d/rhel8.repo; \
+    echo baseurl=http://{{ repo_url }}/repos/{{ item }}/ >> /etc/yum.repos.d/rhel8.repo; \
+    echo enabled=1 >> /etc/yum.repos.d/rhel8.repo; \
+    echo gpgcheck=0 >> /etc/yum.repos.d/rhel8.repo; \
+    echo '' >> /etc/yum.repos.d/rhel8.repo;
+  loop: "{{ rhel8_repos }}"
+  when: release.stdout == "8"
+
+- include_tasks: update.yaml

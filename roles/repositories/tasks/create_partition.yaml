@@ -1,0 +1,29 @@
+---
+
+- name: Create partition
+  become: yes
+  parted:
+    device: /dev/vdb
+    number: 1
+    label: gpt
+    state: present
+
+- name: Format partition
+  become: yes
+  filesystem:
+    fstype: ext4
+    dev: /dev/vdb1
+
+- name: Create mount directory
+  become: yes
+  file:
+    path: /mnt/data/
+    state: directory
+
+- name: Mount repo partition
+  become: yes
+  mount:
+    path: /mnt/data/
+    src: /dev/vdb1
+    fstype: ext4
+    state: present

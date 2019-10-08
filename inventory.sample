@@ -1,0 +1,14 @@
+[hypervisor]
+hetznet        ansible_host=XXXXXXXXXXXXXX  ansible_user=XXXXX   ansible_become=true
+
+[extservices]
+rhservices     ansible_host=XXXXXXXXXXXXXX  ansible_user=stack
+
+[undercloud]
+rhdirector     ansible_host=XXXXXXXXXXXXXX  ansible_user=stack  
+
+[repository]
+rhrepo         ansible_host=XXXXXXXXXXXXXX  ansible_user=stack  
+
+[tower]
+rhtower        ansible_host=XXXXXXXXXXXXXX  ansible_user=stack  

@@ -1,0 +1,101 @@
+---
+
+customer_name: epheo
+
+enable_ceph: False
+enable_ceph_external: True
+enable_nfvi: False
+enable_extra: True
+enable_monitoring: False
+enable_ssl: True
+enable_ipa: False
+enable_saf: True
+enable_sensu: False
+enable_fluentd: False
+enable_telemetry: True
+enable_fencing: False
+
+undercloud_ip: '10.196.196.100'
+dns_ip: '10.194.55.202'
+ntp_ip: '10.80.8.8'
+
+
+# saf_route: ''
+# saf_port: ''
+
+overcloud_vip: 10.196.197.50
+internal_vip: 10.196.198.50
+redis_vip: 10.196.198.51
+# control_vip: ''
+# storage_vip: ''
+# storagemgmt_vip: ''
+
+internal_net:
+  vlanid: 3782
+  subnet: '10.196.198.0/24'
+  pool_start: '10.196.198.101'
+  pool_end: '10.196.198.200'
+
+storage_net:
+  vlanid: 3782
+  subnet: '10.194.100.0/24'
+  pool_start: '10.194.100.101'
+  pool_end: '10.194.100.200'
+
+tenant_net:
+  vlanid: 3783
+  subnet: '10.196.199.0/24'
+  pool_start: '10.196.199.101'
+  pool_end: '10.196.199.200'
+
+external_net:
+  vlanid: 3781
+  subnet: "10.196.197.0/24"
+  gateway: '10.196.197.1'
+  pool_start: '10.196.197.101'
+  pool_end: '10.196.197.200'
+  fip_pool_start: "10.196.197.10"
+  fip_pool_end: "10.196.197.60"
+
+external_guest_net:
+  vlanid: 3784
+  subnet: "10.196.195.0/24"
+  gateway: '10.196.195.1'
+  fip_pool_start: "10.196.195.10"
+  fip_pool_end: "10.196.195.200"
+
+# provider_net:
+#   vlanid: 3784
+
+# ceph_external:
+#   ClientUserName: openstack
+#   ClientKey: 'AQBQk3dduiXXXXXXXXXXXXXXXXXXXXXXXXXXXX=='
+#   ClusterFSID: '00000000-0000-0000-0000-000000000000'
+#   ExternalMonHost: '10.194.100.201,10.194.100.202,10.194.100.203'
+
+undercloud_br_nic: ens224
+
+# proxy_url: ''
+
+NAMESERVER: 10.194.55.202
+RHOS_VERSION: 13
+REGISTRY_IP_ADDRESS: '10.196.196.100'
+REGISTRY_PORT: '8787'
+REGISTRY_NAMESPACE: 'registry.access.redhat.com/rhosp13'
+REGISTRY_IMAGES: '/home/stack/templates/local_registry_images.yaml'
+REGISTRY_ENV: '/home/stack/templates/overcloud_images.yaml'
+ENV_PATH: '/home/stack/templates/environments'
+CEPH_NAMESPACE: 'registry.access.redhat.com/rhceph'
+CEPH_IMAGE: 'rhceph-3-rhel7'
+
+
+ssl:
+  countryname: 'FR'
+  provincename: 'Paris'
+  localityname: 'IdF'
+  orgname: 'epheo'
+  orgunit: 'eu'
+  commonname: 'lab'
+  emailaddress: 'lab@epheo.eu'
+
+

@@ -1,0 +1,67 @@
+---
+
+- name: Prepare container images
+  shell: |
+    {% if proxy_url is defined  %}
+    export http_proxy=http://{{ proxy_url }}
+    export https_proxy=http://{{ proxy_url }}
+    export no_proxy={{ REGISTRY_IP_ADDRESS }}
+    {% endif %}
+    openstack overcloud container image prepare \
+    {% if enable_ceph is sameas true %}
+      -e /usr/share/openstack-tripleo-heat-templates/environments/ceph-ansible/ceph-ansible.yaml \
+    {% endif %}
+    {% if enable_nfvi is sameas true %}
+      -e /usr/share/openstack-tripleo-heat-templates/environments/services-docker/neutron-sriov.yaml \
+      -e /usr/share/openstack-tripleo-heat-templates/environments/services-docker/neutron-ovs-dpdk.yaml \
+    {% endif %}
+    {% if enable_extra is sameas true %}
+      -e /usr/share/openstack-tripleo-heat-templates/environments/services-docker/barbican.yaml \
+      -e /usr/share/openstack-tripleo-heat-templates/environments/services-docker/octavia.yaml \
+      -e /usr/share/openstack-tripleo-heat-templates/environments/services-docker/manila.yaml \
+    {% endif %}
+    {% if enable_monitoring is sameas true %}
+      -e /usr/share/openstack-tripleo-heat-templates/environments/services-docker/collectd.yaml \
+      -e /usr/share/openstack-tripleo-heat-templates/environments/services-docker/fluentd.yaml \
+      -e /usr/share/openstack-tripleo-heat-templates/environments/services-docker/sensu-client.yaml \
+    {% endif %}
+    {% if enable_saf is sameas true %}
+      -e /usr/share/openstack-tripleo-heat-templates/environments/metrics-collectd-qdr.yaml \
+      -e /usr/share/openstack-tripleo-heat-templates/environments/services-docker/collectd.yaml \
+    {% endif %}
+    {% if enable_ceph is sameas true %}
+      --set ceph_namespace={{ CEPH_NAMESPACE }} \
+      --set ceph_image={{ CEPH_IMAGE }} \
+    {% endif %}
+      --environment-directory ~stack/templates/environments/ \
+      --roles-file /home/stack/templates/roles_data.yaml \
+      --namespace={{ REGISTRY_NAMESPACE }} \
+      --push-destination={{ REGISTRY_IP_ADDRESS }}:{{ REGISTRY_PORT }} \
+      --prefix=openstack- \
+      --tag-from-label {version}-{release} \
+      --output-env-file={{ REGISTRY_ENV }} \
+      --output-images-file {{ REGISTRY_IMAGES }}
+    
+    # ## This is bug from the prepare comand which does not detect Insecure Registries if using a proxy
+    # # https://review.opendev.org/#/c/516356/
+    
+    # {% if proxy_url|length %}
+    # echo "  DockerInsecureRegistryAddress:" >> {{ REGISTRY_ENV }}
+    # echo "  - {{ REGISTRY_IP_ADDRESS }}:{{ REGISTRY_PORT }}" >> {{ REGISTRY_ENV }}
+    # {% endif %}
+
+- name: Upload container images
+  shell: |
+    openstack overcloud container image upload \
+      --config-file {{ REGISTRY_IMAGES }} \
+      --verbose
+
+- name: Validate uploaded images
+  delegate_to: localhost
+  shell: |
+    export REPO_URL={{ REGISTRY_IP_ADDRESS }}:{{ REGISTRY_PORT }}
+    curl -s -X GET http://$REPO_URL/v2/_catalog  | jq '.repositories[]' |sort |xargs -I _  curl -s -X GET http://$REPO_URL/v2/_/tags/list
+  register: shell_result
+
+- debug:
+    var: shell_result.stdout_lines

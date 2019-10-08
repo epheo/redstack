@@ -1,0 +1,16 @@
+<network>
+  <name>{{ item.name }}</name>
+{% if item.gateway is defined %}
+  <forward mode="nat">
+    <nat>
+      <port start="1024" end="65535"/>
+    </nat>
+  </forward>
+  <domain name="{{ item.name }}"/>
+  <ip address="{{ item.gateway }}" netmask="{{ item.netmask }}">
+    <dhcp>
+      <range start="{{ item.dhcp_start }}" end="{{ item.dhcp_end }}"/>
+    </dhcp>
+  </ip>
+{% endif %}
+</network>

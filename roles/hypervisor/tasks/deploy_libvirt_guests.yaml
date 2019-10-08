@@ -1,0 +1,20 @@
+---
+
+- name: Define Guests
+  shell: |
+    if [ -z "$(virsh list --all |grep \ {{ item.name }}\ )" ]; then
+      echo '{{ lookup("template", "roles/hypervisor/templates/guest.xml.j2") }}' > guest.xml
+      virsh define guest.xml
+    fi
+  loop: '{{ libvirt_guests }}'
+  register: command_result
+  changed_when: "command_result.stdout != ''"
+
+- name: Start Guests
+  shell: |
+    if [ -z "$(virsh list |grep \ {{ item.name }}\ )" ]; then
+      virsh start {{ item.name }}
+    fi
+  loop: '{{ libvirt_guests }}'
+  register: command_result
+  changed_when: "command_result.stdout != ''"

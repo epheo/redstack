@@ -1,0 +1,6 @@
+---
+
+- name: Delete current stack
+  shell: |
+    openstack stack delete $(openstack stack list -c 'Stack Name' -f value |uniq) --wait -y
+    sleep 10 

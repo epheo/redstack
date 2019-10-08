@@ -1,0 +1,17 @@
+parameter_defaults:
+
+  CloudDomain: {{ customer_name }}.lab 
+  CloudName: rhosp.{{ customer_name }}.lab
+  CloudNameCtlplane: rhosp.ctlplane.{{ customer_name }}.lab
+  CloudNameInternal: rhosp.internalapi.{{ customer_name }}.lab
+  CloudNameStorage: rhosp.storage.{{ customer_name }}.lab
+  CloudNameStorageManagement: rhosp.storagemgmt.{{ customer_name }}.lab
+
+  ControllerHostnameFormat: 'controller-%index%'
+  ComputeHostnameFormat: 'compute-%index%'
+
+  ControllerCount: 3
+  OvercloudControllerFlavor: control
+
+  ComputeCount: 2
+  OvercloudComputeFlavor: compute

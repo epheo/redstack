@@ -1,0 +1,60 @@
+---
+
+- name: Copy Repomirror 
+  copy:
+    src: ../files/repomirror/
+    dest: ~/repomirror/
+
+- name: Template Repomirror config
+  template:
+    src: ../templates/repomirror.config.j2
+    dest: ~/repomirror/common/config
+  notify: build_repomirror_images
+
+- name: Set SELinux context
+  become: yes
+  shell: |
+    chcon -Rt svirt_sandbox_file_t /mnt/data/repos/
+
+- name: Run Rhel 7 reposync
+  become: yes
+  async: 1
+  poll: 0
+  shell: |
+    cd repomirror/rhel7
+    chmod +x run.sh
+    ./run.sh
+  when: rhel7_repos is defined
+
+- name: Run Rhel 8 reposync
+  become: yes
+  async: 1
+  poll: 0
+  shell: |
+    cd repomirror/rhel8
+    chmod +x run.sh
+    ./run.sh
+  when: rhel8_repos is defined
+
+- name: Wait for Sync of Rhel 8 repositories to finish
+  become: yes
+  shell: podman ps |grep repomirror-rhel8
+  register: result
+  until: "result.stdout == ''"
+  retries: 500
+  delay: 10
+  ignore_errors: yes
+
+- name: Wait for Sync of Rhel 7 repositories to finish
+  become: yes
+  shell: podman ps |grep repomirror-rhel7
+  register: result
+  until: "result.stdout == ''"
+  retries: 500
+  delay: 10
+  ignore_errors: yes
+
+- name: Set SELinux context
+  become: yes
+  shell: |
+    chcon -Rt httpd_sys_content_t /var/www/html/

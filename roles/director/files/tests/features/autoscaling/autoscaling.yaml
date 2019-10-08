@@ -1,0 +1,280 @@
+heat_template_version: 2016-10-14
+description: AutoScaling Wordpress
+
+parameters:
+  image:
+    type: string
+    description: Image used for servers
+  key:
+    type: string
+    description: SSH key to connect to the servers
+  flavor:
+    type: string
+    description: flavor used by the web servers
+  database_flavor:
+    type: string
+    description: flavor used by the db server
+  network:
+    type: string
+    description: Network used by the server
+  subnet_id:
+    type: string
+    description: subnet on which the load balancer will be located
+  database_name:
+    type: string
+    description: Name of the wordpress DB
+    default: wordpress
+  database_user:
+    type: string
+    description: Name of the wordpress user
+    default: wordpress
+  external_network_id:
+    type: string
+    description: UUID of a Neutron external network
+  security_group_db:
+    type: string
+    description: Security group for DB server
+  security_group_front:
+    type: string
+    description: Security group for Front server
+
+
+resources:
+  database_password:
+    type: OS::Heat::RandomString
+  database_root_password:
+    type: OS::Heat::RandomString
+  db:
+    type: OS::Nova::Server
+    properties:
+      flavor: {get_param: database_flavor}
+      image: {get_param: image}
+      key_name: {get_param: key}
+      networks:
+        - port: { get_resource: port_db }
+      user_data_format: RAW
+      user_data:
+        str_replace:
+          template: |
+            #!/bin/bash -v
+            yum -y install mariadb mariadb-server
+            systemctl enable mariadb.service
+            systemctl start mariadb.service
+            echo "redhat" | passwd --stdin root
+            mysqladmin -u root password $db_rootpassword
+            cat << EOF | mysql -u root --password=$db_rootpassword
+            CREATE DATABASE $db_name;
+            GRANT ALL PRIVILEGES ON $db_name.* TO "$db_user"@"%"
+            IDENTIFIED BY "$db_password";
+            FLUSH PRIVILEGES;
+            EXIT
+            EOF
+            wc_notify -k --data-binary '{"status": "SUCCESS"}'
+          params:
+            $db_rootpassword: {get_attr: [database_root_password, value]}
+            $db_name: {get_param: database_name}
+            $db_user: {get_param: database_user}
+            $db_password: {get_attr: [database_password, value]}
+            wc_notify: { get_attr: [wait_handle, curl_cli] }
+  port_db:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: network}
+      security_groups:
+        - {get_param: security_group_db}
+
+  asg:
+    type: OS::Heat::AutoScalingGroup
+    properties:
+      min_size: 1
+      max_size: 5
+      resource:
+        type: lb_server.yaml
+        properties:
+          flavor: {get_param: flavor}
+          image: {get_param: image}
+          key_name: {get_param: key}
+          network: {get_param: network}
+          subnet: {get_param: subnet_id}
+          pool_id: {get_resource: pool}
+          security_group: {get_param: security_group_front}
+          metadata: {"metering.server_group": {get_param: "OS::stack_id"}}
+          user_data:
+            str_replace:
+              template: |
+                #!/bin/bash -v
+                yum -y install httpd wordpress stress
+                systemctl enable httpd.service
+                systemctl start httpd.service
+                echo "redhat" | passwd --stdin root
+                setsebool -P httpd_can_network_connect_db=1
+
+                sed -i "/Deny from All/d" /etc/httpd/conf.d/wordpress.conf
+                sed -i "s/Require local/Require all granted/" /etc/httpd/conf.d/wordpress.conf
+                sed -i s/database_name_here/$db_name/ /etc/wordpress/wp-config.php
+                sed -i s/username_here/$db_user/ /etc/wordpress/wp-config.php
+                sed -i s/password_here/$db_password/ /etc/wordpress/wp-config.php
+                sed -i s/localhost/$db_host/ /etc/wordpress/wp-config.php
+
+                systemctl restart httpd.service
+                wc_notify -k --data-binary '{"status": "SUCCESS"}'
+              params:
+                $db_name: {get_param: database_name}
+                $db_user: {get_param: database_user}
+                $db_password: {get_attr: [database_password, value]}
+                $db_host: {get_attr: [db, first_address]}
+                wc_notify: { get_attr: [wait_handle, curl_cli] }
+
+  web_server_scaleup_policy:
+    type: OS::Heat::ScalingPolicy
+    properties:
+      adjustment_type: change_in_capacity
+      auto_scaling_group_id: {get_resource: asg}
+      cooldown: 30
+      scaling_adjustment: 1
+  web_server_scaledown_policy:
+    type: OS::Heat::ScalingPolicy
+    properties:
+      adjustment_type: change_in_capacity
+      auto_scaling_group_id: {get_resource: asg}
+      cooldown: 30
+      scaling_adjustment: -1
+
+
+  cpu_alarm_high:
+    type: OS::Aodh::GnocchiAggregationByResourcesAlarm
+    properties:
+      description: Scale-up if the average CPU > 50% for 120 seconds
+      metric: cpu_util
+      aggregation_method: mean
+      granularity: 300
+      evaluation_periods: 2
+      threshold: 50
+      resource_type: instance
+      comparison_operator: gt
+      alarm_actions:
+        - str_replace:
+            template: trust+url
+            params:
+              url: {get_attr: [web_server_scaleup_policy, signal_url]}
+      query:
+        str_replace:
+          template: '{"=": {"server_group": "stack_id"}}'
+          params:
+            stack_id: {get_param: "OS::stack_id"}
+
+  cpu_alarm_low:
+    type: OS::Aodh::GnocchiAggregationByResourcesAlarm
+    properties:
+      description: Scale-down if the average CPU < 15% for 120 seconds
+      metric: cpu_util
+      aggregation_method: mean
+      granularity: 300
+      evaluation_periods: 2
+      threshold: 15
+      resource_type: instance
+      comparison_operator: lt
+      alarm_actions:
+        - str_replace:
+            template: trust+url
+            params:
+              url: {get_attr: [web_server_scaledown_policy, signal_url]}
+      query:
+        str_replace:
+          template: '{"=": {"server_group": "stack_id"}}'
+          params:
+            stack_id: {get_param: "OS::stack_id"}
+
+  lb_monitor:
+    type: OS::Neutron::LBaaS::HealthMonitor
+    properties:
+      delay: 5
+      max_retries: 5
+      pool: {get_resource: pool}
+      timeout: 5
+      type: TCP
+
+  pool:
+    type: OS::Neutron::LBaaS::Pool
+    properties:
+      listener: {get_resource: listener}
+      lb_algorithm: ROUND_ROBIN
+      protocol: HTTP
+#      session_persistence:
+#        type: SOURCE_IP
+
+  listener:
+    type: OS::Neutron::LBaaS::Listener
+    properties:
+      loadbalancer: {get_resource: lb}
+      protocol: HTTP
+      protocol_port: 80
+
+  lb:
+    type: OS::Neutron::LBaaS::LoadBalancer
+    properties:
+      vip_subnet: {get_param: subnet_id}
+
+  # assign a floating ip address to the load balancer
+  # pool.
+  lb_floating:
+    type: OS::Neutron::FloatingIP
+    properties:
+      floating_network_id: {get_param: external_network_id}
+      port_id: {get_attr: [lb, vip_port_id]}
+
+
+  wait:
+    type: OS::Heat::WaitCondition
+    properties:
+      handle: {get_resource: wait_handle}
+      timeout: 900
+      count: 2
+
+  wait_handle:
+    type: OS::Heat::WaitConditionHandle
+
+
+
+outputs:
+  scale_up_url:
+    description: >
+      This URL is the webhook to scale up the autoscaling group.  You
+      can invoke the scale-up operation by doing an HTTP POST to this
+      URL; no body nor extra headers are needed.
+    value: {get_attr: [web_server_scaleup_policy, alarm_url]}
+  scale_dn_url:
+    description: >
+      This URL is the webhook to scale down the autoscaling group.
+      You can invoke the scale-down operation by doing an HTTP POST to
+      this URL; no body nor extra headers are needed.
+    value: {get_attr: [web_server_scaledown_policy, alarm_url]}
+  pool_ip_address:
+    value: {get_attr: [lb, vip_address]}
+    description: The IP address of the load balancing pool
+  website_url:
+    value:
+      str_replace:
+        template: http://host/wordpress/
+        params:
+          host: { get_attr: [lb_floating, floating_ip_address] }
+    description: >
+      This URL is the "external" URL that can be used to access the
+      Wordpress site.
+  gnocchi_query:
+    value:
+      str_replace:
+        template: >
+          openstack metric measures aggregation -m cpu_util
+          --aggregation mean --granularity 60 --needed-overlap 0
+          --query server_group=stackval --resource-type instance
+        params:
+          stackval: { get_param: "OS::stack_id" }
+    description: >
+      This is a Gnocchi meter resource has a metadata item of the
+      form user_metadata.X=Y and samples about resources so tagged can
+      be queried with a Ceilometer query term of the form
+      metadata.user_metadata.X=Y.  In this case the nested stacks give
+      their VMs metadata that is passed as a nested stack parameter,
+      and this stack passes a metadata of the form metering.stack=Y,
+      where Y is this stack's ID.

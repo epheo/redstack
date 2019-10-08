@@ -1,0 +1,18 @@
+---
+
+- name: Install needed packages
+  package:
+    state: latest
+    name: docker-distribution
+
+- name: enable service docker and ensure it is not masked
+  systemd:
+    name: docker-distribution
+    enabled: yes
+    masked: no
+
+- name: restart service docker, in all cases, also issue daemon-reload to pick up config changes
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: docker-distribution

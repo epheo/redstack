@@ -1,0 +1,71 @@
+---
+
+- name: Install needed packages
+  become: yes
+  yum:
+    state: latest
+    name: ['python-tripleoclient', 'ceph-ansible']
+
+- name: Configure Undercloud
+  template:
+    src: ../templates/undercloud.conf.j2
+    dest: ~stack/undercloud.conf
+
+- name: Run undercloud installation
+  shell: "openstack undercloud install"
+
+- name: Download overcloud images
+  become: yes
+  yum:
+    state: latest
+    name: "{{ item }}"
+  with_items:
+    - rhosp-director-images
+    - rhosp-director-images-ipa
+
+- name: Create directory images
+  file:
+    path: /home/stack/images
+    state: directory
+    owner: stack
+    group: stack
+
+- name: untar images
+  shell: "for i in $(ls /usr/share/rhosp-director-images/overcloud-full-latest*) $(ls /usr/share/rhosp-director-images/ironic-python-agent-latest-*); do tar -xvf $i -C /home/stack/images/; done"
+
+- name: upload images
+  shell: |
+    source /home/stack/stackrc && openstack overcloud image upload --update-existing --image-path /home/stack/images/
+    for i in $(openstack baremetal node list -c UUID -f value); do openstack overcloud node configure $i; done
+
+- name: Set DNS on ctlplane-subnet
+  shell: "source /home/stack/stackrc &&  openstack subnet set --dns-nameserver {{ dns_ip }} ctlplane-subnet"
+  ignore_errors: yes
+
+- name: Create Flavor for OvsDpdkSriov
+  become: yes
+  shell: |
+    source /home/stack/stackrc
+    openstack flavor create --id auto --ram 4096 --disk 40 --vcpus 1 computeovsdpdksriov
+    openstack flavor set --property "cpu_arch"="x86_64" --property "capabilities:boot_option"="local" --property "capabilities:profile"="computeovsdpdksriov" computeovsdpdksriov
+    openstack flavor set --property resources:VCPU=0 --property resources:MEMORY_MB=0 --property resources:DISK_GB=0 --property resources:CUSTOM_BAREMETAL=1 computeovsdpdksriov
+  when: enable_nfvi is sameas true
+
+#- name: Copy OVS Vlan network config
+#  become: yes
+#  copy:
+#    src: files/network-scripts/
+#    dest: /etc/sysconfig/network-scripts/
+#
+#- name: restart network service
+#  become: yes
+#  systemd:
+#    state: restarted
+#    name: network
+#
+#
+#- name: Adding the Certificate Authority to Director
+#  become: yes
+#  shell: |
+#    cp ~stack/ssl/ca.crt.pem /etc/pki/ca-trust/source/anchors/
+#    update-ca-trust extract

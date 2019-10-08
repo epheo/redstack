@@ -1,0 +1,60 @@
+templates: /usr/share/openstack-tripleo-heat-templates/
+environments:
+  - /usr/share/openstack-tripleo-heat-templates/environments/network-isolation.yaml
+{% if enable_telemetry is sameas false %}
+  - /usr/share/openstack-tripleo-heat-templates/environments/disable-telemetry.yaml
+{% endif %}
+{% if enable_nfvi is sameas true %}
+  - /usr/share/openstack-tripleo-heat-templates/environments/neutron-sriov.yaml
+  - /usr/share/openstack-tripleo-heat-templates/environments/neutron-ovs-dpdk.yaml
+  - /usr/share/openstack-tripleo-heat-templates/environments/ovs-hw-offload.yaml
+  - /usr/share/openstack-tripleo-heat-templates/environments/host-config-and-reboot.yaml
+{% endif %}
+{% if enable_ceph is sameas true %}
+  - /usr/share/openstack-tripleo-heat-templates/environments/ceph-ansible/ceph-ansible.yaml
+  - /usr/share/openstack-tripleo-heat-templates/environments/ceph-ansible/ceph-rgw.yaml
+{% endif %}
+{% if enable_ceph_external is sameas true %}
+  - /usr/share/openstack-tripleo-heat-templates/environments/ceph-ansible/ceph-ansible-external.yaml
+{% endif %}
+{% if enable_monitoring is sameas true %}
+  - /usr/share/openstack-tripleo-heat-templates/environments/logging-environment.yaml
+  - /usr/share/openstack-tripleo-heat-templates/environments/monitoring-environment.yaml
+  - /usr/share/openstack-tripleo-heat-templates/environments/collectd-environment.yaml
+{% endif %}
+{% if enable_saf is sameas true %}
+  - /usr/share/openstack-tripleo-heat-templates/environments/metrics-collectd-qdr.yaml
+  - /usr/share/openstack-tripleo-heat-templates/environments/collectd-environment.yaml
+{% endif %}
+{% if enable_extra is sameas true %}
+  - /usr/share/openstack-tripleo-heat-templates/environments/services/octavia.yaml
+  - /usr/share/openstack-tripleo-heat-templates/environments/services/barbican.yaml
+  - /usr/share/openstack-tripleo-heat-templates/environments/barbican-backend-simple-crypto.yaml
+{% endif %}
+  - /home/stack/templates/overcloud_images.yaml
+  - /home/stack/templates/environments/10-deployment-environment.yaml
+{% if enable_ipa is sameas true %}
+  - /home/stack/templates/environments/11-keystone_domain_specific_ldap_backend.yaml
+{% endif %}
+  - /home/stack/templates/environments/30-storage-environment.yaml
+  - /home/stack/templates/environments/40-network-override-environment.yaml
+{% if enable_ssl is sameas true %}
+  - /home/stack/templates/environments/45-enable-tls.yaml
+  - /home/stack/templates/environments/46-inject-trust-anchor-hiera.yaml
+  - /home/stack/templates/environments/47-tls-endpoints-public-ip.yaml
+{% endif %}
+{% if enable_extra is sameas true %}
+  - /home/stack/templates/environments/42-octavia-environment.yaml
+  - /home/stack/templates/environments/70-barbican-environment.yaml
+{% endif %}
+{% if enable_monitoring is sameas true %}
+  - /home/stack/templates/environments/80-logging-monitoring.yaml
+{% endif %}
+{% if enable_saf is sameas true %}
+  - /home/stack/templates/environments/80-logging-monitoring.yaml
+{% endif %}
+  - /home/stack/templates/environments/90-hardening-environment.yaml
+  - /home/stack/templates/environments/99-extraconfig-environment.yaml
+{% if enable_fencing is sameas true %}
+  - /home/stack/templates/environments/98-fencing.yaml
+{% endif %}

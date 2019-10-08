@@ -1,0 +1,65 @@
+---
+
+- name: Create directory templates
+  file:
+    path: /home/stack/templates
+    state: directory
+    owner: stack
+    group: stack
+
+- name: Ensure directory structure exists
+  file:
+    path: '/home/stack/templates/{{ item.path }}'
+    state: directory
+  with_filetree: 'roles/overcloud/files/templates/'
+  when: item.state == 'directory'
+
+- name: Ensure files are populated from templates
+  template:
+    src: '{{ item.src }}'
+    dest: '/home/stack/templates/{{ item.path }}'
+  with_filetree: 'roles/overcloud/files/templates/'
+  when: item.state == 'file'
+
+- name: Copy answers
+  template:
+    src: ../templates/answers.yaml.j2
+    dest: /home/stack/answers.yaml
+
+- name: Copy deploy script
+  copy:
+    src: ../files/deploy.sh
+    dest: /home/stack/deploy.sh
+
+- name: Ensure Test directory structure exists
+  file:
+    path: '/home/stack/tests/{{ item.path }}'
+    state: directory
+  with_filetree: 'roles/overcloud/files/tests/'
+  when: item.state == 'directory'
+
+- name: Ensure Test files are populated from templates
+  template:
+    src: '{{ item.src }}'
+    dest: '/home/stack/tests/{{ item.path }}'
+  with_filetree: 'roles/overcloud/files/tests/'
+  when: item.state == 'file'
+
+- name: Synchronize templates on Director host
+  synchronize:
+    src: "roles/overcloud/files/scripts/"
+    dest: /home/stack/scripts/
+    set_remote_user: yes
+    owner: no
+    recursive: yes
+    archive: no
+    group: no
+    perms: no
+    checksum: yes
+    delete: yes
+
+- name: Set permission on the script folder
+  shell: |
+    chmod +x -R ~/scripts/
+    chmod +x -R ~/tests/
+    chmod +x ~/deploy.sh

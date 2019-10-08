@@ -1,0 +1,19 @@
+---
+
+- name: Install needed packages
+  become: yes
+  package:
+    state: latest
+    name: [ 'createrepo', 'podman', 'slirp4netns', 'fuse-devel' ]
+
+- name: Enable user namespace
+  become: yes
+  shell: |
+    if [ ! -f /etc/sysctl.d/user-namespaces.conf ]; then
+    sysctl user.max_user_namespaces=1000
+    cat << EOF > /etc/sysctl.d/user-namespaces.conf
+    user.max_user_namespaces=1000
+    EOF
+    fi
+  register: command_result
+  changed_when: "command_result.stdout != ''"

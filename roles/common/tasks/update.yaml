@@ -1,0 +1,15 @@
+---
+
+- name: Yum clean all
+  become: yes
+  shell: |
+    yum clean all
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+- name: Upgrade all packages
+  become: yes
+  package:
+    name: "*"
+    state: latest
+
+- include_tasks: reboot.yaml

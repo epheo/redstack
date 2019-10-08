@@ -1,0 +1,6 @@
+---
+
+- name: Install packages
+  package:
+    state: latest
+    name: [ 'screen', 'git', 'vim', 'rsync' ]

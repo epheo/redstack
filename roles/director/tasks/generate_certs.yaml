@@ -1,0 +1,53 @@
+# https://access.redhat.com/documentation/en-us/red_hat_openstack_platform/13/html/advanced_overcloud_customization/sect-enabling_ssltls_on_the_overcloud
+---
+
+- name: Create SSL directory
+  file:
+    path: /home/stack/ssl
+    state: directory
+    owner: stack
+    group: stack
+
+- name: Create newcerts directory
+  file:
+    path: /home/stack/ssl/newcerts
+    state: directory
+    owner: stack
+    group: stack
+
+- name: Create index and serial files
+  shell: |
+    touch /home/stack/ssl/index.txt
+    echo '01' > /home/stack/ssl/serial
+
+- name: Creating a Certificate Authority
+  shell: |
+    cd ~stack/ssl
+    sudo openssl genrsa -out ca.key.pem 4096
+    printf '{{ ssl.countryname }}\n{{ ssl.provincename }}\n{{ ssl.localityname }}\n{{ ssl.orgname }}\n{{ ssl.orgunit }}\n{{ ssl.commonname }}\n{{ ssl.emailaddress }}\n' | sudo openssl req  -key ca.key.pem -new -x509 -days 7300 -extensions v3_ca -out ca.crt.pem
+
+- name: Adding the Certificate Authority to Clients
+  shell: |
+    cd ~stack/ssl
+    sudo cp ca.crt.pem /etc/pki/ca-trust/source/anchors/
+    sudo update-ca-trust extract
+
+- name: Creating an SSL/TLS Key
+  shell: |
+    cd ~stack/ssl
+    openssl genrsa -out server.key.pem 2048
+
+- name: Creating an SSL/TLS Certificate Signing Request
+  template:
+    src: undercloud/templates/openssl.cnf.j2
+    dest: /home/stack/ssl/openssl.cnf
+
+- name: Generating certificate signing request
+  shell: |
+    cd ~stack/ssl
+    printf '{{ ssl.countryname }}\n{{ ssl.provincename }}\n{{ ssl.localityname }}\n{{ ssl.orgname }}\n{{ ssl.orgunit }}\n{{ ssl.commonname }}\n{{ ssl.emailaddress }}\n\n{{ ssl.countryname }}\n' | openssl req -config openssl.cnf -key server.key.pem -new -out server.csr.pem
+
+- name: Creating the SSL/TLS Certificate
+  shell: |
+    cd ~stack/ssl
+    printf 'y\ny\n' | sudo openssl ca -config openssl.cnf -extensions v3_req -days 3650 -in server.csr.pem -out server.crt.pem -cert ca.crt.pem -keyfile ca.key.pem

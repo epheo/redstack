@@ -1,0 +1,40 @@
+parameter_defaults:
+
+  #  Debug: true
+  #  ConfigDebug: true
+  #  DockerPuppetDebug: True
+
+  # Create user name on install
+  #extra_username: redhatstack
+  #extra_username_pass: $6$somesaltsalt$kK.nEcss6K201neKzVQFgcGiNg9kIAiWZyhZhKRs9zDAZ.w8aRWfEJpoUE23AdmdEHhE3jcuD7iv82qSEvtQC/
+
+  KeystoneNotificationFormat: cadf
+
+  # NotificationDriver: log
+
+  # Decrease Gnocchi polling time
+  ManagePolling: true
+  ManagePipeline: true
+  PipelinePublishers:
+    - gnocchi://?archive_policy=medium
+  EventPipelinePublishers:
+    - gnocchi://?archive_policy=medium
+    - panko://
+  GnocchiArchivePolicy: 'medium'
+
+  # CloudForms integration
+  CeilometerStoreEvents: true
+
+  ComputeParameters:
+    NovaReservedHostMemory: 4096
+
+  ComputeExtraConfig:
+    nova::cpu_allocation_ratio: 8
+    ceilometer::agent::polling::polling_interval: 60
+
+  ControllerExtraConfig:
+    ceilometer::agent::polling::polling_interval: 60
+  
+  ExtraConfig:
+    heat::engine::heat_waitcondition_server_url: "http://10.245.32.69:8000/v1/waitcondition"
+    tripleo::instanceha::no_shared_storage: false

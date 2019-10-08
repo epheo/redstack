@@ -1,0 +1,36 @@
+---
+
+- name: Prepare baremetal nodes
+  shell: |
+    source ~/stackrc
+    openstack overcloud node import ~/instackenv.json
+    sleep 5
+    for i in $(openstack baremetal node list -c UUID -f value);
+      do openstack baremetal node power off $i;
+    done
+
+- name: Create directory for introspection results
+  file:
+    path: /home/stack/introspection
+    state: directory
+    owner: stack
+    group: stack
+
+- name: Launch introspection
+  shell: |
+    source ~/stackrc
+    openstack overcloud node introspect --all-manageable --provide
+    sleep 5
+    for node in `openstack baremetal node list -f value -c Name`; 
+      do openstack baremetal introspection data save $node |jq . > introspection/${node}.json ; 
+    done
+
+- name: Tag nodes 
+  shell: |
+    bash ~/scripts/undercloud_add_baremetal_metadata.sh
+
+#- name: Synchronize the introspection results on Director host
+#  synchronize:
+#    mode: pull
+#    src: /home/stack/introspection/
+#    dest: ./introspection/

@@ -1,0 +1,13 @@
+export ORG_ID="{{ subscription.org }}"
+export ACTIVATION_KEY="{{ subscription.activation_key }}"
+export REPOMIRROR_PATH="/mnt/data/repos/"
+export RHEL7_REPOS_TO_SYNC="
+{% for item in rhel7_repos %}
+  {{ item }}
+{% endfor %}
+  "
+export RHEL8_REPOS_TO_SYNC="
+{% for item in rhel8_repos %}
+  {{ item }}
+{% endfor %}
+  "

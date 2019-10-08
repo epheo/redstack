@@ -1,0 +1,31 @@
+parameter_defaults:
+  EnableFencing: true
+  FencingConfig:
+    devices:
+    - agent: fence_ipmilan
+      host_mac: 24:6e:96:94:e5:4c
+      params:
+        ipaddr: 10.245.48.18
+        lanplus: true
+        login: root
+        passwd: TT!inovasyon
+        pcmk_host_list: controller-0
+        privlvl: administrator
+    - agent: fence_ipmilan
+      host_mac: 24:6e:96:94:e8:7c
+      params:
+        ipaddr: 10.245.48.19
+        lanplus: true
+        login: root
+        passwd: TT!inovasyon
+        pcmk_host_list: controller-1
+        privlvl: administrator
+    - agent: fence_ipmilan
+      host_mac: 24:6e:96:94:ea:e0
+      params:
+        ipaddr: 10.245.48.20
+        lanplus: true
+        login: root
+        passwd: TT!inovasyon
+        pcmk_host_list: controller-2
+        privlvl: administrator

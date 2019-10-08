@@ -1,0 +1,61 @@
+---
+
+- name: Define Storage pools
+  shell: |
+    if [ -z "$(virsh pool-list --all |grep {{ item.name }})" ]; then
+      mkdir -p {{ item.path }}
+      echo '{{ lookup("template", "roles/hypervisor/templates/storage_pool.xml.j2") }}' > pool.xml
+      virsh pool-define pool.xml
+    fi
+  loop: '{{ libvirt_storage_pools }}'
+  register: command_result
+  changed_when: "command_result.stdout != ''"
+
+- name: Start Storage pools
+  shell: |
+    if [ -z "$(virsh pool-list |grep {{ item.name }})" ]; then
+      virsh pool-start {{ item.name }}
+    fi
+  loop: '{{ libvirt_storage_pools }}'
+  register: command_result
+  changed_when: "command_result.stdout != ''"
+
+- name: Copy Guest Root Image
+  synchronize:
+    src: '{{ item.localpath }}'
+    dest: '{{ guests_rootdisk_pool_path }}/{{ item.name }}'
+    checksum: yes
+  loop: '{{ guests_rootimg }}'
+
+- name: Refresh Image pool
+  shell: |
+    virsh pool-refresh --pool {{ guests_rootdisk_pool }}
+
+- name: Create Qcow2 Root volumes
+  shell: |
+    {% if item.root is defined %}
+    if [ -z "$(virsh vol-list --pool {{ guests_rootdisk_pool }} |grep \ {{ item.name }}-root )" ]; then
+      qemu-img create -f qcow2 -o backing_file={{ guests_rootdisk_pool_path }}/{{ item.root }} {{ guests_rootdisk_pool_path }}/{{ item.name }}-root {{ guests_rootdisk_size }}G
+      virsh pool-refresh --pool {{ guests_rootdisk_pool }}
+    fi
+    {% else %}
+    true
+    {% endif %}
+  loop: '{{ libvirt_guests }}'
+  register: command_result
+  changed_when: "command_result.stdout != ''"
+
+- name: Create Qcow2 volumes
+  shell: |
+    {% if item.volumes is defined %}
+    {% for vol in item.volumes %}
+    if [ -z "$(virsh vol-list --pool {{ vol.pool }} |grep \ {{ vol.name }}\  )" ]; then
+      virsh vol-create-as --pool {{ vol.pool }} --format qcow2 --name {{ vol.name }} {{ vol.size }}G
+    fi
+    {% endfor %}
+    {% else %}
+    true
+    {% endif %}
+  loop: '{{ libvirt_guests }}'
+  register: command_result
+  changed_when: "command_result != ''"

@@ -1,0 +1,30 @@
+{% if enable_ceph_external is sameas true %}
+resource_registry:
+  OS::TripleO::Services::CephExternal: /usr/share/openstack-tripleo-heat-templates/puppet/services/ceph-external.yaml
+  OS::TripleO::Services::CephClient: OS::Heat::None
+  OS::TripleO::Services::CephMon: OS::Heat::None
+  OS::TripleO::Services::CephOSD: OS::Heat::None
+  OS::TripleO::Services::SwiftProxy: OS::Heat::None
+  OS::TripleO::Services::SwiftStorage: OS::Heat::None
+  OS::TripleO::Services::SwiftRingBuilder: OS::Heat::None
+
+parameter_defaults:
+
+  CinderEnableIscsiBackend: False
+  CinderEnableRbdBackend: True
+  CinderBackupBackend: ceph
+  NovaEnableRbdBackend: True
+  GlanceBackend: rbd
+  GnocchiBackend: rbd
+
+  CephClientUserName: {{ ceph_external.ClientUserName }}
+  CephClientKey: {{ ceph_external.ClientKey }}
+  CephClusterFSID: {{ ceph_external.ClusterFSID }}
+  CephExternalMonHost: {{ ceph_external.ExternalMonHost  }}
+
+  CinderRbdPoolName: volumes
+  GlanceRbdPoolName: images
+  NovaRbdPoolName: vms
+  CinderRbdExtraPools: backups
+  GnocchiRbdPoolName: metrics
+{% endif %}

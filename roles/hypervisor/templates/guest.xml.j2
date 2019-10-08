@@ -1,0 +1,94 @@
+<domain type="kvm">
+  <name>{{ item.name }}</name>
+  <memory unit="KiB">{{ item.ram }}</memory>
+  <currentMemory unit="KiB">{{ item.ram }}</currentMemory>
+  <vcpu placement="static">{{ item.vcpu }}</vcpu>
+  <os>
+    <type arch="x86_64" machine="pc">hvm</type>
+    <boot dev="hd"/>
+  </os>
+  <features>
+    <acpi/>
+    <apic/>
+    <pae/>
+  </features>
+  <clock offset="utc"/>
+  <on_poweroff>destroy</on_poweroff>
+  <on_reboot>restart</on_reboot>
+  <on_crash>destroy</on_crash>
+  <devices>
+    <emulator>/usr/bin/qemu-kvm</emulator>
+{% if item.root is defined %}
+    <disk type="volume" device="disk">
+      <driver name="qemu" type="qcow2"/>
+      <source pool="{{ guests_rootdisk_pool }}" volume="{{ item.name }}-root"/>
+      <target dev="vda" bus="virtio"/>
+    </disk>
+{% endif %}
+{% if item.volumes is defined %}
+{% for vol in item.volumes %}
+    <disk type="volume" device="disk">
+      <driver name="qemu" type="qcow2"/>
+      <source pool="{{ vol.pool }}" volume="{{ vol.name }}"/>
+      <target dev="{{ vol.target }}" bus="virtio"/>
+    </disk>
+{% endfor %}
+{% endif %}
+    <disk type="file" device="cdrom">
+      <driver name="qemu" type="raw"/>
+      <source file="{{ guests_rootdisk_pool_path }}/cloudinit.iso"/>
+      <backingStore/>
+      <target dev="hda" bus="ide"/>
+      <readonly/>
+      <alias name="ide0-0-0"/>
+      <address type="drive" controller="0" bus="0" target="0" unit="0"/>
+    </disk>
+    <controller type="usb" index="0" model="piix3-uhci">
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x01" function="0x2"/>
+    </controller>
+    <controller type="pci" index="0" model="pci-root"/>
+    <controller type="ide" index="0">
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x01" function="0x1"/>
+    </controller>
+    <controller type="virtio-serial" index="0">
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x04" function="0x0"/>
+    </controller>
+{% for net in item.networks %}
+    <interface type="network">
+      <source network="{{ net }}"/>
+      <model type="virtio"/>
+    </interface>
+{% endfor %}
+    <serial type="pty">
+      <target type="isa-serial" port="0">
+        <model name="isa-serial"/>
+      </target>
+    </serial>
+    <console type="pty">
+      <target type="serial" port="0"/>
+    </console>
+    <console type="pty">
+      <target type="virtio" port="1"/>
+    </console>
+    <channel type="pty">
+      <target type="virtio" name="org.qemu.guest_agent.0"/>
+      <address type="virtio-serial" controller="0" bus="0" port="1"/>
+    </channel>
+    <input type="mouse" bus="ps2"/>
+    <input type="keyboard" bus="ps2"/>
+    <graphics type="spice" autoport="yes">
+      <listen type="address"/>
+    </graphics>
+    <video>
+      <model type="cirrus" vram="16384" heads="1" primary="yes"/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x02" function="0x0"/>
+    </video>
+    <memballoon model="virtio">
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x07" function="0x0"/>
+    </memballoon>
+    <rng model="virtio">
+      <backend model="random">/dev/random</backend>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x08" function="0x0"/>
+    </rng>
+  </devices>
+</domain>

@@ -1,0 +1,13 @@
+---
+
+- hosts: hypervisor
+  roles:
+    - hypervisor
+  vars_files:
+    - secrets/kvm.yaml
+  tasks:
+    #- include_tasks: roles/hypervisor/tasks/cleanup.yaml
+    - include_tasks: roles/hypervisor/tasks/deploy_libvirt_nets.yaml
+    - include_tasks: roles/hypervisor/tasks/create_libvirt_volumes.yaml
+    - include_tasks: roles/hypervisor/tasks/deploy_libvirt_guests.yaml
+    - include_tasks: roles/hypervisor/tasks/configure_virtual_bmc.yaml

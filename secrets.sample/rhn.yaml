@@ -1,0 +1,6 @@
+---
+
+subscription:
+  # satellite_ip:
+  org: 00000000
+  activation_key: XXXXXXXXXXXXXX

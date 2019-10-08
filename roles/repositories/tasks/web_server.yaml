@@ -1,0 +1,26 @@
+---
+
+- name: Install needed packages
+  become: yes
+  yum:
+    state: latest
+    name: [ 'httpd' ]
+
+- name: Create symbolic link 
+  become: yes
+  file:
+    src: "/mnt/data/repos"
+    dest: "/var/www/html/repos"
+    state: link
+
+- name: Set SELinux context
+  become: yes
+  shell: |
+    chcon -Rt httpd_sys_content_t /mnt/data/repos/
+
+- name: Restart Service 
+  become: yes
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: httpd

@@ -1,0 +1,13 @@
+---
+
+- name: Add customer registry to insecure list
+  become: yes
+  shell: |
+    sed -i s/REGISTRY=\"--insecure-registry\ 10.8.0.5/REGISTRY=\"--insecure-registry\ 10.169.108.131:5000\ --insecure-registry\ 10.8.0.5/g /etc/sysconfig/docker
+
+- name: restart docker service 
+  become: yes
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: docker

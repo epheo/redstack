@@ -1,0 +1,12 @@
+---
+
+- name: Power off all baremetal nodes
+  shell: |
+    source ~/stackrc
+    for i in $(openstack baremetal node list -c UUID -f value); do openstack baremetal node power off $i;done
+    sleep 5
+    
+- name: Delete all baremetal nodes
+  shell: |
+    source ~/stackrc
+    for i in $(openstack baremetal node list -c UUID -f value); do openstack baremetal node delete $i;done

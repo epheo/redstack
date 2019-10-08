@@ -1,0 +1,23 @@
+#cloud-config
+ssh_pwauth: True
+disable_root: false
+users:
+  - name: stack
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    ssh_authorized_keys:
+{% for item in guests_pubkey %}
+      - {{ item }}
+{% endfor %}
+chpasswd:
+  list: |
+    root:{{ guests_passwd }}
+  expire: false
+runcmd:
+  - sed -i'.orig' -e's/without-password/yes/' /etc/ssh/sshd_config
+  - systemctl restart sshd
+ssh_authorized_keys:
+  - {{ guests_pubkey }}
+growpart:
+    mode: auto
+    devices: ["/"]
+    ignore_growroot_disabled: false

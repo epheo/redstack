@@ -1,0 +1,9 @@
+---
+
+- name: build_repomirror_images
+  become: yes
+  shell: |
+    podman pull registry.access.redhat.com/ubi{{ item }}
+    cd repomirror/rhel{{ item }} && chmod +x build.sh && ./build.sh
+  when: rhel7_repos is defined
+  loop: [ '7', '8' ]
