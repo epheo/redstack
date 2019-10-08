@@ -37,13 +37,9 @@
 - name: Adding the Certificate Authority to Clients
   become: yes
   shell: |
-    if [[ ! -f /etc/pki/ca-trust/source/anchors/ca.crt.pem ]]; then
-      cd ~stack/ssl
-      sudo cp ca.crt.pem /etc/pki/ca-trust/source/anchors/
-      sudo update-ca-trust extract
-    fi
-  register: command_result
-  changed_when: "command_result.stdout != ''"
+    cd ~stack/ssl
+    sudo cp ca.crt.pem /etc/pki/ca-trust/source/anchors/
+    sudo update-ca-trust extract
 
 - name: Creating an SSL/TLS Key
   shell: |
@@ -58,8 +54,6 @@
   template:
     src: ../templates/openssl.cnf.j2
     dest: /home/stack/ssl/openssl.cnf
-  register: command_result
-  changed_when: "command_result.stdout != ''"
 
 - name: Generating certificate signing request
   shell: |
