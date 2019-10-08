@@ -4,8 +4,6 @@
   roles:
     - common
     - hypervisor
-  vars_files:
-    - secrets/kvm.yaml
   tasks:
     - include_tasks: roles/common/tasks/predeploy.yaml
     - include_tasks: roles/common/tasks/update.yaml

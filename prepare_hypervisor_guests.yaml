@@ -3,8 +3,6 @@
 - hosts: hypervisor
   roles:
     - hypervisor
-  vars_files:
-    - secrets/kvm.yaml
   tasks:
     #- include_tasks: roles/hypervisor/tasks/cleanup.yaml
     - include_tasks: roles/hypervisor/tasks/deploy_libvirt_nets.yaml

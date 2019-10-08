@@ -3,6 +3,6 @@
 guests_pubkey: 
   - 'ssh-rsa AAAAB3NzXXXXXXXX'
   - 'ssh-rsa AAAAB3NzYYYYYYYY'
-guests_passwd: 'your_password_here'
+guests_passwd: 'your_password'
 
-vbmc_password: 'your_password_here'
+vbmc_password: 'your_password'

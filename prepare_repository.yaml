@@ -4,8 +4,6 @@
   roles:
     - common
     - repositories
-  vars_files:
-    - secrets/rhn.yaml
   tasks:
     - include_tasks: roles/common/tasks/predeploy.yaml
     - include_tasks: roles/repositories/tasks/create_partition.yaml

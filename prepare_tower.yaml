@@ -4,8 +4,6 @@
   roles:
     - common
     - tower
-  vars_files:
-    - secrets/tower.yaml
   tasks:
     - include_tasks: roles/common/tasks/predeploy.yaml
     - include_tasks: roles/common/tasks/manage_repo.yaml
