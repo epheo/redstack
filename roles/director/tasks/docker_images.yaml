@@ -2,11 +2,11 @@
 
 - name: Prepare container images
   shell: |
-{% if proxy_url is defined  %}
+    {% if proxy_url is defined %}
     export http_proxy=http://{{ proxy_url }}
     export https_proxy=http://{{ proxy_url }}
     export no_proxy={{ registry.ip }}
-{% endif %}
+    {% endif %}
     openstack overcloud container image prepare \
     {% if enable_ceph is sameas true %}
       -e /usr/share/openstack-tripleo-heat-templates/environments/ceph-ansible/ceph-ansible.yaml \
@@ -42,14 +42,6 @@
       --output-env-file={{ registry.env }} \
       --output-images-file {{ registry.images }}
     
-    # ## This is bug from the prepare comand which does not detect Insecure Registries if using a proxy
-    # # https://review.opendev.org/#/c/516356/
-    
-    # {% if proxy_url|length %}
-    # echo "  DockerInsecureRegistryAddress:" >> {{ registry.env }}
-    # echo "  - {{ registry.ip }}:{{ registry.port }}" >> {{ registry.env }}
-    # {% endif %}
-
 - name: Upload container images
   shell: |
     openstack overcloud container image upload \
