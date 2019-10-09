@@ -2,6 +2,7 @@
 
 - hosts: undercloud
   roles:
+    - common
     - director
   tasks:
     - include_tasks: roles/director/tasks/uninstall.yaml
