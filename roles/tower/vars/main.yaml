@@ -8,6 +8,8 @@ job_templates:
     extra_vars: 'secrets/kvm.yaml'
   - name: prepare_hypervisor_guests
     extra_vars: 'secrets/kvm.yaml'
+  - name: delete_hypervisor_guests
+    extra_vars: 'secrets/kvm.yaml'
   - name: prepare_repository
     extra_vars: 'secrets/rhn.yaml'
   - name: prepare_tower

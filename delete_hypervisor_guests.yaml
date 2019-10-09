@@ -1,0 +1,7 @@
+---
+
+- hosts: hypervisor
+  roles:
+    - hypervisor
+  tasks:
+    - include_tasks: roles/hypervisor/tasks/cleanup.yaml

@@ -4,7 +4,6 @@
   roles:
     - hypervisor
   tasks:
-    #- include_tasks: roles/hypervisor/tasks/cleanup.yaml
     - include_tasks: roles/hypervisor/tasks/deploy_libvirt_nets.yaml
     - include_tasks: roles/hypervisor/tasks/create_libvirt_volumes.yaml
     - include_tasks: roles/hypervisor/tasks/deploy_libvirt_guests.yaml
