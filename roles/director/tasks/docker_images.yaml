@@ -1,5 +1,19 @@
 ---
 
+- name: Set Default route
+  become: yes
+  lineinfile:
+    dest: /etc/sysconfig/network-scripts/ifcfg-br-ctlplane
+    line: GATEWAY={{ ctlplane_net.gateway }}
+    insertbefore: BOF
+
+- name: Restart network service 
+  become: yes
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: network
+
 - name: Prepare container images
   shell: |
     {% if proxy_url is defined %}
@@ -57,3 +71,4 @@
 
 - debug:
     var: shell_result.stdout_lines
+

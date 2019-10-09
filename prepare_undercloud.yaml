@@ -26,5 +26,5 @@
       telegram:
         token: '{{ telegram.token }}'
         chat_id: '{{ telegram.chat_id }}'
-        msg: OSP Undercloud have been deployed
+        msg: OSP Undercloud is now ready
       when: telegram is defined
