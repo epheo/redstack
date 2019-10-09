@@ -1,0 +1,8 @@
+---
+
+- hosts: undercloud
+  roles:
+    - director
+  tasks:
+    - include_tasks: roles/director/tasks/delete.yaml
+    - include_tasks: roles/director/tasks/baremetal_delete.yaml

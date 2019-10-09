@@ -24,42 +24,25 @@
     - repository
     - tower
 
-- name: Create Hypervisor Host
-  tower_host:
-    inventory: "{{ customer_name }}" 
-    name: "hetznet"
-    variables:
-      ansible_user: epheo
-      ansible_become: True
-      ansible_host: ''
-    tower_host: localhost
-    tower_username: "{{ tower.user }}"
-    tower_password: "{{ tower.password }}"
-
 - name: Create Hosts
   tower_host:
     inventory: "{{ customer_name }}" 
-    name: "{{ item }}"
-    variables:
-      ansible_user: stack
-      ansible_host: ''
+    name: "{{ item.name }}"
+    variables: "{{ item.variables }}"
     tower_host: localhost
     tower_username: "{{ tower.user }}"
     tower_password: "{{ tower.password }}"
-  loop: 
-    - rhservices
-    - rhdirector
-    - rhrepo
-    - rhtower
+  loop: "{{ inventory_hosts }}"
+
+- name: Login to Tower
+  shell: |
+    tower-cli login {{ tower.user }} --password {{ tower.password }}
 
 - name: Associate host group 
   shell: |
-    tower-cli login {{ tower.user }} --password {{ tower.password }}
-    tower-cli host associate  --host "hetznet" --group "hypervisor"
-    tower-cli host associate  --host "rhservices" --group "extservices"
-    tower-cli host associate  --host "rhdirector" --group "undercloud"
-    tower-cli host associate  --host "rhrepo" --group "repository"
-    tower-cli host associate  --host "rhtower" --group "tower"
+    tower-cli host associate  --host "{{ item.name }}" --group "{{ item.group }}"
+  loop: "{{ inventory_hosts }}"
+  ignore_errors: True
 
 - name: Add tower credential
   tower_credential:

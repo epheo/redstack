@@ -1,6 +1,1 @@
 ---
-
-- name: Check connectivity
-  ping:
-    data: alive
-  tags: check

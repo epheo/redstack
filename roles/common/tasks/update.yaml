@@ -11,5 +11,5 @@
   package:
     name: "*"
     state: latest
-
-- include_tasks: reboot.yaml
+  notify: 
+    - reboot
