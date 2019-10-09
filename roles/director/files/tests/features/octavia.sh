@@ -21,6 +21,7 @@ if ! openstack router list |grep external-$project  ; then
   openstack subnet set --dns-nameserver {{ dns_ip }} subnet22
 fi
 
+{% if subscription is defined %}
 cat > /home/stack/user-data-scripts/userdata-webserver-$project << EOF
 #!/bin/bash
 curl -k https://{{ subscription.satellite_ip }}/pub/katello-ca-consumer-latest.noarch.rpm > katello-ca-consumer-latest.noarch.rpm
@@ -29,6 +30,7 @@ subscription-manager register --org={{ subscription.org }} --activationkey={{ su
 yum install -y nc
 while true ; do nc -l -p 80 -c 'echo -e "HTTP/1.1 200 OK\n\n  \$(date) on host \$(hostname)"'; done
 EOF
+{% endif %}
 
 openstack server create  test-lb-member1 \
   --config-drive true \

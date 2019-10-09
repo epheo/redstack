@@ -4,6 +4,6 @@
   roles:
     - director
   tasks:
-    - include_tasks: roles/director/tasks/baremetal_prepare.yaml
+    #- include_tasks: roles/director/tasks/baremetal_prepare.yaml
     - include_tasks: roles/director/tasks/templates_update.yaml
-    - include_tasks: roles/director/tasks/deploy.yaml
+    #- include_tasks: roles/director/tasks/deploy.yaml

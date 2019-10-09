@@ -5,7 +5,7 @@
     {% if proxy_url is defined  %}
     export http_proxy=http://{{ proxy_url }}
     export https_proxy=http://{{ proxy_url }}
-    export no_proxy={{ REGISTRY_IP_ADDRESS }}
+    export no_proxy={{ registry.ip }}
     {% endif %}
     openstack overcloud container image prepare \
     {% if enable_ceph is sameas true %}
@@ -30,36 +30,36 @@
       -e /usr/share/openstack-tripleo-heat-templates/environments/services-docker/collectd.yaml \
     {% endif %}
     {% if enable_ceph is sameas true %}
-      --set ceph_namespace={{ CEPH_NAMESPACE }} \
-      --set ceph_image={{ CEPH_IMAGE }} \
+      --set ceph_namespace={{ ceph.namespace }} \
+      --set ceph_image={{ ceph.image }} \
     {% endif %}
       --environment-directory ~stack/templates/environments/ \
       --roles-file /home/stack/templates/roles_data.yaml \
-      --namespace={{ REGISTRY_NAMESPACE }} \
-      --push-destination={{ REGISTRY_IP_ADDRESS }}:{{ REGISTRY_PORT }} \
+      --namespace={{ registry.namespace }} \
+      --push-destination={{ registry.ip }}:{{ registry.port }} \
       --prefix=openstack- \
       --tag-from-label {version}-{release} \
-      --output-env-file={{ REGISTRY_ENV }} \
-      --output-images-file {{ REGISTRY_IMAGES }}
+      --output-env-file={{ registry.env }} \
+      --output-images-file {{ registry.images }}
     
     # ## This is bug from the prepare comand which does not detect Insecure Registries if using a proxy
     # # https://review.opendev.org/#/c/516356/
     
     # {% if proxy_url|length %}
-    # echo "  DockerInsecureRegistryAddress:" >> {{ REGISTRY_ENV }}
-    # echo "  - {{ REGISTRY_IP_ADDRESS }}:{{ REGISTRY_PORT }}" >> {{ REGISTRY_ENV }}
+    # echo "  DockerInsecureRegistryAddress:" >> {{ registry.env }}
+    # echo "  - {{ registry.ip }}:{{ registry.port }}" >> {{ registry.env }}
     # {% endif %}
 
 - name: Upload container images
   shell: |
     openstack overcloud container image upload \
-      --config-file {{ REGISTRY_IMAGES }} \
+      --config-file {{ registry.images }} \
       --verbose
 
 - name: Validate uploaded images
   delegate_to: localhost
   shell: |
-    export REPO_URL={{ REGISTRY_IP_ADDRESS }}:{{ REGISTRY_PORT }}
+    export REPO_URL={{ registry.ip }}:{{ registry.port }}
     curl -s -X GET http://$REPO_URL/v2/_catalog  | jq '.repositories[]' |sort |xargs -I _  curl -s -X GET http://$REPO_URL/v2/_/tags/list
   register: shell_result
 

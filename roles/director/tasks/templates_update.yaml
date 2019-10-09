@@ -11,14 +11,14 @@
   file:
     path: '/home/stack/templates/{{ item.path }}'
     state: directory
-  with_filetree: 'roles/overcloud/files/templates/'
+  with_filetree: 'roles/director/files/templates/'
   when: item.state == 'directory'
 
 - name: Ensure files are populated from templates
   template:
     src: '{{ item.src }}'
     dest: '/home/stack/templates/{{ item.path }}'
-  with_filetree: 'roles/overcloud/files/templates/'
+  with_filetree: 'roles/director/files/templates/'
   when: item.state == 'file'
 
 - name: Copy answers
@@ -35,19 +35,19 @@
   file:
     path: '/home/stack/tests/{{ item.path }}'
     state: directory
-  with_filetree: 'roles/overcloud/files/tests/'
+  with_filetree: 'roles/director/files/tests/'
   when: item.state == 'directory'
 
 - name: Ensure Test files are populated from templates
   template:
     src: '{{ item.src }}'
     dest: '/home/stack/tests/{{ item.path }}'
-  with_filetree: 'roles/overcloud/files/tests/'
+  with_filetree: 'roles/director/files/tests/'
   when: item.state == 'file'
 
 - name: Synchronize templates on Director host
   synchronize:
-    src: "roles/overcloud/files/scripts/"
+    src: "roles/director/files/scripts/"
     dest: /home/stack/scripts/
     set_remote_user: yes
     owner: no

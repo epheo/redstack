@@ -1,4 +1,17 @@
+{% if resource_registry is defined %}
+resource_registry:
+{% for k, v in resource_registry.items() %}
+  {{ k }}: {{ v }}
+{% endfor %}
+{% endif %}
+
 parameter_defaults:
+
+{% if parameter_defaults is defined %}
+{% for k, v in parameter_defaults.items() %}
+  {{ k }}: {{ v }}
+{% endfor %}
+{% endif %}
 
   #  Debug: true
   #  ConfigDebug: true
@@ -12,15 +25,7 @@ parameter_defaults:
 
   # NotificationDriver: log
 
-  # Decrease Gnocchi polling time
-  ManagePolling: true
-  ManagePipeline: true
-  PipelinePublishers:
-    - gnocchi://?archive_policy=medium
-  EventPipelinePublishers:
-    - gnocchi://?archive_policy=medium
-    - panko://
-  GnocchiArchivePolicy: 'medium'
+
 
   # CloudForms integration
   CeilometerStoreEvents: true

@@ -1,4 +1,4 @@
 [Service]
 Environment="HTTP_PROXY=http://{{ proxy_url }}"
 Environment="HTTPS_PROXY=http://{{ proxy_url }}"
-Environment="NO_PROXY=127.0.0.1,localhost,{{ REGISTRY_IP_ADDRESS }}"
+Environment="NO_PROXY=127.0.0.1,localhost,{{ registry.ip }}"
