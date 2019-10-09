@@ -22,3 +22,9 @@
     - include_tasks: roles/director/tasks/install.yaml
     - include_tasks: roles/director/tasks/conf_docker_proxy.yaml
     - include_tasks: roles/director/tasks/docker_images.yaml
+    - name: Notify Telegram
+      telegram:
+        token: '{{ telegram.token }}'
+        chat_id: '{{ telegram.chat_id }}'
+        msg: OSP Undercloud have been deployed
+      when: telegram is defined

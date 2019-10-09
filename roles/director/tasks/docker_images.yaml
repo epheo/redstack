@@ -2,11 +2,11 @@
 
 - name: Prepare container images
   shell: |
-    {% if proxy_url is defined  %}
+{% if proxy_url is defined  %}
     export http_proxy=http://{{ proxy_url }}
     export https_proxy=http://{{ proxy_url }}
     export no_proxy={{ registry.ip }}
-    {% endif %}
+{% endif %}
     openstack overcloud container image prepare \
     {% if enable_ceph is sameas true %}
       -e /usr/share/openstack-tripleo-heat-templates/environments/ceph-ansible/ceph-ansible.yaml \
