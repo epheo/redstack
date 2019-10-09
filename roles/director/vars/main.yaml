@@ -82,7 +82,7 @@ undercloud_br_nic: eth1
 # proxy_url: ''
 
 registry:
-  ip: '10.196.196.100'
+  ip: '{{ undercloud_ip }}'
   port: '8787'
   namespace: 'registry.access.redhat.com/rhosp13'
   images: '/home/stack/templates/local_registry_images.yaml'
