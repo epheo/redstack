@@ -1,5 +1,10 @@
 ---
 
+- name: Create downloads dir
+  file:
+    state: directory
+    path: downloads
+
 - name: Download Rhel 7 Qcow2 Image
   get_url:
     url: "{{ private_cdn.url }}/rhel-server-7.7-x86_64-kvm.qcow2"
