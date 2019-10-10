@@ -1,0 +1,7 @@
+---
+
+- hosts: localhost
+  roles:
+    - common
+  tasks:
+    - include_tasks: roles/common/tasks/download.yaml

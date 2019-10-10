@@ -24,3 +24,5 @@ job_templates:
     extra_vars: 'secrets/director.yaml'
   - name: overcloud_prepare
     extra_vars: 'secrets/director.yaml'
+  - name: download_bits
+    extra_vars: 'secrets/rhn.yaml'
