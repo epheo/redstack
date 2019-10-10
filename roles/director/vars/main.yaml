@@ -110,8 +110,8 @@ parameter_defaults:
   ManagePolling: true
   ManagePipeline: true
   PipelinePublishers:
-    - gnocchi://?archive_policy=medium
+    - 'gnocchi://?archive_policy=medium'
   EventPipelinePublishers:
-    - gnocchi://?archive_policy=medium
-    - panko://
+    - 'gnocchi://?archive_policy=medium'
+    - 'panko://'
   GnocchiArchivePolicy: 'medium'
