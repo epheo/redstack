@@ -14,7 +14,6 @@
   tasks:
     - include_tasks: roles/common/tasks/predeploy.yaml
     - include_tasks: roles/common/tasks/manage_repo.yaml
-    - include_tasks: roles/tower/tasks/download.yaml
     - include_tasks: roles/tower/tasks/install.yaml
     - include_tasks: roles/tower/tasks/setup_license.yaml
     - include_tasks: roles/tower/tasks/setup_towercli.yaml
