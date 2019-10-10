@@ -9,7 +9,7 @@ parameter_defaults:
 
 {% if parameter_defaults is defined %}
 {% for k, v in parameter_defaults.items() %}
-  {{ k }}: {{ v }}
+  {{ k }}: {{ v | from_yaml }}
 {% endfor %}
 {% endif %}
 
