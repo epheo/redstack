@@ -21,6 +21,7 @@
     - include_tasks: roles/director/tasks/generate_certs.yaml
     - include_tasks: roles/director/tasks/install.yaml
     - include_tasks: roles/director/tasks/conf_docker_proxy.yaml
+    - include_tasks: roles/director/tasks/templates_update.yaml
     - include_tasks: roles/director/tasks/docker_images.yaml
     - name: Notify Telegram
       telegram:
