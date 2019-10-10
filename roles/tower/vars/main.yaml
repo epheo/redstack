@@ -1,7 +1,6 @@
 ---
 
 tower_url: '10.42.1.5'
-#tower_url: "{{ hostvars.rhtower.ansible_host }}"
 
 job_templates:
   - name: hypervisor_prepare
@@ -20,7 +19,7 @@ job_templates:
     extra_vars: 'secrets/director.yaml'
   - name: undercloud_uninstall
     extra_vars: 'secrets/director.yaml'
-  - name: undercloud_prepare
+  - name: undercloud_install
     extra_vars: 'secrets/director.yaml'
   - name: undercloud_prepare_templates
     extra_vars: 'secrets/director.yaml'

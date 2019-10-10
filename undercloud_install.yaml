@@ -28,6 +28,7 @@
     - include_tasks: roles/director/tasks/install.yaml
     - include_tasks: roles/director/tasks/conf_docker_proxy.yaml
     - name: Notify Telegram
+      delegate_to: localhost
       telegram:
         token: '{{ telegram.token }}'
         chat_id: '{{ telegram.chat_id }}'

@@ -1,6 +1,12 @@
 ---
 
 - hosts: repository
+  gather_facts: no
+  tasks:
+    - name: Wait for Host to become available...
+      local_action: wait_for host={{ ansible_host }} delay=15 port=22 timeout=240 state=started
+
+- hosts: repository
   roles:
     - common
     - repositories
