@@ -22,6 +22,10 @@ job_templates:
     extra_vars: 'secrets/director.yaml'
   - name: undercloud_prepare
     extra_vars: 'secrets/director.yaml'
+  - name: undercloud_prepare_templates
+    extra_vars: 'secrets/director.yaml'
+  - name: undercloud_prepare_images
+    extra_vars: 'secrets/director.yaml'
   - name: overcloud_prepare
     extra_vars: 'secrets/director.yaml'
   - name: download_bits

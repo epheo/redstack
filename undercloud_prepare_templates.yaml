@@ -1,0 +1,7 @@
+---
+
+- hosts: undercloud
+  roles:
+    - director
+  tasks:
+    - include_tasks: roles/director/tasks/templates_update.yaml
