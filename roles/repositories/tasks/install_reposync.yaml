@@ -17,3 +17,9 @@
     fi
   register: command_result
   changed_when: "command_result.stdout != ''"
+
+- name: Create Repos directory
+  become: yes
+  file:
+    path: /mnt/data/repos/
+    state: directory

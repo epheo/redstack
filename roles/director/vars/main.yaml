@@ -13,7 +13,7 @@ enable_fluentd: False
 enable_telemetry: False
 enable_fencing: False
 
-undercloud_ip: '10.42.1.51'
+undercloud_ip: '10.42.1.7'
 dns_ip: '10.42.1.20'
 ntp_ip: '10.42.1.20'
 

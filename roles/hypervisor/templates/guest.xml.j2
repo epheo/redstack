@@ -36,7 +36,7 @@
 {% endif %}
     <disk type="file" device="cdrom">
       <driver name="qemu" type="raw"/>
-      <source file="{{ guests_rootdisk_pool_path }}/cloudinit.iso"/>
+      <source file="{{ guests_rootdisk_pool_path }}/cloudinit_{{ item.name }}.iso"/>
       <backingStore/>
       <target dev="hda" bus="ide"/>
       <readonly/>
@@ -53,9 +53,9 @@
     <controller type="virtio-serial" index="0">
       <address type="pci" domain="0x0000" bus="0x00" slot="0x04" function="0x0"/>
     </controller>
-{% for net in item.networks %}
+{% for port in item.ports %}
     <interface type="network">
-      <source network="{{ net }}"/>
+      <source network="{{ port.network }}"/>
       <model type="virtio"/>
     </interface>
 {% endfor %}

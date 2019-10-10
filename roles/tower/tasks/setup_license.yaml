@@ -2,7 +2,7 @@
 
 - name: setup the license
   uri:
-    url: "https://{{ repo_url }}/api/v2/config/"
+    url: "https://{{ tower_url }}/api/v2/config/"
     user: "{{ tower.user }}"
     password: "{{ tower.password }}"
     method: POST

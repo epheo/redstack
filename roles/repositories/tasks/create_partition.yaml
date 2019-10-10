@@ -26,4 +26,4 @@
     path: /mnt/data/
     src: /dev/vdb1
     fstype: ext4
-    state: present
+    state: mounted

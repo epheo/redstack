@@ -6,14 +6,14 @@
     - director
   vars:
     enable_repos:
+      - rhel-7-server-rpms
+      - rhel-7-server-rh-common-rpms
       - rhel-7-server-extras-rpms
-      - rhel-7-server-openstack-13-rpms
       - rhel-7-server-optional-rpms
+      - rhel-7-server-openstack-13-rpms
       - rhel-7-server-rhceph-3-mon-rpms
       - rhel-7-server-rhceph-3-osd-rpms
       - rhel-7-server-rhceph-3-tools-rpms
-      - rhel-7-server-rh-common-rpms
-      - rhel-7-server-rpms
       - rhel-ha-for-rhel-7-server-rpms
   tasks:
     - include_tasks: roles/common/tasks/predeploy.yaml

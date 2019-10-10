@@ -2,26 +2,25 @@
 
 - name: Create directory for cloudinit ISOs
   file:
-    path: cloudinit_iso
+    path: cloudinit/cloudinit_{{ item.name }}
     state: directory
-
-- name: Create directory for Guests disks
-  file:
-    path: /mnt/data/vm_storage/
-    state: directory
+  loop: '{{ libvirt_guests }}'
 
 - name: Write CloudInit UserData
   template:
     src: ../files/cloudinit/user-data
-    dest: cloudinit_iso/user-data
+    dest: cloudinit/cloudinit_{{ item.name }}/user-data
+  loop: '{{ libvirt_guests }}'
 
 - name: Write CloudInit Metadata
   template:
     src: ../files/cloudinit/meta-data
-    dest: cloudinit_iso/meta-data
+    dest: cloudinit/cloudinit_{{ item.name }}/meta-data
+  loop: '{{ libvirt_guests }}'
 
 - name: Generate cloudinit Metadata ISO
   shell: |
-    cd cloudinit_iso/
-    genisoimage -output {{ guests_rootdisk_pool_path }}/cloudinit.iso -volid cidata -joliet -rock user-data meta-data
+    cd cloudinit/cloudinit_{{ item.name }}/
+    genisoimage -output {{ guests_rootdisk_pool_path }}/cloudinit_{{ item.name }}.iso -volid cidata -joliet -rock user-data meta-data
     virsh pool-refresh --pool {{ guests_rootdisk_pool }}
+  loop: '{{ libvirt_guests }}'

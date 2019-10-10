@@ -9,4 +9,3 @@
     - include_tasks: roles/common/tasks/update.yaml
     - include_tasks: roles/common/tasks/deploy_userland.yaml
     - include_tasks: roles/hypervisor/tasks/install.yaml
-    - include_tasks: roles/hypervisor/tasks/generate_cloudinit.yaml

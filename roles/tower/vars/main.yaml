@@ -1,22 +1,26 @@
 ---
 
-tower_url: '10.42.1.16'
+tower_url: '10.42.1.5'
 #tower_url: "{{ hostvars.rhtower.ansible_host }}"
 
 job_templates:
-  - name: prepare_hypervisor
+  - name: hypervisor_prepare
     extra_vars: 'secrets/kvm.yaml'
-  - name: prepare_hypervisor_guests
+  - name: guests_delete
     extra_vars: 'secrets/kvm.yaml'
-  - name: prepare_repository
+  - name: guests_prepare
+    extra_vars: 'secrets/kvm.yaml'
+  - name: repository_prepare
     extra_vars: 'secrets/rhn.yaml'
-  - name: prepare_tower
+  - name: repository_synchronise
+    extra_vars: 'secrets/rhn.yaml'
+  - name: tower_prepare
     extra_vars: 'secrets/tower.yaml'
-  - name: prepare_undercloud
+  - name: overcloud_delete
     extra_vars: 'secrets/director.yaml'
-  - name: delete_undercloud
+  - name: undercloud_uninstall
     extra_vars: 'secrets/director.yaml'
-  - name: prepare_overcloud
+  - name: undercloud_prepare
     extra_vars: 'secrets/director.yaml'
-  - name: delete_overcloud
+  - name: overcloud_prepare
     extra_vars: 'secrets/director.yaml'

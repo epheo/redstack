@@ -3,7 +3,7 @@
 - name: Download and unarchive Ansible Tower Installer
   unarchive:
     src: downloads/ansible-tower-setup-bundle-latest.el7.tar.gz
-    dest: ~/tower
+    dest: ~/
 
 - name: Move installer
   shell: mv ansible-tower-setup* tower 
@@ -27,12 +27,12 @@
     regexp: ^rabbitmq_password
     line: rabbitmq_password='{{ tower.password }}'
 
-- name: Install needed packages
-  become: yes
-  package:
-    state: latest
-    name: 'ansible'
+# - name: Install needed packages
+#   become: yes
+#   package:
+#     state: latest
+#     name: 'ansible'
     
 - name: Run installer
   become: yes
-  shell: cd tower && ansible-playbook -i inventory install.yml
+  shell: cd tower && ./setup.sh

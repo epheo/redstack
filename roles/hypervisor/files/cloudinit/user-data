@@ -5,15 +5,42 @@ users:
   - name: stack
     sudo: ALL=(ALL) NOPASSWD:ALL
     ssh_authorized_keys:
-{% for item in guests_pubkey %}
-      - {{ item }}
+{% for pubkey in guests_pubkey %}
+      - {{ pubkey }}
 {% endfor %}
 chpasswd:
   list: |
     root:{{ guests_passwd }}
   expire: false
+{% for port in item.ports %}
+{% if port.address is defined %}
+write_files:
+  - content: |
+      NAME={{ port.name }}
+      DEVICE={{ port.name }}
+      BOOTPROTO=none
+      ONBOOT=yes
+{% if port.defroute is sameas true %}
+      DEFROUTE=yes
+{% endif %}
+      IPADDR={{ port.address.split("/")[0] }}
+      PREFIX={{ port.address.split("/")[1] }}
+{% if port.gateway is defined %}
+      GATEWAY={{ port.gateway }}
+{% endif %}
+{% if dns_ip is defined %}
+      DNS1={{ dns_ip }}
+{% endif %}
+    path: /etc/sysconfig/network-scripts/ifcfg-{{ port.name }}
+{% endif %}
+{% endfor %}
 runcmd:
   - sed -i'.orig' -e's/without-password/yes/' /etc/ssh/sshd_config
+{% for port in item.ports %}
+{% if port.address is defined %}
+  - "ifdown {{ port.name }} && ifup {{ port.name }}"
+{% endif %}
+{% endfor %}
   - systemctl restart sshd
 ssh_authorized_keys:
   - {{ guests_pubkey }}

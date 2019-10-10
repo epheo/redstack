@@ -24,11 +24,15 @@
   shell: |
     subscription-manager attach --pool={{ pool_id.stdout_lines[0] }}
     
+- name: Disable repositories
+  become: yes
+  shell: |
+    subscription-manager repos --disable=*
+
 - name: Subscribe repositories
   become: yes
   shell: |
-    repo=`cat repo_list`
-    subscription-manager repos --disable=*
-    subscription-manager repos $(for i in $repo; do echo --enable=$i ;done)
+    subscription-manager repos --enable={{ item }}
+  loop: "{{ enable_repos }}"
 
 - include_tasks: update.yaml

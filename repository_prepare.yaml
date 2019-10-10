@@ -1,0 +1,19 @@
+---
+
+- hosts: repository
+  roles:
+    - common
+    - repositories
+  vars:
+    enable_repos:
+      - rhel-7-server-rpms
+      - rhel-7-server-rh-common-rpms
+      - rhel-7-server-extras-rpms
+      - rhel-7-server-optional-rpms
+  tasks:
+    - include_tasks: roles/common/tasks/predeploy.yaml
+    - include_tasks: roles/repositories/tasks/create_partition.yaml
+    - include_tasks: roles/common/tasks/subscribe_rhsm.yaml
+    - include_tasks: roles/repositories/tasks/install_reposync.yaml
+    - include_tasks: roles/repositories/tasks/install_registry.yaml
+    - include_tasks: roles/repositories/tasks/web_server.yaml

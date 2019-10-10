@@ -13,3 +13,5 @@
     state: latest
   notify: 
     - reboot
+
+- meta: flush_handlers
