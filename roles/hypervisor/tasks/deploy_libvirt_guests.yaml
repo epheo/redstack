@@ -18,3 +18,5 @@
   loop: '{{ libvirt_guests }}'
   register: command_result
   changed_when: "command_result.stdout != ''"
+
+- shell: 'sleep 15'

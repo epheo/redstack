@@ -4,6 +4,15 @@
   roles:
     - director
   tasks:
-    - include_tasks: roles/director/tasks/baremetal_prepare.yaml
-    - include_tasks: roles/director/tasks/templates_update.yaml
-    - include_tasks: roles/director/tasks/deploy.yaml
+    - block:
+        - include_tasks: roles/director/tasks/baremetal_prepare.yaml
+        - include_tasks: roles/director/tasks/templates_update.yaml
+        - include_tasks: roles/director/tasks/deploy.yaml
+        - set_fact: 
+            message: "OSP Overcloud have been deployed"
+          notify: telegram
+      rescue:
+        - set_fact: 
+            message: "OSP Overercloud installation have failed"
+          changed_when: True
+          notify: telegram

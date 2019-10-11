@@ -1,11 +1,11 @@
 ---
 
 guests_rootimg:
-  - localpath: downloads/rhel-server-7.7-x86_64-kvm.qcow2 
+  - localpath: downloads/rhel-7.7.qcow2 
     name: rhel-7.7.qcow2 
-  - localpath: downloads/rhel-8.0-update-3-x86_64-kvm.qcow2
+  - localpath: downloads/rhel-8.0.qcow2
     name: rhel-8.0.qcow2 
-  - localpath: downloads/Fedora-Cloud-Base-30-1.2.x86_64.qcow2
+  - localpath: downloads/fedora-30.qcow2
     name: fedora-30.qcow2 
 guests_rootdisk_pool: ssd
 guests_rootdisk_pool_path: '/var/lib/libvirt/ssd'

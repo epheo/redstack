@@ -5,7 +5,13 @@
     - common
     - hypervisor
   tasks:
-    - include_tasks: roles/common/tasks/predeploy.yaml
-    - include_tasks: roles/common/tasks/update.yaml
-    - include_tasks: roles/common/tasks/deploy_userland.yaml
-    - include_tasks: roles/hypervisor/tasks/install.yaml
+    - block:
+      - include_tasks: roles/common/tasks/predeploy.yaml
+      - include_tasks: roles/common/tasks/update.yaml
+      - include_tasks: roles/common/tasks/deploy_userland.yaml
+      - include_tasks: roles/hypervisor/tasks/install.yaml
+      rescue:
+        - set_fact: 
+            message: "Got some issues during the hypervisor install..."
+          changed_when: True
+          notify: telegram

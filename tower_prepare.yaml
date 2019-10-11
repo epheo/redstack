@@ -4,6 +4,12 @@
   roles:
     - tower
   tasks:
-    - include_tasks: roles/tower/tasks/create_project.yaml
-    - include_tasks: roles/tower/tasks/create_inventory.yaml
-    - include_tasks: roles/tower/tasks/create_jobs_templates.yaml
+    - block:
+      - include_tasks: roles/tower/tasks/create_project.yaml
+      - include_tasks: roles/tower/tasks/create_inventory.yaml
+      - include_tasks: roles/tower/tasks/create_jobs_templates.yaml
+      rescue:
+        - set_fact: 
+            message: "Tower configuration have failed..."
+          changed_when: True
+          notify: telegram

@@ -8,30 +8,35 @@
 - name: Download Rhel 7 Qcow2 Image
   get_url:
     url: "{{ private_cdn.url }}/rhel-server-7.7-x86_64-kvm.qcow2"
-    dest: downloads/
+    dest: downloads/rhel-7.7.qcow2
     force_basic_auth: yes
     url_username: "{{ private_cdn.username }}"
     url_password: "{{ private_cdn.password }}"
+    checksum: "sha1:5c82def77db1535cee0b5df7b40edbd30b385d8b"
 
 - name: Download Rhel 8 Qcow2 Image
   get_url:
     url: "{{ private_cdn.url }}/rhel-8.0-update-3-x86_64-kvm.qcow2"
-    dest: downloads/
+    dest: downloads/rhel-8.0.qcow2
     force_basic_auth: yes
     url_username: "{{ private_cdn.username }}"
     url_password: "{{ private_cdn.password }}"
+    checksum: "sha1:d83b7a4a2b22525cbfdecbc81bfb084dee40dea8"
 
 - name: Download Ansible Tower Setup
   get_url:
     url: https://releases.ansible.com/ansible-tower/setup-bundle/ansible-tower-setup-bundle-latest.el7.tar.gz
-    dest: downloads/
+    dest: downloads/ansible-tower-setup-bundle-latest.el7.tar.gz
+    checksum: "sha1:e048294c4d442bb763f3279b4589863488727386"
 
 - name: Download Ansible Tower Setup
   get_url:
     url: https://github.com/ansible/tower-cli/archive/master.zip
     dest: downloads/tower-cli.zip
+    checksum: "sha1:ee45c8b3dae66579080189b21fef329765eb9e9d"
 
 - name: Download Fedora Qcow2 Image
   get_url:
     url: https://download.fedoraproject.org/pub/fedora/linux/releases/30/Cloud/x86_64/images/Fedora-Cloud-Base-30-1.2.x86_64.qcow2
-    dest: downloads/
+    dest: downloads/fedora-30.qcow2
+    checksum: "sha1:fc2c00162ef2348149ad8ff545b1f1960d2b0fea"

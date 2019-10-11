@@ -1,2 +1,12 @@
 ---
-# Who would run all that anyway ?
+
+- import_playbook: download_bits.yaml
+- import_playbook: hypervisor_prepare.yaml
+- import_playbook: guests_prepare.yaml
+- import_playbook: repository_install.yaml
+- import_playbook: repository_synchronise.yaml
+- import_playbook: tower_install.yaml
+- import_playbook: tower_prepare.yaml
+- import_playbook: undercloud_install.yaml
+- import_playbook: undercloud_prepare_templates.yaml
+- import_playbook: undercloud_prepare_images.yaml

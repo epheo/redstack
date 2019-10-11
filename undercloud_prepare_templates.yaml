@@ -4,4 +4,14 @@
   roles:
     - director
   tasks:
-    - include_tasks: roles/director/tasks/templates_update.yaml
+    - block:
+        - include_tasks: roles/director/tasks/templates_update.yaml
+        - set_fact: 
+            message: "Just updated the Overcloud templates"
+          changed_when: True
+          notify: telegram
+      rescue:
+        - set_fact: 
+            message: "There must be something wrong in those Heat templates.."
+          changed_when: True
+          notify: telegram

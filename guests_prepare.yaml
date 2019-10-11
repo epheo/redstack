@@ -4,8 +4,14 @@
   roles:
     - hypervisor
   tasks:
-    - include_tasks: roles/hypervisor/tasks/generate_cloudinit.yaml
-    - include_tasks: roles/hypervisor/tasks/deploy_libvirt_nets.yaml
-    - include_tasks: roles/hypervisor/tasks/create_libvirt_volumes.yaml
-    - include_tasks: roles/hypervisor/tasks/deploy_libvirt_guests.yaml
-    #- include_tasks: roles/hypervisor/tasks/configure_virtual_bmc.yaml
+    - block:
+      - include_tasks: roles/hypervisor/tasks/generate_cloudinit.yaml
+      - include_tasks: roles/hypervisor/tasks/deploy_libvirt_nets.yaml
+      - include_tasks: roles/hypervisor/tasks/create_libvirt_volumes.yaml
+      - include_tasks: roles/hypervisor/tasks/deploy_libvirt_guests.yaml
+      #- include_tasks: roles/hypervisor/tasks/configure_virtual_bmc.yaml
+      rescue:
+        - set_fact: 
+            message: "KVM guests havn't been created"
+          changed_when: True
+          notify: telegram

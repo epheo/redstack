@@ -4,4 +4,10 @@
   roles:
     - common
   tasks:
-    - include_tasks: roles/common/tasks/download.yaml
+    - block:
+      - include_tasks: roles/common/tasks/download.yaml
+      rescue:
+        - set_fact: 
+            message: "Downloads have failed"
+          changed_when: True
+          notify: telegram

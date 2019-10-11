@@ -4,4 +4,14 @@
   roles:
     - repositories
   tasks:
-    - include_tasks: roles/repositories/tasks/reposync.yaml
+    - block:
+        - include_tasks: roles/repositories/tasks/reposync.yaml
+        - set_fact: 
+            message: "Local repos are now the latests"
+          changed_when: True
+          notify: telegram
+      rescue:
+        - set_fact: 
+            message: "Couldn't synchronise the repos.. Is the CDN down ?"
+          changed_when: True
+          notify: telegram

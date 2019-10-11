@@ -3,3 +3,4 @@ secrets/
 inventory*
 !inventory.sample
 downloads/
+dev.yaml

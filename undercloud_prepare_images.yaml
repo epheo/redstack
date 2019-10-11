@@ -4,4 +4,13 @@
   roles:
     - director
   tasks:
-    - include_tasks: roles/director/tasks/docker_images.yaml
+    - block:
+        - include_tasks: roles/director/tasks/docker_images.yaml
+        - set_fact: 
+            message: "Docker images have been updated to latest"
+          notify: telegram
+      rescue:
+        - set_fact: 
+            message: "Couldn't fetch latest OpenStack docker images"
+          changed_when: True
+          notify: telegram

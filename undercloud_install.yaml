@@ -3,8 +3,7 @@
 - hosts: undercloud
   gather_facts: no
   tasks:
-    - name: Wait for Host to become available...
-      local_action: wait_for host={{ ansible_host }} delay=15 port=22 timeout=240 state=started
+    - include_tasks: roles/common/tasks/wait_for_host.yaml
   
 - hosts: undercloud
   roles:
@@ -22,15 +21,18 @@
       - rhel-7-server-rhceph-3-tools-rpms
       - rhel-ha-for-rhel-7-server-rpms
   tasks:
-    - include_tasks: roles/common/tasks/predeploy.yaml
-    - include_tasks: roles/common/tasks/manage_repo.yaml
-    - include_tasks: roles/director/tasks/generate_certs.yaml
-    - include_tasks: roles/director/tasks/install.yaml
-    - include_tasks: roles/director/tasks/conf_docker_proxy.yaml
-    - name: Notify Telegram
-      delegate_to: localhost
-      telegram:
-        token: '{{ telegram.token }}'
-        chat_id: '{{ telegram.chat_id }}'
-        msg: OSP Undercloud is now ready
-      when: telegram is defined
+    - block:
+        - include_tasks: roles/common/tasks/predeploy.yaml
+        - include_tasks: roles/common/tasks/manage_repo.yaml
+        - include_tasks: roles/director/tasks/generate_certs.yaml
+        - include_tasks: roles/director/tasks/install.yaml
+        - include_tasks: roles/director/tasks/conf_docker_proxy.yaml
+        - set_fact: 
+            message: "OSP Undercloud have been deployed"
+          changed_when: True
+          notify: telegram
+      rescue:
+        - set_fact: 
+            message: "OSP Undercloud installation have failed"
+          changed_when: True
+          notify: telegram

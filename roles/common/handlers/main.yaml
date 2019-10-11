@@ -14,3 +14,11 @@
 - shell: 'sleep 5'
   delegate_to: localhost
   listen: "reboot"
+
+- name: telegram
+  delegate_to: localhost
+  telegram:
+    token: '{{ telegram.token }}'
+    chat_id: '{{ telegram.chat_id }}'
+    msg: "{{ message }}"
+  when: telegram is defined
