@@ -2,6 +2,7 @@
 
 - hosts: undercloud
   roles:
+    - common
     - director
   tasks:
     - block:

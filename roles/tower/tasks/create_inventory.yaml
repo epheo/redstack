@@ -1,57 +1,88 @@
 ---
 
-- name: Create Inventory
-  tower_inventory:
-    name: "{{ customer_name }}"
-    description: "{{ customer_name }} Inventory"
-    organization: "{{ customer_name }}"
-    state: present
-    tower_host: localhost
-    tower_username: "{{ tower.user }}"
-    tower_password: "{{ tower.password }}"
+- name: Create Inventory 
+  uri:
+    url: "https://localhost/api/v2/inventories/"
+    user: "{{ tower.user }}"
+    password: "{{ tower.password }}"
+    method: POST
+    body_format: json
+    body: 
+      {
+        "organization": "{{ org_id }}",
+        "name": "{{ customer_name }}_inventory",
+        "variables" : ""
+      }
+    validate_certs: False
+    force_basic_auth: yes
+    status_code: [ 201, 400 ]
+  register: res
+  changed_when: res.status == 201
+- uri:
+    url: "https://localhost/api/v2/inventories/?name={{ customer_name }}_inventory"
+    user: "{{ tower.user }}"
+    password: "{{ tower.password }}"
+    method: GET
+    body_format: json
+    validate_certs: False
+    force_basic_auth: yes
+    status_code: [ 200 ]
+  register: inventory_res
+- set_fact:
+    inventory_id: "{{ inventory_res.json.results[0].id }}"
 
-- name: Create Groups
-  tower_group: 
-    inventory: "{{ customer_name }}" 
-    name: "{{ item }}"
-    tower_host: localhost
-    tower_username: "{{ tower.user }}"
-    tower_password: "{{ tower.password }}"
-  loop: 
-    - hypervisor
-    - extservices
-    - undercloud
-    - repository
-    - tower
 
-- name: Create Hosts
-  tower_host:
-    inventory: "{{ customer_name }}" 
-    name: "{{ item.name }}"
-    variables: "{{ item.variables }}"
-    tower_host: localhost
-    tower_username: "{{ tower.user }}"
-    tower_password: "{{ tower.password }}"
+- name: Create Groups 
+  uri:
+    url: "https://localhost/api/v2/groups/"
+    user: "{{ tower.user }}"
+    password: "{{ tower.password }}"
+    method: POST
+    body_format: json
+    body: 
+      {
+        "name": "{{ item.group }}",
+        "inventory": "{{ inventory_id }}",
+        "variables": ""
+      }
+    validate_certs: False
+    force_basic_auth: yes
+    status_code: [ 201, 400 ]
+  register: res
+  changed_when: res.status == 201
+  with_items: "{{ inventory_hosts }}"
+
+- uri:
+    url: "https://localhost/api/v2/groups/"
+    user: "{{ tower.user }}"
+    password: "{{ tower.password }}"
+    method: GET
+    body_format: json
+    validate_certs: False
+    force_basic_auth: yes
+    status_code: [ 200 ]
+  register: group_res
+
+
+- name: Create Hosts 
+  uri:
+    url: "https://localhost/api/v2/groups/{{ group_res.json.results | selectattr('name', 'equalto', item.group) | map(attribute='id') | list | max }}/hosts/"
+    user: "{{ tower.user }}"
+    password: "{{ tower.password }}"
+    method: POST
+    body_format: json
+    body: 
+      {
+        "name": "{{ item.name }}",
+        "description": "",
+        "enabled": "yes",
+        "inventory": "{{ inventory_id }}",
+        "variables": "{{ item.variables | to_json }}"
+      }
+    validate_certs: False
+    force_basic_auth: yes
+    status_code: [ 201, 400 ]
+  register: res
+  changed_when: res.status == 201
   loop: "{{ inventory_hosts }}"
 
-- name: Login to Tower
-  shell: |
-    tower-cli login {{ tower.user }} --password {{ tower.password }}
-
-- name: Associate host group 
-  shell: |
-    tower-cli host associate  --host "{{ item.name }}" --group "{{ item.group }}"
-  loop: "{{ inventory_hosts }}"
-  ignore_errors: True
-
-- name: Add tower credential
-  tower_credential:
-    name: id_rsa
-    description: Team Description
-    organization: "{{ customer_name }}"
-    kind: ssh
-    ssh_key_data: "{{ lookup('file', '~/.ssh/id_rsa') }}"
-    state: present
-    tower_host: localhost
-    tower_username: "{{ tower.user }}"
-    tower_password: "{{ tower.password }}"

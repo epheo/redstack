@@ -1,4 +1,5 @@
 ---
+# Deprecated. Task have been rewritten to use Tower Rest API instead
 
 - name: Install Pre Requirements
   become: yes

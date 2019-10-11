@@ -9,7 +9,7 @@ job_templates:
     extra_vars: 'secrets/kvm.yaml'
   - name: guests_prepare
     extra_vars: 'secrets/kvm.yaml'
-  - name: repository_install
+  - name: repository_prepare
     extra_vars: 'secrets/rhn.yaml'
   - name: repository_synchronise
     extra_vars: 'secrets/rhn.yaml'

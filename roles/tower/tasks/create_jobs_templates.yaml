@@ -1,50 +1,25 @@
 ---
 
-- copy:
-    src: secrets/
-    dest: ~/secrets/
-
 - name: Create job template
-  tower_job_template:
-    name: "{{ item.name }}"
-    job_type: "run"
-    inventory: "{{ customer_name }}"
-    project: "RedStack"
-    playbook: "{{ item.name }}.yaml"
-    credential: "id_rsa"
-    state: "present"
-    extra_vars_path: "{{ item.extra_vars }}"
-    tower_host: localhost
-    tower_username: "{{ tower.user }}"
-    tower_password: "{{ tower.password }}"
+  uri:
+    url: "https://localhost/api/v2/job_templates/"
+    user: "{{ tower.user }}"
+    password: "{{ tower.password }}"
+    method: POST
+    body_format: json
+    body: 
+      {
+        "name": "{{ item.name }}",
+        "job_type": "run",
+        "inventory": "{{ inventory_id }}",
+        "project": "{{ project_id }}",
+        "playbook": "{{ item.name }}.yaml",
+        "credential": "{{ creds_id }}",
+        "extra_vars": "{{ lookup('file', '{{ item.extra_vars }}' ) | from_yaml | to_json }}"
+      }
+    validate_certs: False
+    force_basic_auth: yes
+    status_code: [ 201, 400 ]
+  register: res
+  changed_when: res.status == 201
   loop: "{{ job_templates }}"
-
-- name: Cleanup secrets
-  file:
-    state: absent
-    path: "secrets/"
-
-
-
-# WIP: Avoid copying the secrets over
-#
-# - name: Create job template
-#   uri:
-#     url: "https://{{ repo_url }}/api/v2/job_templates/"
-#     user: "{{ tower.user }}"
-#     password: "{{ tower.password }}"
-#     method: POST
-#     body_format: json
-#     body: 
-#       {
-#         "name": "{{ item.name }}"
-#         "job_type": "run"
-#         "inventory": "{{ customer_name }}"
-#         "project": "RedStack"
-#         "playbook": "{{ item.name }}.yaml"
-#         "credential": "id_rsa"
-#         "extra_vars": "{{ lookup('file', '{{ item.extra_vars }}' ) }}"
-#       }
-#     validate_certs: False
-#     force_basic_auth: yes
-#   loop: "{{ job_templates }}"

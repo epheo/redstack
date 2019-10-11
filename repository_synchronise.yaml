@@ -2,6 +2,7 @@
 
 - hosts: repository
   roles:
+    - common
     - repositories
   tasks:
     - block:

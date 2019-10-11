@@ -2,6 +2,7 @@
 
 - hosts: hypervisor
   roles:
+    - common
     - hypervisor
   tasks:
     - block:
