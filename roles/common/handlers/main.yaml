@@ -22,3 +22,8 @@
     chat_id: '{{ telegram.chat_id }}'
     msg: "{{ message }}"
   when: telegram is defined
+
+- name: get_rhn_status
+  become: yes
+  shell: "subscription-manager status |grep 'Overall Status:' |awk '{print $3}'"
+  register: rhn_status

@@ -1,28 +1,53 @@
 ---
 
-- name: Register system and add subscription
+- debug: msg="Get RHN Status"
+  changed_when: true
+  notify: get_rhn_status
+- meta: flush_handlers
+
+- name: Unregister system
   become: yes
-  redhat_subscription:
-    activationkey: '{{ subscription.activation_key }}'
-    org_id: '{{ subscription.org }}'
-    state: present
+  shell: "subscription-manager unregister"
+  when: rhn_status.stdout == 'Invalid'
+  notify: get_rhn_status
+- meta: flush_handlers
+
+- name: Register system
+  become: yes
+  shell: |
+    subscription-manager register \
+      --org={{ subscription.org }} \
+      --activationkey={{ subscription.activation_key }}
+  when: rhn_status.stdout == 'Unknown'
+  notify: get_rhn_status
+- meta: flush_handlers
+
+- name: Check for already consumed subscriptions
+  become: yes
+  shell: "subscription-manager list --consumed |grep 'Red Hat OpenStack'"
+  register: already_defined_subs
+  when: rhn_status.stdout == 'Current'
+
+- debug:
+    var: already_defined_subs.stdout
 
 - name: Get Pool ID
   become: yes
   shell: |
     subscription-manager list \
-     --available --all \
-     --matches="Red Hat OpenStack" \
-     \ | grep Pool\ ID |awk -F ' ' '{print $3}' |head -n1
+      --available --all \
+      --matches="Red Hat OpenStack" |grep "Pool ID" |awk '{print $3}' |head -n1
   register: pool_id
+  when: already_defined_subs.stdout == ""
 
 - debug:
-    var: pool_id.stdout_lines[0]
-    
+    var: pool_id
+
 - name: Attach Pool ID
   become: yes
   shell: |
-    subscription-manager attach --pool={{ pool_id.stdout_lines[0] }}
+    subscription-manager attach --pool={{ pool_id.stdout }}
+  when: already_defined_subs.stdout == ""
     
 - name: Disable repositories
   become: yes

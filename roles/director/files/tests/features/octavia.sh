@@ -21,7 +21,7 @@ if ! openstack router list |grep external-$project  ; then
   openstack subnet set --dns-nameserver {{ dns_ip }} subnet22
 fi
 
-{% if subscription is defined %}
+{% if subscription.satellite_ip is defined %}
 cat > /home/stack/user-data-scripts/userdata-webserver-$project << EOF
 #!/bin/bash
 curl -k https://{{ subscription.satellite_ip }}/pub/katello-ca-consumer-latest.noarch.rpm > katello-ca-consumer-latest.noarch.rpm

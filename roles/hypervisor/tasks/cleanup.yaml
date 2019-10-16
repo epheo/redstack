@@ -22,7 +22,9 @@
   shell: |
     {% if item.volumes is defined %}
     {% for vol in item.volumes %}
+    {% if vol.name != 'repo-data' %}
     virsh vol-delete --pool {{ vol.pool }} {{ vol.name }}
+    {% endif %}
     {% endfor %}
     {% else %}
     true
@@ -35,3 +37,4 @@
     virsh net-destroy {{ item.name }}
     virsh net-undefine {{ item.name }}
   loop: '{{ libvirt_networks }}'
+  notify: reboot

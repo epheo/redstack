@@ -1,11 +1,6 @@
 ---
 
 - hosts: repository
-  gather_facts: no
-  tasks:
-    - include_tasks: roles/common/tasks/wait_for_host.yaml
-
-- hosts: repository
   roles:
     - common
     - repositories
