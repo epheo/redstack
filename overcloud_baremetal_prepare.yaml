@@ -1,0 +1,19 @@
+---
+
+- hosts: undercloud
+  roles:
+    - common
+    - director
+  vars_files:
+    - roles/hypervisor/vars/overcloud.yaml
+  tasks:
+    - block:
+        - include_tasks: roles/director/tasks/instackenv.yaml
+        - include_tasks: roles/director/tasks/baremetal_prepare.yaml
+      rescue:
+        - set_fact: 
+            message: "OSP Overcloud baremetal creation have failed"
+          changed_when: True
+          notify: telegram
+        - fail:
+            msg: "{{ message }}"

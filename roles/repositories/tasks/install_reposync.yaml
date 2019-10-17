@@ -23,3 +23,6 @@
   file:
     path: /mnt/data/repos/
     state: directory
+
+#- name: Podman pull ubi7 image
+#- name: Podman run ubi7 image

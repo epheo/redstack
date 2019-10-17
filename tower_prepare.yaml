@@ -14,3 +14,5 @@
             message: "Tower configuration have failed..."
           changed_when: True
           notify: telegram
+        - fail:
+            msg: "{{ message }}"

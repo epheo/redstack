@@ -2,7 +2,7 @@
 
 - name: Install needed packages
   become: yes
-  yum:
+  package:
     state: latest
     name: ['python-tripleoclient', 'ceph-ansible']
 

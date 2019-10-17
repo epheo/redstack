@@ -20,7 +20,7 @@ ntp_ip: '10.42.1.20'
 # saf_route: ''
 # saf_port: ''
 
-overcloud_vip: 10.42.5.50
+overcloud_vip: 10.42.42.50
 internal_vip: 10.42.2.50
 redis_vip: 10.42.2.51
 # control_vip: ''
@@ -54,12 +54,12 @@ tenant_net:
 
 external_net:
   vlanid: 425
-  subnet: "10.42.5.0/24"
-  gateway: '10.42.5.1'
-  pool_start: '10.42.5.101'
-  pool_end: '10.42.5.200'
-  fip_pool_start: "10.42.5.10"
-  fip_pool_end: "10.42.5.60"
+  subnet: "10.42.42.0/24"
+  gateway: '10.42.42.1'
+  pool_start: '10.42.42.101'
+  pool_end: '10.42.42.200'
+  fip_pool_start: "10.42.42.10"
+  fip_pool_end: "10.42.42.60"
 
 external_guest_net:
   vlanid: 426

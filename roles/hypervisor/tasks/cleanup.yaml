@@ -38,3 +38,4 @@
     virsh net-undefine {{ item.name }}
   loop: '{{ libvirt_networks }}'
   notify: reboot
+  when: cleanup_networks is sameas true

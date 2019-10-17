@@ -12,24 +12,26 @@ chpasswd:
   list: |
     root:{{ guests_passwd }}
   expire: false
+write_files:
+  - content: "{{ item.name }}"
+    path: /root/name
 {% for port in item.ports %}
 {% if port.address is defined %}
-write_files:
   - content: |
       NAME={{ port.name }}
       DEVICE={{ port.name }}
       BOOTPROTO=none
       ONBOOT=yes
-{% if port.defroute is sameas true %}
-      DEFROUTE=yes
-{% endif %}
       IPADDR={{ port.address.split("/")[0] }}
       PREFIX={{ port.address.split("/")[1] }}
 {% if port.gateway is defined %}
       GATEWAY={{ port.gateway }}
 {% endif %}
+{% if port.defroute is sameas true %}
+      DEFROUTE=yes
 {% if dns_ip is defined %}
       DNS1={{ dns_ip }}
+{% endif %}
 {% endif %}
     path: /etc/sysconfig/network-scripts/ifcfg-{{ port.name }}
 {% endif %}

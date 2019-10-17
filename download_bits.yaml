@@ -11,3 +11,5 @@
             message: "Downloads have failed"
           changed_when: True
           notify: telegram
+        - fail:
+            msg: "{{ message }}"

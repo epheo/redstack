@@ -16,6 +16,8 @@
     owner: stack
     group: stack
 
+# - name: Wait for nodes to be availables...
+
 - name: Launch introspection
   shell: |
     source ~/stackrc

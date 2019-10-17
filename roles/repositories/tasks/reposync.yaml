@@ -17,8 +17,8 @@
 - name: Set SELinux context
   become: yes
   shell: |
-    setenforce 0
     chcon -Rt svirt_sandbox_file_t /mnt/data/repos/
+    setenforce 0
 
 - name: Run Rhel 7 reposync
   become: yes
@@ -61,6 +61,6 @@
 - name: Set SELinux context
   become: yes
   shell: |
+    setenforce 1
     chcon -Rt httpd_sys_content_t /var/www/html/
     chcon -Rt httpd_sys_content_t /var/www/html/repos/
-    setenforce 1

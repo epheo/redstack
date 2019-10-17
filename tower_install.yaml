@@ -21,3 +21,5 @@
             message: "Tower installation failed..."
           changed_when: True
           notify: telegram
+        - fail:
+            msg: "{{ message }}"

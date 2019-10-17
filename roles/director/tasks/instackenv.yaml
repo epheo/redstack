@@ -1,0 +1,33 @@
+---
+
+- name: Get mac addresses
+  delegate_to: hetznet
+  shell: |
+    virsh domiflist {{ item.name }} | awk '$3 == "internal" {print "{{ item.name }}="$NF}'
+  register: node_mac_map
+  loop: "{{ libvirt_guests }}"
+  changed_when: false
+
+- name: Get existing BMC ports
+  delegate_to: hetznet
+  shell: |
+     vbmc list | awk '$4 ~ /(running|down)/ {print $2"="$8}'
+  register: bmc_list
+  changed_when: false
+
+- set_fact:
+    node_port_map: "{{ node_port_map|default({}) | combine({item.split('=')[0]:item.split('=')[1]}) }}"
+  with_items:
+   - "{{bmc_list.stdout_lines}}"
+
+- set_fact:
+    instack_vars: "{{ instack_vars|default([]) + [ { 'node': item.stdout.split('=')[0],
+      'mac': item.stdout.split('=')[1], 'port': node_port_map[item.stdout.split('=')[0]]} ]}}"
+  with_items:
+   - "{{ node_mac_map.results }}"
+
+- name: create host definitions
+  template:
+    src: ../templates/instackenv.json.j2
+    dest: ~/instackenv.json
+

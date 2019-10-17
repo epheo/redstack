@@ -15,3 +15,5 @@
             message: "Couldn't fetch latest OpenStack docker images"
           changed_when: True
           notify: telegram
+        - fail:
+            msg: "{{ message }}"

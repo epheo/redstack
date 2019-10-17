@@ -16,3 +16,5 @@
             message: "There must be something wrong in those Heat templates.."
           changed_when: True
           notify: telegram
+        - fail:
+            msg: "{{ message }}"

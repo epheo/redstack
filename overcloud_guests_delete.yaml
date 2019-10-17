@@ -1,14 +1,10 @@
 ---
 
-- import_playbook: overcloud_guests_delete.yaml
-
 - hosts: hypervisor
   roles:
     - common
     - hypervisor
-  vars:
-    cleanup_networks: true
   vars_files:
-    - roles/hypervisor/vars/infrastructure.yaml
+    - roles/hypervisor/vars/overcloud.yaml
   tasks:
     - include_tasks: roles/hypervisor/tasks/cleanup.yaml

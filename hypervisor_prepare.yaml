@@ -15,3 +15,5 @@
             message: "Got some issues during the hypervisor install..."
           changed_when: True
           notify: telegram
+        - fail:
+            msg: "{{ message }}"

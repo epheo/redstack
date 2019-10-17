@@ -15,3 +15,8 @@ parameter_defaults:
 
   ComputeCount: 2
   OvercloudComputeFlavor: compute
+
+{% if enable_ceph is sameas true %}
+  CephStorageCount: 3
+  OvercloudCephStorageFlavor: ceph-storage
+{% endif %}

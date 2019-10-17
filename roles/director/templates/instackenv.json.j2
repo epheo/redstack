@@ -1,0 +1,21 @@
+{
+    "nodes":[
+        {%- for item in instack_vars %}
+        {
+            "mac":[
+                "{{item.mac}}"
+            ],
+            {%- if item.node is match('control_*') -%}"capabilities": "profile:control",{%- endif -%}
+            {%- if item.node is match('compute_*') -%}"capabilities": "profile:compute",{%- endif -%}
+            {%- if item.node is match('ceph_*') -%}"capabilities": "profile:ceph-storage",{%- endif -%}
+            "name": "{{ item.node }}",
+            "arch":"x86_64",
+            "pm_type":"pxe_ipmitool",
+            "pm_user":"{{ bmc_username }}",
+            "pm_password":"{{ bmc_password }}",
+            "pm_addr":"{{ external_net.gateway }}",
+            "pm_port" : "{{item.port}}"
+        } {%- if loop.index != instack_vars | count %} , {%- endif%} {%- endfor %}
+    ]
+}
+

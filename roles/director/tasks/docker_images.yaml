@@ -1,12 +1,5 @@
 ---
 
-- name: Set Default route
-  become: yes
-  lineinfile:
-    dest: /etc/sysconfig/network-scripts/ifcfg-br-ctlplane
-    line: GATEWAY={{ ctlplane_net.gateway }}
-    insertbefore: BOF
-
 - name: Restart network service 
   become: yes
   systemd:

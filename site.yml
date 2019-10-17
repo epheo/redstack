@@ -8,9 +8,11 @@
   tasks:
     - include_tasks: roles/common/tasks/wait_for_host.yaml
 - import_playbook: repository_install.yaml
-- import_playbook: repository_synchronise.yaml
+#- import_playbook: repository_synchronise.yaml
 - import_playbook: tower_install.yaml
 - import_playbook: tower_prepare.yaml
 - import_playbook: undercloud_install.yaml
 - import_playbook: undercloud_prepare_templates.yaml
 - import_playbook: undercloud_prepare_images.yaml
+- import_playbook: overcloud_guests_prepare.yaml
+- import_playbook: overcloud_prepare.yaml

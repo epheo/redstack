@@ -4,9 +4,10 @@
   roles:
     - common
     - director
+  vars_files:
+    - roles/hypervisor/vars/overcloud.yaml
   tasks:
     - block:
-        - include_tasks: roles/director/tasks/baremetal_prepare.yaml
         - include_tasks: roles/director/tasks/templates_update.yaml
         - include_tasks: roles/director/tasks/deploy.yaml
         - set_fact: 
@@ -17,3 +18,5 @@
             message: "OSP Overercloud installation have failed"
           changed_when: True
           notify: telegram
+        - fail:
+            msg: "{{ message }}"

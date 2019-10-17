@@ -16,3 +16,5 @@
             message: "Couldn't synchronise the repos.. Is the CDN down ?"
           changed_when: True
           notify: telegram
+        - fail:
+            msg: "{{ message }}"

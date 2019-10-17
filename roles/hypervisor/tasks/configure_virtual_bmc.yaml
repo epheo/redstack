@@ -27,10 +27,13 @@
       Host *
         StrictHostKeyChecking no
 
+- set_fact:
+    external_ip: "{{ (libvirt_networks |  selectattr('name', 'search', 'external') | list | first).gateway }}"
+
 - name: Configure vbmc ports
   shell: |
     if [ -z "$(vbmc list |grep \ {{ item.name }}\ )" ]; then
-      vbmc add {{ item.name  }} --port {{ item.port }} --username {{ vbmc_username }} --password {{ vbmc_password }} --libvirt-uri qemu:///system
+      vbmc add {{ item.name  }} --port {{ item.port }} --username {{ bmc_username }} --password {{ bmc_password }} --libvirt-uri qemu:///system
     fi
   loop: "{{ vbmc_ports }}"
 
@@ -69,12 +72,22 @@
     enabled: yes
     name: vbmc-ports
 
+- name: Open firewalld vbmc ports
+  shell: "firewall-cmd --zone=public --add-port={{ item.port }}/udp --permanent"
+  loop: "{{ vbmc_ports }}"
+
 - name: Open IPTABLES vbmc ports
   shell: "iptables -I INPUT -p udp --dport {{ item.port }} -m state --state NEW  -j ACCEPT"
   loop: "{{ vbmc_ports }}"
 
 - name: Enable forwarding
+  shell: "firewall-cmd --permanent --direct --add-rule ipv4 filter FORWARD 1 -s 0.0.0.0/0 -j ACCEPT"
+
+- name: Enable forwarding
   shell: "iptables -I FORWARD 1  -d 0.0.0.0/0 -j ACCEPT"
+
+- name: Reload firewalld
+  shell: "firewall-cmd --reload"
 
 - name: Save IPTABLES
   shell: "iptables-save |sudo tee /etc/sysconfig/iptables"

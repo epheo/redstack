@@ -7,7 +7,7 @@ parameter_defaults:
       params:
         ipaddr: 10.42.1.60
         lanplus: true
-        login: '{{ bmc_user }}'
+        login: '{{ bmc_username }}'
         passwd: '{{ bmc_password }}'
         pcmk_host_list: controller-0
         privlvl: administrator
@@ -16,7 +16,7 @@ parameter_defaults:
       params:
         ipaddr: 10.42.1.61
         lanplus: true
-        login: '{{ bmc_user }}'
+        login: '{{ bmc_username }}'
         passwd: '{{ bmc_password }}'
         pcmk_host_list: controller-1
         privlvl: administrator
@@ -25,7 +25,7 @@ parameter_defaults:
       params:
         ipaddr: 10.42.1.62
         lanplus: true
-        login: '{{ bmc_user }}'
+        login: '{{ bmc_username }}'
         passwd: '{{ bmc_password }}'
         pcmk_host_list: controller-2
         privlvl: administrator
