@@ -1,6 +1,15 @@
 resource_registry:
   OS::TripleO::Controller::Net::SoftwareConfig:  ../nic-config/controller.yaml
   OS::TripleO::Compute::Net::SoftwareConfig:  ../nic-config/compute.yaml
+{% if enable_ceph is sameas true %}
+  OS::TripleO::CephStorage::Net::SoftwareConfig: ../nic-config/ceph-storage.yaml
+{% endif %}
+
+{% if enable_nfvi is sameas true %}
+  OS::TripleO::Services::NeutronSriovAgent: /usr/share/openstack-tripleo-heat-templates/docker/services/neutron-sriov-agent.yaml 
+  OS::TripleO::Services::NeutronSriovHostConfig: /usr/share/openstack-tripleo-heat-templates/puppet/services/neutron-sriov-host-config.yaml
+  OS::TripleO::Services::ComputeNeutronOvsDpdk: /usr/share/openstack-tripleo-heat-templates/docker/services/neutron-ovs-dpdk-agent.yaml
+{% endif %}
 
 parameter_defaults:
   ControlPlaneSubnetCidr: '24'
@@ -9,7 +18,7 @@ parameter_defaults:
 
   EC2MetadataIp: {{ undercloud_ip }}  # Generally the IP of the Undercloud
 
-  DnsServers: ["{{ dns_ip }}"]
+  DnsServers: [ "{{ dns_ip }}" ]
   NtpServer: {{ ntp_ip }}
   TimeZone: 'UTC'
 

@@ -118,14 +118,9 @@ resources:
                 addresses:
                 - ip_netmask: {get_param: StorageIpSubnet}
 
-              - type: interface
-                name: eth1
-                use_dhcp: false
-                defroute: false
-
               - type: vlan
                 vlan_id: {get_param: StorageMgmtNetworkVlanID}
-                device: eth1
+                device: eth0
                 addresses:
                 - ip_netmask: {get_param: StorageMgmtIpSubnet}
 

@@ -1,28 +1,35 @@
 ---
   
 - name: Install needed packages
+  become: yes
   package:
     state: latest
     name: ntp
 
 - name: replace line
+  become: yes
   lineinfile: 
     dest: /etc/ntp.conf 
     regexp: 'restrict 127.0.0.1' 
-    line: 'restrict 10.8.0.0 netmask 255.255.255.0 nomodify notrap'
+    line: 'restrict 10.0.0.0 netmask 255.0.0.0 nomodify notrap'
 
-- firewalld:
+- name: Enable NTP in firewalld
+  become: yes
+  ignore_errors: true
+  firewalld:
     service: ntp
     permanent: yes
     state: enabled
 
 - name: enable service httpd and ensure it is not masked
+  become: yes
   systemd:
     name: ntpd
     enabled: yes
     masked: no
 
 - name: restart service ntp, in all cases, also issue daemon-reload to pick up config changes
+  become: yes
   systemd:
     state: restarted
     daemon_reload: yes

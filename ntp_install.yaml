@@ -1,0 +1,5 @@
+---
+
+- hosts: extservices
+  roles:
+    - ntp

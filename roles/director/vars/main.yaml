@@ -1,6 +1,6 @@
 ---
 
-enable_ceph: False
+enable_ceph: True
 enable_ceph_external: False
 enable_nfvi: False
 enable_extra: False
@@ -14,8 +14,8 @@ enable_telemetry: False
 enable_fencing: False
 
 undercloud_ip: '10.42.1.7'
-dns_ip: '10.42.1.20'
-ntp_ip: '10.42.1.20'
+dns_ip: '10.42.1.4'
+ntp_ip: '10.42.1.4'
 
 # saf_route: ''
 # saf_port: ''
