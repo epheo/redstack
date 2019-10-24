@@ -1,6 +1,6 @@
 ---
 
-enable_ceph: True
+enable_ceph: False
 enable_ceph_external: False
 enable_nfvi: False
 enable_extra: False
@@ -12,6 +12,7 @@ enable_sensu: False
 enable_fluentd: False
 enable_telemetry: False
 enable_fencing: False
+enable_ovn: True
 
 undercloud_ip: '10.42.1.7'
 dns_ip: '10.42.1.4'

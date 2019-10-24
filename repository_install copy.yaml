@@ -1,0 +1,28 @@
+---
+
+- hosts: repository
+  roles:
+    - common
+    - repositories
+  vars:
+    enable_repos:
+      - rhel-7-server-rpms
+      - rhel-7-server-rh-common-rpms
+      - rhel-7-server-extras-rpms
+      - rhel-7-server-optional-rpms
+      - rhel-7-server-openstack-13-rpms
+  tasks:
+    - block:
+        - include_tasks: roles/common/tasks/predeploy.yaml
+        - include_tasks: roles/repositories/tasks/create_partition.yaml
+        - include_tasks: roles/common/tasks/subscribe_rhsm.yaml
+        - include_tasks: roles/repositories/tasks/install_reposync.yaml
+        - include_tasks: roles/repositories/tasks/install_registry.yaml
+        - include_tasks: roles/repositories/tasks/web_server.yaml
+      rescue:
+        - set_fact: 
+            message: "I have fail to install the repository server"
+          changed_when: True
+          notify: telegram
+        - fail:
+            msg: "{{ message }}"

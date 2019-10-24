@@ -36,6 +36,9 @@
       -e /usr/share/openstack-tripleo-heat-templates/environments/metrics-collectd-qdr.yaml \
       -e /usr/share/openstack-tripleo-heat-templates/environments/services-docker/collectd.yaml \
     {% endif %}
+    {% if enable_ovn is sameas true %}
+      -e /usr/share/openstack-tripleo-heat-templates/environments/services-docker/neutron-ovn-dvr-ha.yaml \
+    {% endif %}
     {% if enable_ceph is sameas true %}
       --set ceph_namespace={{ ceph.namespace }} \
       --set ceph_image={{ ceph.image }} \

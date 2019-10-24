@@ -31,6 +31,9 @@ environments:
   - /usr/share/openstack-tripleo-heat-templates/environments/services/barbican.yaml
   - /usr/share/openstack-tripleo-heat-templates/environments/barbican-backend-simple-crypto.yaml
 {% endif %}
+{% if enable_ovn is sameas true %}
+  - /usr/share/openstack-tripleo-heat-templates/environments/services-docker/neutron-ovn-dvr-ha.yaml
+{% endif %}
   - /home/stack/templates/overcloud_images.yaml
   - /home/stack/templates/environments/10-deployment-environment.yaml
 {% if enable_ipa is sameas true %}

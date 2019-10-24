@@ -33,9 +33,15 @@ parameter_defaults:
   NeutronEnableForceMetadata: true
 
   # List of Neutron network types for tenant networks (will be used in order)
+
+{% if enable_ovn is sameas true %}
+  NeutronNetworkType: 'geneve,vlan'
+  NeutronTunnelTypes: 'geneve'
+{% else %}
   NeutronNetworkType: 'vxlan,vlan'
-  # The tunnel type for the tenant network (vxlan or gre). Set to '' to disable tunneling.
   NeutronTunnelTypes: 'vxlan'
+{% endif %}
+
   # Neutron VLAN ranges per network, for example 'datacentre:1:499,tenant:500:1000':
   NeutronExternalNetworkBridge: "''"
 
@@ -50,8 +56,7 @@ parameter_defaults:
   ExternalNetworkVlanID: {{ external_net.vlanid }}
   InternalApiNetworkVlanID: {{ internal_net.vlanid }}
   TenantNetworkVlanID: {{ tenant_net.vlanid }}
-
-  ## Predictable VIPs
+  StorageNetworkVlanID: {{ storage_net.vlanid }}
 
   PublicVirtualFixedIPs: [{'ip_address':'{{ overcloud_vip }}'}]
 {% if control_vip is defined %}
