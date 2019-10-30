@@ -85,7 +85,6 @@
 - set_fact:
     creds_id: "{{ creds_res.json.results[0].id }}"
 
-
 - name: Add tower project
   uri:
     url: "https://localhost/api/v2/projects/"

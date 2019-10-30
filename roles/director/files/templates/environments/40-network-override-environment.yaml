@@ -1,6 +1,9 @@
 resource_registry:
   OS::TripleO::Controller::Net::SoftwareConfig:  ../nic-config/controller.yaml
   OS::TripleO::Compute::Net::SoftwareConfig:  ../nic-config/compute.yaml
+{% if enable_nfvi is sameas true %}
+  OS::TripleO::ComputeOvsDpdkSriov::Net::SoftwareConfig:  ../nic-config/computeovsdpdksriov.yaml
+{% endif %}
 {% if enable_ceph is sameas true %}
   OS::TripleO::CephStorage::Net::SoftwareConfig: ../nic-config/ceph-storage.yaml
 {% endif %}
@@ -22,17 +25,24 @@ parameter_defaults:
   NtpServer: {{ ntp_ip }}
   TimeZone: 'UTC'
 
-  NeutronServicePlugins: "qos,router,trunk"
+{% if enable_nfvi is sameas true %}
+  NeutronMechanismDrivers: ['sriovnicswitch','openvswitch']
+  NeutronGlobalPhysnetMtu: 9000
+  NeutronEnableIsolatedMetadata: true
   NeutronEnableForceMetadata: true
 
+  NeutronVhostuserSocketDir: "/var/lib/vhost_sockets"
+  NeutronDpdkDriverType: vfio-pci
+  NeutronDatapathType: netdev
+  NeutronEnableForceMetadata: true
+{% else %}
   NeutronMechanismDrivers: ['openvswitch']
   NeutronGlobalPhysnetMtu: 1500
-  #  DHCP provide metadata route to VM.
   NeutronEnableIsolatedMetadata: true
-  # DHCP always provides metadata route to VM.
   NeutronEnableForceMetadata: true
+{% endif %}
 
-  # List of Neutron network types for tenant networks (will be used in order)
+  NeutronServicePlugins: "qos,router,trunk"
 
 {% if enable_ovn is sameas true %}
   NeutronNetworkType: 'geneve,vlan'
@@ -45,9 +55,15 @@ parameter_defaults:
   # Neutron VLAN ranges per network, for example 'datacentre:1:499,tenant:500:1000':
   NeutronExternalNetworkBridge: "''"
 
+{% if enable_nfvi is sameas true %}
+  NeutronNetworkVLANRanges: 'datacentre:1:4094,dpdk:1:4094,sriov:1:4094'
+  NeutronBridgeMappings: 'datacentre:br-ex,dpdk:br-link0'
+  NeutronFlatNetworks: datacentre,dpdk
+{% else %}
   NeutronNetworkVLANRanges: 'datacentre:1:4094'
   NeutronBridgeMappings: 'datacentre:br-ex'
   NeutronFlatNetworks: datacentre
+{% endif %}
 
   # Customize bonding options, e.g. "mode=4 lacp_rate=1 updelay=1000 miimon=100"
   # for Linux bonds w/LACP, or "bond_mode=active-backup" for OVS active/backup.
@@ -57,6 +73,8 @@ parameter_defaults:
   InternalApiNetworkVlanID: {{ internal_net.vlanid }}
   TenantNetworkVlanID: {{ tenant_net.vlanid }}
   StorageNetworkVlanID: {{ storage_net.vlanid }}
+
+  NetworkDeploymentActions: ['CREATE','UPDATE']
 
   PublicVirtualFixedIPs: [{'ip_address':'{{ overcloud_vip }}'}]
 {% if control_vip is defined %}
@@ -74,9 +92,6 @@ parameter_defaults:
 {% if redis_vip is defined %}
   RedisVirtualFixedIPs: [{'ip_address':'{{ redis_vip }}'}]
 {% endif %}
-
-  NetworkDeploymentActions: ['CREATE','UPDATE']
-
 
   ServiceNetMap:
     ApacheNetwork: internal_api

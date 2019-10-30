@@ -23,12 +23,23 @@ parameter_defaults:
 
   KeystoneNotificationFormat: cadf
 
-  # NotificationDriver: log
-
-
-
   # CloudForms integration
   CeilometerStoreEvents: true
+
+  NovaSchedulerAvailableFilters: ["nova.scheduler.filters.all_filters","nova.scheduler.filters.pci_passthrough_filter.PciPassthroughFilter"]
+  NovaSchedulerDefaultFilters:
+      - RetryFilter
+      - AggregateInstanceExtraSpecsFilter
+      - AvailabilityZoneFilter
+      - RamFilter
+      - DiskFilter
+      - ComputeFilter
+      - ComputeCapabilitiesFilter
+      - ImagePropertiesFilter
+      - ServerGroupAntiAffinityFilter
+      - ServerGroupAffinityFilter
+      - PciPassthroughFilter
+      - NUMATopologyFilter
 
   ComputeParameters:
     NovaReservedHostMemory: 4096
@@ -37,9 +48,45 @@ parameter_defaults:
     nova::cpu_allocation_ratio: 8
     ceilometer::agent::polling::polling_interval: 60
 
+  ComputeOvsDpdkSriovExtraConfig:
+    nova::cpu_allocation_ratio: 1.9
+
+  ComputeOvsDpdkSriovParameters:
+    IsolCpusList: 2-31,34-63
+    KernelArgs: default_hugepagesz=1GB hugepagesz=1G hugepages=190 intel_iommu=on iommu=pt
+      isolcpus=2-31,34-63
+    NovaReservedHostMemory: 8192
+    TunedProfileName: "cpu-partitioning"
+    NovaVcpuPinSet: 2-12,14-21,23-31,34-44,46-53,55-63
+    OvsDpdkCoreList: 0-1,32-33
+    OvsDpdkSocketMemory: 2048,1024
+    OvsPmdCoreList: 13,22,45,54
+
+    NeutronPhysicalDevMappings:
+      - sriov:p3p1
+      - sriov:p3p2
+
+    NeutronSriovNumVFs:
+      - p3p1:16
+      - p3p2:16
+    NovaPCIPassthrough:
+      - devname: "p3p1"
+        physical_network: "sriov"
+      - devname: "p3p2"
+        physical_network: "sriov"
   ControllerExtraConfig:
     ceilometer::agent::polling::polling_interval: 60
   
+  # Decrease Gnocchi polling time
+  ManagePolling: true
+  ManagePipeline: true
+  PipelinePublishers:
+    - gnocchi://?archive_policy=medium
+  EventPipelinePublishers:
+    - gnocchi://?archive_policy=medium
+    - panko://
+  GnocchiArchivePolicy: 'medium'
+
   ExtraConfig:
     heat::engine::heat_waitcondition_server_url: "http://10.245.32.69:8000/v1/waitcondition"
     tripleo::instanceha::no_shared_storage: false
