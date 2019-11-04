@@ -1,0 +1,69 @@
+heat_template_version: 2014-10-16
+
+description:
+
+parameters:
+
+resources:
+  userdata:
+    type: OS::Heat::MultipartMime
+    properties:
+      parts:
+      - config: {get_resource: wipe_ceph_drives}
+      - config: {get_resource: cloudinit}
+  cloudinit:
+    type: OS::Heat::CloudConfig
+    properties:
+      cloud_config:
+        ssh_pwauth: True
+        disable_root: false
+        users:
+          - name: stack
+            sudo: ALL=(ALL) NOPASSWD:ALL
+            ssh_authorized_keys:
+{% for pubkey in guests_pubkey %}
+              - {{ pubkey }}
+{% endfor %}
+        chpasswd:
+          list: |
+            root:{{ guests_passwd }}
+          expire: false
+
+  wipe_ceph_drives:
+    type: OS::Heat::SoftwareConfig
+    properties:
+      config: |
+        #!/bin/bash
+        if [[ `hostname` = *"ceph"* ]] || [[ `hostname` = *"computehci"* ]]
+        then
+          echo "Number of disks detected: $(lsblk -no NAME,TYPE,MOUNTPOINT | grep "disk" | awk '{print $1}' | wc -l)"
+          for DEVICE in `lsblk -no NAME,TYPE,MOUNTPOINT | grep "disk" | awk '{print $1}'`
+          do
+            ROOTFOUND=0
+            echo "Checking /dev/$DEVICE..."
+            echo "Number of partitions on /dev/$DEVICE: $(expr $(lsblk -n /dev/$DEVICE | awk '{print $7}' | wc -l) - 1)"
+            for MOUNTS in `lsblk -n /dev/$DEVICE | awk '{print $7}'`
+            do
+              if [ "$MOUNTS" = "/" ]
+              then
+                ROOTFOUND=1
+              fi
+            done
+            if [ $ROOTFOUND = 0 ]
+            then
+              echo "Root not found in /dev/${DEVICE}"
+              echo "Wiping disk /dev/${DEVICE}"
+              dd if=/dev/zero of=/dev/${DEVICE} bs=10M count=1
+              wipefs -f -a /dev/${DEVICE}
+            else
+              echo "Root found in /dev/${DEVICE}"
+            fi
+          done
+          for dm in $(dmsetup ls|awk '{print $1}') ; do
+           [[ $dm = *"ceph"* ]] && dmsetup remove -f  $dm
+          done
+        fi
+
+outputs:
+  OS::stack_id:
+    value: {get_resource: userdata}

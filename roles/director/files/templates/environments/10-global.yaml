@@ -1,3 +1,6 @@
+resource_registry:
+  OS::TripleO::NodeUserData: /home/stack/templates/heat/first-boot.yaml
+
 parameter_defaults:
 
   CloudDomain: {{ customer_name }}.lab 

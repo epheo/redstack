@@ -35,29 +35,29 @@ environments:
   - /usr/share/openstack-tripleo-heat-templates/environments/services-docker/neutron-ovn-dvr-ha.yaml
 {% endif %}
   - /home/stack/templates/overcloud_images.yaml
-  - /home/stack/templates/environments/10-deployment-environment.yaml
+  - /home/stack/templates/environments/10-global.yaml
 {% if enable_ipa is sameas true %}
-  - /home/stack/templates/environments/11-keystone_domain_specific_ldap_backend.yaml
+  - /home/stack/templates/environments/11-ldap.yaml
 {% endif %}
-  - /home/stack/templates/environments/30-storage-environment.yaml
-  - /home/stack/templates/environments/40-network-override-environment.yaml
+  - /home/stack/templates/environments/30-ceph.yaml
+  - /home/stack/templates/environments/40-network.yaml
 {% if enable_ssl is sameas true %}
-  - /home/stack/templates/environments/45-enable-tls.yaml
-  - /home/stack/templates/environments/46-inject-trust-anchor-hiera.yaml
-  - /home/stack/templates/environments/47-tls-endpoints-public-ip.yaml
+  - /home/stack/templates/environments/60-tls.yaml
+  - /home/stack/templates/environments/61-tls_trust_anchor.yaml
+  - /home/stack/templates/environments/62-tls_endpoints.yaml
 {% endif %}
 {% if enable_extra is sameas true %}
-  - /home/stack/templates/environments/42-octavia-environment.yaml
-  - /home/stack/templates/environments/70-barbican-environment.yaml
+  - /home/stack/templates/environments/71-octavia.yaml
+  - /home/stack/templates/environments/72-barbican.yaml
 {% endif %}
 {% if enable_monitoring is sameas true %}
-  - /home/stack/templates/environments/80-logging-monitoring.yaml
+  - /home/stack/templates/environments/80-logging_monitoring.yaml
 {% endif %}
 {% if enable_saf is sameas true %}
-  - /home/stack/templates/environments/80-logging-monitoring.yaml
+  - /home/stack/templates/environments/80-logging_monitoring.yaml
 {% endif %}
-  - /home/stack/templates/environments/90-hardening-environment.yaml
-  - /home/stack/templates/environments/99-extraconfig-environment.yaml
+  - /home/stack/templates/environments/90-security.yaml
 {% if enable_fencing is sameas true %}
-  - /home/stack/templates/environments/98-fencing.yaml
+  - /home/stack/templates/environments/91-fencing.yaml
 {% endif %}
+  - /home/stack/templates/environments/99-extra.yaml

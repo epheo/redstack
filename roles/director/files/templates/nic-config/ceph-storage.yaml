@@ -107,11 +107,7 @@ resources:
                     - - get_param: ControlPlaneIp
                       - get_param: ControlPlaneSubnetCidr
                 routes:
-                - ip_netmask:
-                    list_join:
-                    - /
-                    - - get_param: ControlPlaneIp
-                      - get_param: ControlPlaneSubnetCidr
+                - default: true
                   next_hop:
                     get_param: ControlPlaneDefaultRoute
 
