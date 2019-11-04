@@ -7,7 +7,6 @@ parameter_defaults:
   CloudNameStorage: rhosp.storage.{{ customer_name }}.lab
   CloudNameStorageManagement: rhosp.storagemgmt.{{ customer_name }}.lab
 
-
   ControllerHostnameFormat: 'controller-%index%'
   ControllerCount: 3
   OvercloudControllerFlavor: control

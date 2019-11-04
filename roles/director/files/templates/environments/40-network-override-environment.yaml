@@ -67,11 +67,11 @@ parameter_defaults:
 
   BondInterfaceOvsOptions: "bond_mode=active-backup"
 
-  # ExternalNetworkVlanID: {{ external_net.vlanid }}
-  # InternalApiNetworkVlanID: {{ internal_net.vlanid }}
-  # TenantNetworkVlanID: {{ tenant_net.vlanid }}
-  # StorageNetworkVlanID: {{ storage_net.vlanid }}
-  # Shouldn't be needed anymore ?
+  ExternalNetworkVlanID: {{ external_net.vlanid }}
+  InternalApiNetworkVlanID: {{ internal_net.vlanid }}
+  TenantNetworkVlanID: {{ tenant_net.vlanid }}
+  StorageNetworkVlanID: {{ storage_net.vlanid }}
+  StorageMgmtNetworkVlanID: {{ storagemgmt_net.vlanid }}
 
   NetworkDeploymentActions: ['CREATE','UPDATE']
 
