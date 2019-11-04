@@ -97,7 +97,6 @@ resources:
             $network_config:
               network_config:
 
-              # em1 - Control
               - type: interface
                 name: eth0
                 use_dhcp: false
@@ -108,7 +107,11 @@ resources:
                     - - get_param: ControlPlaneIp
                       - get_param: ControlPlaneSubnetCidr
                 routes:
-                - default: true
+                - ip_netmask:
+                    list_join:
+                    - /
+                    - - get_param: ControlPlaneIp
+                      - get_param: ControlPlaneSubnetCidr
                   next_hop:
                     get_param: ControlPlaneDefaultRoute
 
