@@ -49,12 +49,6 @@
 # NIC2, Control Plane is always NIC1.
 
 
-- name: Storage
-  vip: true
-  name_lower: storage
-  ip_subnet: '{{ storage_net.subnet }}'
-  allocation_pools: [{'start': '{{ storage_net.pool_start }}', 'end': '{{ storage_net.pool_end }}'}]
-
 - name: InternalApi
   name_lower: internal_api
   vip: true
@@ -63,16 +57,30 @@
   allocation_pools: [{'start': '{{ internal_net.pool_start }}', 'end': '{{ internal_net.pool_end }}'}]
 
 - name: Tenant
-  vip: false  # Tenant network does not use VIPs
   name_lower: tenant
+  vip: false
   vlan: '{{ tenant_net.vlanid }}'
   ip_subnet: '{{ tenant_net.subnet }}'
   allocation_pools: [{'start': '{{ tenant_net.pool_start }}', 'end': '{{ tenant_net.pool_end }}'}]
 
 - name: External
-  vip: true
   name_lower: external
+  vip: true
   vlan: '{{ external_net.vlanid }}'
   ip_subnet: '{{ external_net.subnet }}'
   allocation_pools: [{'start': '{{ external_net.pool_start }}', 'end': '{{ external_net.pool_end }}'}]
   gateway_ip: '{{ external_net.gateway }}'
+
+- name: Storage
+  name_lower: storage
+  vip: true
+  vlan: '{{ storage_net.vlanid }}'
+  ip_subnet: '{{ storage_net.subnet }}'
+  allocation_pools: [{'start': '{{ storage_net.pool_start }}', 'end': '{{ storage_net.pool_end }}'}]
+
+- name: StorageMgmt
+  name_lower: storage_mgmt
+  vip: true
+  vlan: '{{ storagemgmt_net.vlanid }}'
+  ip_subnet: '{{ storagemgmt_net.subnet }}'
+  allocation_pools: [{'start': '{{ storagemgmt_net.pool_start }}', 'end': '{{ storagemgmt_net.pool_end }}'}]

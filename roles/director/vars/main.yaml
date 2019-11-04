@@ -1,6 +1,6 @@
 ---
 
-enable_ceph: False
+enable_ceph: True
 enable_ceph_external: False
 enable_nfvi: False
 enable_extra: False
@@ -42,16 +42,22 @@ internal_net:
   pool_end: '10.42.2.200'
 
 storage_net:
-  vlanid: 423
-  subnet: '10.42.3.0/24'
-  pool_start: '10.42.3.101'
-  pool_end: '10.42.3.200'
+  vlanid: 428
+  subnet: '10.42.8.0/24'
+  pool_start: '10.42.8.101'
+  pool_end: '10.42.8.200'
+
+storagemgmt_net:
+  vlanid: 429
+  subnet: '10.42.9.0/24'
+  pool_start: '10.42.9.101'
+  pool_end: '10.42.9.200'
 
 tenant_net:
   vlanid: 424
-  subnet: '10.196.199.0/24'
-  pool_start: '10.196.199.101'
-  pool_end: '10.196.199.200'
+  subnet: '10.42.4.0/24'
+  pool_start: '10.42.4.101'
+  pool_end: '10.42.4.200'
 
 external_net:
   vlanid: 425
