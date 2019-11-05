@@ -23,6 +23,7 @@
       <driver name="qemu" type="qcow2"/>
       <source pool="{{ guests_rootdisk_pool }}" volume="{{ item.name }}-root"/>
       <target dev="vda" bus="virtio"/>
+      <serial>{{ 99999999 | random | to_uuid }}</serial>
     </disk>
 {% endif %}
 {% if item.volumes is defined %}
@@ -31,6 +32,7 @@
       <driver name="qemu" type="qcow2"/>
       <source pool="{{ vol.pool }}" volume="{{ vol.name }}"/>
       <target dev="{{ vol.target }}" bus="virtio"/>
+      <serial>{{ 99999999 | random | to_uuid }}</serial>
     </disk>
 {% endfor %}
 {% endif %}
