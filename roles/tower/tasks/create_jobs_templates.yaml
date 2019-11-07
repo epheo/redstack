@@ -9,17 +9,17 @@
     body_format: json
     body: 
       {
-        "name": "{{ item.name }}",
+        "name": "{{ item | basename }}",
         "job_type": "run",
         "inventory": "{{ inventory_id }}",
         "project": "{{ project_id }}",
-        "playbook": "{{ item.name }}.yaml",
+        "playbook": "{{ item }}",
         "credential": "{{ creds_id }}",
-        "extra_vars": "{{ lookup('file', '{{ item.extra_vars }}' ) | from_yaml | to_json }}"
+        "extra_vars": "{{ lookup('file', 'secrets/common.yaml' ) | from_yaml | to_json }}"
       }
     validate_certs: False
     force_basic_auth: yes
     status_code: [ 201, 400 ]
   register: res
   changed_when: res.status == 201
-  loop: "{{ job_templates }}"
+  loop: "{{ lookup('fileglob', '../../../*.yaml', wantlist=True) }}"
