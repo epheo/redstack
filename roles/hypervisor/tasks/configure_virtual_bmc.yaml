@@ -36,6 +36,7 @@
       vbmc add {{ item.name  }} --port {{ item.port }} --username {{ bmc_username }} --password {{ bmc_password }} --libvirt-uri qemu:///system
     fi
   loop: "{{ vbmc_ports }}"
+  register: command_result
   changed_when: "command_result.stdout != ''"
 
 - name: Create vbmc-ports.service
@@ -54,16 +55,12 @@
 
 - name: Create file vbmc-ports.sh
   shell: |
-    touch /usr/local/sbin/vbmc-ports.sh
     echo '#!/bin/bash' > /usr/local/sbin/vbmc-ports.sh
+    chmod +x /usr/local/sbin/vbmc-ports.sh
 
 - name: Configure vbmc-ports.sh content
   shell: "echo 'vbmc start {{ item.name  }}' >> /usr/local/sbin/vbmc-ports.sh"
   loop: "{{ vbmc_ports }}"
-
-- name: Add execution permissions to vbmc script
-  shell: |
-    chmod +x /usr/local/sbin/vbmc-ports.sh
 
 - name: Open firewalld vbmc ports
   shell: "firewall-cmd --zone=public --add-port={{ item.port }}/udp --permanent"
