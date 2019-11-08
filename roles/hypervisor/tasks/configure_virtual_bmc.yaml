@@ -36,6 +36,7 @@
       vbmc add {{ item.name  }} --port {{ item.port }} --username {{ bmc_username }} --password {{ bmc_password }} --libvirt-uri qemu:///system
     fi
   loop: "{{ vbmc_ports }}"
+  changed_when: "command_result.stdout != ''"
 
 - name: Create vbmc-ports.service
   copy:
@@ -60,24 +61,12 @@
   shell: "echo 'vbmc start {{ item.name  }}' >> /usr/local/sbin/vbmc-ports.sh"
   loop: "{{ vbmc_ports }}"
 
-- name: Enable vbmc service
+- name: Add execution permissions to vbmc script
   shell: |
     chmod +x /usr/local/sbin/vbmc-ports.sh
 
-- name: restart vbmc-ports service 
-  become: yes
-  systemd:
-    state: restarted
-    daemon_reload: yes
-    enabled: yes
-    name: vbmc-ports
-
 - name: Open firewalld vbmc ports
   shell: "firewall-cmd --zone=public --add-port={{ item.port }}/udp --permanent"
-  loop: "{{ vbmc_ports }}"
-
-- name: Open IPTABLES vbmc ports
-  shell: "iptables -I INPUT -p udp --dport {{ item.port }} -m state --state NEW  -j ACCEPT"
   loop: "{{ vbmc_ports }}"
 
 - name: Enable forwarding
@@ -89,5 +78,25 @@
 - name: Reload firewalld
   shell: "firewall-cmd --reload"
 
+- name: Open IPTABLES vbmc ports
+  shell: "iptables -I INPUT -p udp --dport {{ item.port }} -m state --state NEW  -j ACCEPT"
+  loop: "{{ vbmc_ports }}"
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
 - name: Save IPTABLES
   shell: "iptables-save |sudo tee /etc/sysconfig/iptables"
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+- name: Enable vbmc-ports service 
+  become: yes
+  systemd:
+    daemon_reload: yes
+    enabled: yes
+    name: vbmc-ports
+
+- name: Restart vbmc-ports service 
+  become: yes
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: vbmc-ports
