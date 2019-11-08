@@ -24,6 +24,7 @@
       <source pool="{{ guests_rootdisk_pool }}" volume="{{ item.name }}-root"/>
       <target dev="vda" bus="sata"/>
       <serial>{{ range(100000000, 999999999) | random }}</serial>
+      <wwn>wwn-{{ range(100000000, 999999999) | random }}</wwn>
     </disk>
 {% endif %}
 {% if item.volumes is defined %}
@@ -33,6 +34,7 @@
       <source pool="{{ vol.pool }}" volume="{{ vol.name }}"/>
       <target dev="{{ vol.target }}" bus="sata"/>
       <serial>{{ range(100000000, 999999999) | random }}</serial>
+      <wwn>wwn-{{ range(100000000, 999999999) | random }}</wwn>
     </disk>
 {% endfor %}
 {% endif %}

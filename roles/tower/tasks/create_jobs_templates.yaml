@@ -1,5 +1,7 @@
 ---
 
+- debug: "{{ inventory_dir }}"
+
 - name: Create job template
   uri:
     url: "https://localhost/api/v2/job_templates/"
@@ -22,4 +24,4 @@
     status_code: [ 201, 400 ]
   register: res
   changed_when: res.status == 201
-  loop: "{{ lookup('fileglob', '../../../*.yaml', wantlist=True) }}"
+  loop: "{{ lookup('fileglob', '{{ inventory_dir }}/*.yaml', wantlist=True) }}"

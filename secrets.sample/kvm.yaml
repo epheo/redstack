@@ -1,8 +1,0 @@
----
-
-guests_pubkey: 
-  - 'ssh-rsa AAAAB3NzXXXXXXXX'
-  - 'ssh-rsa AAAAB3NzYYYYYYYY'
-guests_passwd: 'your_password'
-
-vbmc_password: 'your_password'
