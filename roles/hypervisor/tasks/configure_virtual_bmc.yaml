@@ -67,7 +67,7 @@
 - name: restart vbmc-ports service 
   become: yes
   systemd:
-    state: started
+    state: restarted
     daemon_reload: yes
     enabled: yes
     name: vbmc-ports
