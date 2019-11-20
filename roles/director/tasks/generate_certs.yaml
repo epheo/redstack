@@ -8,13 +8,6 @@
     owner: stack
     group: stack
 
-- name: Create newcerts directory
-  file:
-    path: /home/stack/ssl/newcerts
-    state: directory
-    owner: stack
-    group: stack
-
 - name: Create index and serial files
   shell: |
     if [[ ! -f ~stack/ssl/index.txt ]]; then
@@ -66,9 +59,36 @@
 
 - name: Creating the SSL/TLS Certificate
   shell: |
-    if [[ ! -f ~stack/ssl/ca.key.pem ]]; then
+    if [[ ! -f ~stack/ssl/server.crt.pem ]]; then
       cd ~stack/ssl
       printf 'y\ny\n' | sudo openssl ca -config openssl.cnf -extensions v3_req -days 3650 -in server.csr.pem -out server.crt.pem -cert ca.crt.pem -keyfile ca.key.pem
     fi
   register: command_result
   changed_when: "command_result.stdout != ''"
+
+- name: Get SSLCertificate value
+  shell: cat ~stack/ssl/server.crt.pem |sed -n -e '/BEGIN/,$p'
+  register: ssl_crt
+  
+- name: Get SSLKey value
+  shell: cat ~stack/ssl/server.key.pem
+  register: ssl_key
+  
+- name: Get ca.crt.pem value
+  shell: cat ~stack/ssl/ca.crt.pem
+  register: root_certificate
+
+- name: Get undercloud cacert
+  ignore_errors: yes
+  shell: cat /etc/pki/ca-trust/source/anchors/cm-local-ca.pem
+  register: undercloud_cacert
+
+- name: Copy 60-tls.yaml
+  template:
+    src: ../templates/60-tls.yaml.j2
+    dest: /home/stack/templates/environments/60-tls.yaml
+
+- name: Copy 61-tls_trust_anchor.yaml.j2
+  template:
+    src: ../templates/61-tls_trust_anchor.yaml.j2
+    dest: /home/stack/templates/environments/61-tls_trust_anchor.yaml

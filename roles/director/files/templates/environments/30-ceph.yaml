@@ -55,19 +55,18 @@ parameter_defaults:
   GlanceBackend: rbd
   GnocchiBackend: rbd
 
-  CephPoolDefaultSize: 3
-  CephPoolDefaultPgNum: 16
-  ManilaCephFSDataPoolPGNum: 16
-  ManilaCephFSMetadataPoolPGNum: 16
+  CephPoolDefaultSize: '{{ ceph.pool_default_size }}'
+  CephPoolDefaultPgNum: 32
+  ManilaCephFSDataPoolPGNum: 32
+  ManilaCephFSMetadataPoolPGNum: 32
 
   CephConfigOverrides:
     mon_max_pg_per_osd: 2048
 
   CephAnsibleDisksConfig:
+    osd_objectstore: bluestore
+    osd_scenario: lvm
     devices:
-      - /dev/vdc
-    dedicated_devices: # Journal(s)
-      - /dev/vdb
-    osd_scenario: non-collocated
-    journal_size: 900
+      - /dev/sdc
+      - /dev/sdb
 {% endif %}

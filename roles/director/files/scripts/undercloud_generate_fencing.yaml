@@ -1,0 +1,28 @@
+#!/bin/bash
+
+username=heat-admin
+bmc_username='{{ bmc_username }}'
+bmc_password='{{ bmc_password }}'
+
+echo "parameter_defaults:"
+echo "  EnableFencing: true"
+echo "  FencingConfig:"
+echo "    devices:"
+
+for i in $(openstack baremetal node list --provision-state active -f value -c UUID); do
+  instance_uuid=$(openstack baremetal node show $i -f json | jq -r .instance_uuid)
+  ipmi_addr=$(openstack baremetal node show $i -f json | jq -r .driver_info.ipmi_address)
+  ip_a=$(openstack server show $instance_uuid -c addresses -f value |sed s/ctlplane=//g)
+  host_mac=$(ssh ${username}@$ip_a "sudo cat /sys/class/net/eth0/address")
+  hostname=$(ssh ${username}@$ip_a "sudo cat /etc/hostname")
+
+  echo "      - agent: fence_ipmilan"
+  echo "         host_mac: $host_mac"
+  echo "         params:"
+  echo "           ipaddr: $ipmi_addr"
+  echo "           lanplus: true"
+  echo "           login: $bmc_username"
+  echo "           passwd: $bmc_password"
+  echo "           pcmk_host_list: $hostname"
+  echo "           privlvl: administrator"
+done

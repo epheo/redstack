@@ -60,4 +60,7 @@ environments:
 {% if enable_fencing is sameas true %}
   - /home/stack/templates/environments/91-fencing.yaml
 {% endif %}
+{% if enable_lowmemory is sameas true %}
+  - /home/stack/templates/environments/98-low_memory.yaml
+{% endif %}
   - /home/stack/templates/environments/99-extra.yaml

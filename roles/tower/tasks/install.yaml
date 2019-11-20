@@ -1,6 +1,6 @@
 ---
 
-- name: Download and unarchive Ansible Tower Installer
+- name: Unarchive Ansible Tower Installer
   unarchive:
     src: downloads/ansible-tower-setup-bundle-latest.el7.tar.gz
     dest: ~/

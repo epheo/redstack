@@ -50,13 +50,13 @@ tower:
 
 inventory_hosts:
   - name: 'XXXXXX'
-    group: 'hypervisor'
+    group: 'hypervisor' # Group names are static
     variables:
-      ansible_host: 'XXX.XX.XXX.XX'
+      ansible_host: 'XXX.XXX.XXX.XXX'
       ansible_user: 'XXXXX'
       ansible_become: 'true'
   - name: 'rhdirector'
-    group: 'undercloud'
+    group: 'undercloud' # Group names are static
     variables:
       ansible_host: '10.42.42.7'
       ansible_user: 'stack'

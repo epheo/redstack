@@ -13,6 +13,7 @@ enable_fluentd: False
 enable_telemetry: False
 enable_fencing: False
 enable_ovn: True
+enable_lowmemory: True
 
 undercloud_ip: '10.42.1.7'
 dns_ip: '10.42.1.4'
@@ -98,6 +99,7 @@ registry:
 ceph:
   namespace: 'registry.access.redhat.com/rhceph'
   image: 'rhceph-3-rhel7'
+  pool_default_size: 1
 
 ssl:
   countryname: 'FR'
@@ -111,7 +113,7 @@ ssl:
 
 parameter_defaults:
 
-  Debug: True
+  # ebug: True
 
   ManagePolling: true
   ManagePipeline: true
