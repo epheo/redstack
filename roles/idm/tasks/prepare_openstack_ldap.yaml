@@ -1,0 +1,31 @@
+---
+
+- name: Create base.ldif
+  template:
+    src: "roles/idm/files/openstack_base.ldif"
+    dest: "/tmp/base.ldif"
+
+- name: Create users.ldif
+  template:
+    src: "roles/idm/files/openstack_users.ldif"
+    dest: "/tmp/users.ldif"
+
+- name: Create groups.ldif
+  template:
+    src: "roles/idm/files/openstack_groups.ldif"
+    dest: "/tmp/groups.ldif"
+    
+- name: Configure base infrastructure
+  ignore_errors: yes
+  shell: |
+    ldapadd -x -D cn="Directory Manager" -w redhatstack -f /tmp/base.ldif
+
+- name: Create user and groups
+  ignore_errors: yes
+  shell: |
+    ldapadd -x -D cn="Directory Manager" -f /tmp/users.ldif -w redhatstack
+    ldapadd -x -D cn="Directory Manager" -f /tmp/groups.ldif -w redhatstack
+  notify: 
+    - restart_ipa
+
+- meta: flush_handlers

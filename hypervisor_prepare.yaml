@@ -4,9 +4,15 @@
   roles:
     - common
     - hypervisor
+  vars:
+    enable_repos:
+      - rhel-7-server-rpms
+      - rhel-7-server-extras-rpms
+      - rhel-7-server-optional-rpms
   tasks:
     - block:
       - include_tasks: roles/common/tasks/predeploy.yaml
+      - include_tasks: roles/common/tasks/manage_repo.yaml
       - include_tasks: roles/common/tasks/update.yaml
       - include_tasks: roles/common/tasks/deploy_userland.yaml
       - include_tasks: roles/hypervisor/tasks/install.yaml

@@ -4,3 +4,5 @@ inventory*
 !inventory.sample
 downloads/
 dev.yaml
+ssh.cfg
+ansible.cfg

@@ -3,7 +3,14 @@
 
 - name: Create SSL directory
   file:
-    path: /home/stack/ssl
+    path: /home/stack/ssl/newcerts
+    state: directory
+    owner: stack
+    group: stack
+
+- name: Create Template directory
+  file:
+    path: /home/stack/templates/environments
     state: directory
     owner: stack
     group: stack

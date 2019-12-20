@@ -7,9 +7,15 @@
   poll: 0
   listen: "reboot"
 
-- name: Wait for machine to restart. If this is baremetal it can take a while...
-  local_action: wait_for host={{ ansible_host }} delay=15 port=22 timeout=240 state=started
+- shell: 'sleep 10'
+  delegate_to: localhost
   listen: "reboot"
+
+- name: Wait for machine to restart. If this is baremetal it can take a while...
+  wait_for_connection:
+  listen: "reboot"
+  
+  #local_action: wait_for host={{ ansible_host }} delay=15 port=22 timeout=240 state=started
 
 - shell: 'sleep 5'
   delegate_to: localhost

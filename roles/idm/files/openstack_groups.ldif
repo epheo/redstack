@@ -1,0 +1,38 @@
+
+dn: cn=openstack-users,ou=groups,dc=lablocal
+objectClass: groupofnames
+cn: openstack-users
+description: All users
+member: uid=redhat,ou=people,dc=lablocal
+member: uid=demo,ou=people,dc=lablocal
+
+dn: cn=openstack-service,ou=groups,dc=lablocal
+objectClass: groupofnames
+cn: openstack-service
+description: All users
+member: uid=ceilometer,ou=people,dc=lablocal
+member: uid=placement,ou=people,dc=lablocal
+member: uid=ironic,ou=people,dc=lablocal
+member: uid=aodh,ou=people,dc=lablocal
+member: uid=octavia,ou=people,dc=lablocal
+member: uid=sahara,ou=people,dc=lablocal
+member: uid=neutron,ou=people,dc=lablocal
+member: uid=heat,ou=people,dc=lablocal
+member: uid=heat-cfn,ou=people,dc=lablocal
+member: uid=panko,ou=people,dc=lablocal
+member: uid=manila,ou=people,dc=lablocal
+member: uid=redhat,ou=people,dc=lablocal
+member: uid=nova,ou=people,dc=lablocal
+member: uid=swift,ou=people,dc=lablocal
+member: uid=admin,ou=people,dc=lablocal
+member: uid=manilav2,ou=people,dc=lablocal
+member: uid=barbican,ou=people,dc=lablocal
+member: uid=glance,ou=people,dc=lablocal
+member: uid=gnocchi,ou=people,dc=lablocal
+member: uid=cinder,ou=people,dc=lablocal
+
+dn: cn=othernonosp,ou=groups,dc=lablocal
+objectClass: groupofnames
+cn: othernonosp
+description: All users
+member: uid=nonosp,ou=people,dc=lablocal

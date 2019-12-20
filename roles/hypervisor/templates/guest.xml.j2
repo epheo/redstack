@@ -17,7 +17,6 @@
   <on_reboot>restart</on_reboot>
   <on_crash>destroy</on_crash>
   <devices>
-    <emulator>/usr/bin/qemu-kvm</emulator>
 {% if item.root is defined %}
     <disk type="volume" device="disk">
       <driver name="qemu" type="qcow2"/>
@@ -58,10 +57,17 @@
       <address type="pci" domain="0x0000" bus="0x00" slot="0x04" function="0x0"/>
     </controller>
 {% for port in item.ports %}
+{% if port.network is defined %}
     <interface type="network">
       <source network="{{ port.network }}"/>
       <model type="virtio"/>
     </interface>
+{% endif %}
+{% if port.bridge is defined %}
+    <interface type="bridge">
+      <source bridge="{{ port.bridge }}"/>
+    </interface>
+{% endif %}
 {% endfor %}
     <serial type="pty">
       <target type="isa-serial" port="0">

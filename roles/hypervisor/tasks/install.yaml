@@ -4,3 +4,17 @@
   package:
     state: latest
     name: [ 'libvirt', 'libguestfs-tools' ]
+
+- name: Enable libvirtd service 
+  become: yes
+  systemd:
+    daemon_reload: yes
+    enabled: yes
+    name: libvirtd
+
+- name: Restart libvirtd service 
+  become: yes
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: libvirtd
