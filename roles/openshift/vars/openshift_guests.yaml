@@ -1,0 +1,74 @@
+---
+
+vbmc_username: root
+vbmc_ports:
+  - { name: master-0 , port: 6251 }
+  - { name: master-1 , port: 6252 }
+  - { name: master-2 , port: 6253 }
+  - { name: worker-0 , port: 6254 }
+  - { name: worker-1 , port: 6255 }
+  - { name: worker-2 , port: 6256 }
+  - { name: worker-3 , port: 6257 }
+  - { name: worker-4 , port: 6258 }
+
+libvirt_guests:
+
+  - name: master-0
+    ram: 20480000
+    vcpu: 4
+    volumes:
+      - name: master0-root
+        target: sda
+        size: 100
+        pool: fast
+    ports:
+      - network: internal
+      - network: external
+
+  - name: master-1
+    ram: 20480000
+    vcpu: 4
+    volumes:
+      - name: master1-root
+        target: sda
+        size: 100
+        pool: fast
+    ports:
+      - network: internal
+      - network: external
+
+  - name: master-2
+    ram: 20480000
+    vcpu: 4
+    volumes:
+      - name: master2-root
+        target: sda
+        size: 100
+        pool: fast
+    ports:
+      - network: internal
+      - network: external
+
+  - name: worker-0
+    ram: 20480000
+    vcpu: 4
+    volumes:
+      - name: worker0-root
+        target: sda
+        size: 100
+        pool: fast
+    ports:
+      - network: internal
+      - network: external
+
+  - name: worker-1
+    ram: 20480000
+    vcpu: 4
+    volumes:
+      - name: worker1-root
+        target: sda
+        size: 100
+        pool: fast
+    ports:
+      - network: internal
+      - network: external

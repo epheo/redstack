@@ -1,0 +1,10 @@
+---
+
+- hosts: hypervisor
+  roles:
+    - common
+    - hypervisor
+  vars_files:
+    - roles/hypervisor/vars/overcloud.yaml
+  tasks:
+    - include_tasks: roles/hypervisor/tasks/cleanup.yaml

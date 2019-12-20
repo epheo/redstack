@@ -1,0 +1,64 @@
+
+---
+
+libvirt_guests:
+
+  - name: oc-client
+    root: rhel-8.0.qcow2 
+    cloudinit: user-data
+    ram: 16384000
+    vcpu: 4
+    ports:
+      - name: eth0
+        network: internal
+        address: 10.42.1.9/24
+      - name: eth1
+        network: external
+        address: 10.42.42.9/24
+        gateway: 10.42.42.1
+        defroute: true
+
+  - name: loadbalancer
+    root: rhel-8.0.qcow2 
+    cloudinit: user-data
+    ram: 2048000
+    vcpu: 2
+    ports:
+      - name: eth0
+        network: internal
+        address: 10.42.1.10/24
+      - name: eth1
+        network: external
+        address: 10.42.42.10/24
+        gateway: 10.42.42.1
+        defroute: true
+
+  - name: idm
+    root: rhel-8.0.qcow2 
+    cloudinit: user-data
+    ram: 2048000
+    vcpu: 2
+    ports:
+      - name: eth0
+        network: internal
+        address: 10.42.1.11/24
+      - name: eth1
+        network: external
+        address: 10.42.42.11/24
+        gateway: 10.42.42.1
+        defroute: true
+
+  - name: quay
+    root: rhel-8.0.qcow2 
+    cloudinit: user-data
+    ram: 2048000
+    vcpu: 2
+    ports:
+      - name: eth0
+        network: internal
+        address: 10.42.1.12/24
+      - name: eth1
+        network: external
+        address: 10.42.42.12/24
+        gateway: 10.42.42.1
+        defroute: true
