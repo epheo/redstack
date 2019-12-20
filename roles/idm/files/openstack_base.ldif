@@ -1,0 +1,10 @@
+
+dn: ou=people,dc=lablocal
+objectClass: organizationalUnit
+objectClass: top
+ou: users
+
+dn: ou=groups,dc=lablocal
+objectClass: organizationalUnit
+objectClass: top
+ou: groups

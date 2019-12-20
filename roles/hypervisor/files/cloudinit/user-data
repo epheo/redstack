@@ -33,6 +33,9 @@ write_files:
       DNS1={{ dns_ip }}
 {% endif %}
 {% endif %}
+{% if port.defroute is sameas false %}
+      DEFROUTE=no
+{% endif %}
     path: /etc/sysconfig/network-scripts/ifcfg-{{ port.name }}
 {% endif %}
 {% endfor %}

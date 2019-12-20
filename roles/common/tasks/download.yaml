@@ -40,3 +40,21 @@
     url: https://download.fedoraproject.org/pub/fedora/linux/releases/30/Cloud/x86_64/images/Fedora-Cloud-Base-30-1.2.x86_64.qcow2
     dest: downloads/fedora-30.qcow2
     checksum: "sha1:fc2c00162ef2348149ad8ff545b1f1960d2b0fea"
+
+- name: Download OpenShift Client
+  get_url:
+    url: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-linux-4.2.4.tar.gz
+    dest: downloads/openshift-client-linux-4.2.4.tar.gz
+    checksum: "sha1:3302c6b80a423528832a32686671e1cb8ba0e77a"
+
+- name: Download OpenShift Installer
+  get_url:
+    url: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-install-linux-4.2.4.tar.gz
+    dest: downloads/openshift-install-linux-4.2.4.tar.gz
+    checksum: "sha1:09aa0c29bd3bf65410a0dfaaa88b49d303342c8e"
+
+- name: Download RHCOS
+  get_url:
+    url: https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/4.2/latest/rhcos-4.2.0-x86_64-openstack.qcow2
+    dest: downloads/rhcos-4.2.0-x86_64-openstack.qcow2
+    checksum: "sha1:187cb79f0dd13d18f03651deed281f148b0b37d7"

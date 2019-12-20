@@ -1,2 +1,2 @@
-# redstack
-Red Hat Solutions Deployment Automation
+# RedStack
+Deployment Automation for Red Hat Solutions 

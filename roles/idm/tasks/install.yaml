@@ -1,0 +1,89 @@
+---
+
+- name: Install FirewallD
+  become: yes
+  package:
+    state: latest
+    name: ['firewalld']
+
+- name: Enable firewalld service 
+  become: yes
+  systemd:
+    daemon_reload: yes
+    enabled: yes
+    name: firewalld
+
+- name: Restart firewalld service 
+  become: yes
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: firewalld
+
+- name: Firewall Add Ports
+  become: yes
+  shell: |
+    firewall-cmd --permanent --add-port={80/tcp,443/tcp,389/tcp,636/tcp,88/tcp,88/udp,464/tcp,464/udp,53/tcp,53/udp,123/udp}
+    
+- name: Firewall Add Services
+  become: yes
+  shell: |
+    firewall-cmd --permanent --add-service={freeipa-ldap,freeipa-ldaps,dns}
+
+- name: Firewall Reload
+  become: yes
+  shell: |
+    firewall-cmd --reload
+     
+- name: Yum enable Module
+  become: yes
+  shell: |
+    yum -y module enable idm:DL1
+
+- name: Yum Distro Sync
+  become: yes
+  shell: |
+    yum -y distro-sync
+
+- name: Yum Module Install
+  become: yes
+  shell: |
+    yum -y module install idm:DL1/server
+
+- name: Yum Module Install
+  become: yes
+  shell: |
+    yum -y module install idm:DL1/dns
+
+- name: Yum Module Install
+  become: yes
+  shell: |
+    yum -y module install idm:DL1/adtrust
+
+- name: Yum Module Install
+  become: yes
+  shell: |
+    yum -y module install idm:DL1/client
+
+- name : Set Hostname
+  become: yes
+  shell: |
+    hostnamectl set-hostname {{ ansible_nodename }}.{{ customer_name }}.lab
+    hostnamectl set-hostname --transient {{ ansible_nodename }}.{{ customer_name }}.lab
+
+- name: Ensure hostname is in /etc/hosts
+  become: yes
+  lineinfile:
+    dest: /etc/hosts
+    line:  "{{ansible_default_ipv4.address}}\t{{ ansible_nodename }}\t{{ ansible_hostname }}.{{ customer_name }}.lab"
+    insertbefore: BOF
+
+- name: Install IPA server
+  become: yes
+  ignore_errors: yes
+  #shell: 'ipa-server-install --realm LABLOCAL --ds-password redhatstack --admin-password redhatstack --unattended'
+  shell: 'ipa-server-install --realm LABLOCAL --ds-password redhatstack --admin-password redhatstack --unattended --setup-dns  --auto-forwarders --auto-reverse '
+  notify: 
+    - restart_ipa
+
+- meta: flush_handlers

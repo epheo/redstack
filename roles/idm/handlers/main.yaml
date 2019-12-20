@@ -1,0 +1,5 @@
+---
+
+- name: restart_ipa
+  become: yes
+  shell: 'ipactl restart'

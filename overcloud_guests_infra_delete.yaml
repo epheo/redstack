@@ -1,0 +1,10 @@
+---
+
+- hosts: hypervisor
+  roles:
+    - common
+    - hypervisor
+  vars_files:
+    - roles/openstack/vars/infrastructure_guests.yaml
+  tasks:
+    - include_tasks: roles/hypervisor/tasks/cleanup.yaml
