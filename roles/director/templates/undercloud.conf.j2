@@ -17,6 +17,11 @@ local_subnet = ctlplane-subnet
 store_events = true
 enable_tempest = true
 
+{% if enable_uefi is sameas true %}
+ipxe_enabled = true
+inspection_enable_uefi = true
+{% endif %}
+
 [ctlplane-subnet]
 cidr = {{ ctlplane_net.subnet }}
 dhcp_start = {{ ctlplane_net.dhcp_start }}

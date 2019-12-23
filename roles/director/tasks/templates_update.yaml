@@ -6,26 +6,22 @@
     state: directory
     owner: stack
     group: stack
-
 - name: Ensure directory structure exists
   file:
     path: '/home/stack/templates/{{ item.path }}'
     state: directory
   with_filetree: 'roles/director/files/templates/'
   when: item.state == 'directory'
-
 - name: Ensure files are populated from templates
   template:
     src: '{{ item.src }}'
     dest: '/home/stack/templates/{{ item.path }}'
   with_filetree: 'roles/director/files/templates/'
   when: item.state == 'file'
-
 - name: Copy answers
   template:
     src: ../templates/answers.yaml.j2
     dest: /home/stack/answers.yaml
-
 - name: Copy deploy script
   copy:
     src: ../files/deploy.sh
@@ -37,7 +33,6 @@
     state: directory
   with_filetree: 'roles/director/files/tests/'
   when: item.state == 'directory'
-
 - name: Ensure Test files are populated from templates
   template:
     src: '{{ item.src }}'
@@ -45,19 +40,25 @@
   with_filetree: 'roles/director/files/tests/'
   when: item.state == 'file'
 
-- name: Synchronize templates on Director host
-  synchronize:
-    src: "roles/director/files/scripts/"
-    dest: /home/stack/scripts/
-    set_remote_user: yes
-    owner: no
-    recursive: yes
-    archive: no
-    group: no
-    perms: no
-    checksum: yes
-    delete: yes
-
+  
+- name: Create directory scripts
+  file:
+    path: /home/stack/scripts
+    state: directory
+    owner: stack
+    group: stack
+- name: Ensure scripts directory structure exists
+  file:
+    path: '/home/stack/scripts/{{ item.path }}'
+    state: directory
+  with_filetree: 'roles/director/files/scripts/'
+  when: item.state == 'directory'
+- name: Ensure scripts files are populated from templates
+  template:
+    src: '{{ item.src }}'
+    dest: '/home/stack/scripts/{{ item.path }}'
+  with_filetree: 'roles/director/files/scripts/'
+  when: item.state == 'file'
 - name: Set permission on the script folder
   shell: |
     chmod +x -R ~/scripts/

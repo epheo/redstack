@@ -1,3 +1,4 @@
+{% raw %}
 #!/bin/bash
 
 echo "HOST: $(hostname)"
@@ -46,3 +47,5 @@ exit 0
 ## Send and run on computes
 #ansible compute -b -m copy -a 'src=/home/stack/scripts/overcloud_reservations_check.sh dest=/usr/bin/reservations_check.sh mode=775'
 #ansible compute -b -m shell -a 'reservations_check.sh'
+
+{% endraw %}

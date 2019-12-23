@@ -7,6 +7,7 @@
   register: node_mac_map
   loop: "{{ libvirt_guests }}"
   changed_when: false
+  when: instack_vars is not defined
 
 - name: Get existing BMC ports
   delegate_to: hetznet
@@ -14,20 +15,23 @@
      vbmc list | awk '$4 ~ /(running|down)/ {print $2"="$8}'
   register: bmc_list
   changed_when: false
+  when: instack_vars is not defined
 
 - set_fact:
     node_port_map: "{{ node_port_map|default({}) | combine({item.split('=')[0]:item.split('=')[1]}) }}"
   with_items:
    - "{{bmc_list.stdout_lines}}"
+  when: instack_vars is not defined
 
 - set_fact:
     instack_vars: "{{ instack_vars|default([]) + [ { 'node': item.stdout.split('=')[0],
-      'mac': item.stdout.split('=')[1], 'port': node_port_map[item.stdout.split('=')[0]]} ]}}"
+      'mac': item.stdout.split('=')[1], 'port': node_port_map[item.stdout.split('=')[0],
+      'addr': external_net.gateway ]} ]}}"
   with_items:
    - "{{ node_mac_map.results }}"
+  when: instack_vars is not defined
 
 - name: create host definitions
   template:
     src: ../templates/instackenv.json.j2
     dest: ~/instackenv.json
-

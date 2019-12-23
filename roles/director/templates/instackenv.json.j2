@@ -5,17 +5,27 @@
             "mac":[
                 "{{item.mac}}"
             ],
-            {%- if item.node is match('control_*') -%}"capabilities": "profile:control",{%- endif -%}
-            {%- if item.node is match('compute_*') -%}"capabilities": "profile:compute",{%- endif -%}
-            {%- if item.node is match('ceph_*') -%}"capabilities": "profile:ceph-storage",{%- endif -%}
+{%- if item.node is match('control_*') -%}
+            "capabilities": "profile:control{% if enable_uefi is sameas true %},boot_mode:uefi{% endif %}",
+{%- endif -%}
+{%- if item.node is match('compute_*') -%}
+            "capabilities": "profile:compute{% if enable_uefi is sameas true %},boot_mode:uefi{% endif %}",
+{%- endif -%}
+{%- if item.node is match('ceph_*') -%}
+            "capabilities": "profile:ceph-storage{% if enable_uefi is sameas true %},boot_mode:uefi{% endif %}",
+{%- endif -%}
             "name": "{{ item.node }}",
             "arch":"x86_64",
-            "pm_type":"pxe_ipmitool",
+            "pm_type":"{{ bmc_type }}",
+{%- if bmc_type is match('redfish') -%}
+            "pm_system_id": "redfish/v1/Systems/1",
+            "redfish_verify_ca": "False",
+{% endif %}
             "pm_user":"{{ bmc_username }}",
             "pm_password":"{{ bmc_password }}",
-            "pm_addr":"{{ external_net.gateway }}",
-            "pm_port" : "{{item.port}}"
+            "pm_addr":"{{ item.addr }}"{%- if item.port is defined -%},
+            "pm_port": "{{item.port}}"
+{% endif %}
         } {%- if loop.index != instack_vars | count %} , {%- endif%} {%- endfor %}
     ]
 }
-

@@ -110,11 +110,7 @@ ssl:
   commonname: 'lab'
   emailaddress: 'lab@epheo.eu'
 
-
 parameter_defaults:
-
-  # ebug: True
-
   ManagePolling: true
   ManagePipeline: true
   PipelinePublishers:
