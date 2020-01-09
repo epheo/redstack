@@ -15,11 +15,10 @@ openstack security group rule create allow_icmp --protocol tcp --dst-port 1:6553
 openstack security group rule create allow_icmp --protocol udp --dst-port 1:65535
 openstack security group rule create allow_icmp --protocol icmp --dst-port -1
 
-openstack port create --network test130_datacentre --security-group no_icmp no_icmp
-openstack port create --network test130_datacentre --security-group allow_icmp allow_icmp
+openstack port create --network private --security-group no_icmp no_icmp
+openstack port create --network private --security-group allow_icmp allow_icmp
 
 openstack server create  test-port-security \
-  --wait \
   --user-data /home/stack/user-data-scripts/userdata-enableroot \
   --key-name undercloud-key \
   --flavor  m1.medium \
@@ -27,12 +26,10 @@ openstack server create  test-port-security \
   --nic port-id=$(neutron port-list | grep allow_icmp | awk '{print $2}') \
   --nic port-id=$(neutron port-list | grep no_icmp | awk '{print $2}') 
 
-# MAC
-
 openstack server create test-port-security \
-  --wait \
   --user-data /home/stack/user-data-scripts/userdata-enableroot \
   --key-name undercloud-key \
   --flavor  m1.medium \
+  --security-group allowall_$project \
   --image rhel7  \
-  --network test130_datacentre 
+  --network private

@@ -11,6 +11,7 @@ environments:
   - /usr/share/openstack-tripleo-heat-templates/environments/host-config-and-reboot.yaml
 {% endif %}
 {% if enable_ceph is sameas true %}
+  - /home/stack/templates/environments/30-ceph.yaml
   - /usr/share/openstack-tripleo-heat-templates/environments/ceph-ansible/ceph-ansible.yaml
   - /usr/share/openstack-tripleo-heat-templates/environments/ceph-ansible/ceph-rgw.yaml
 {% endif %}
@@ -39,7 +40,6 @@ environments:
 {% if enable_ipa is sameas true %}
   - /home/stack/templates/environments/11-ldap.yaml
 {% endif %}
-  - /home/stack/templates/environments/30-ceph.yaml
   - /home/stack/templates/environments/40-network.yaml
 {% if enable_ssl is sameas true %}
   - /home/stack/templates/environments/60-tls.yaml

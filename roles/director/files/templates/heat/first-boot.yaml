@@ -9,8 +9,13 @@ resources:
     type: OS::Heat::MultipartMime
     properties:
       parts:
+{% if enable_ceph is sameas true %}
       - config: {get_resource: wipe_ceph_drives}
+{% endif %}
       - config: {get_resource: cloudinit}
+{% if enable_pcipassthrough is sameas true %}
+      - config: {get_resource: compute_kernel_args}
+{% endif %}
   cloudinit:
     type: OS::Heat::CloudConfig
     properties:
@@ -29,6 +34,7 @@ resources:
             root:{{ guests_passwd }}
           expire: false
 
+{% if enable_ceph is sameas true %}
   wipe_ceph_drives:
     type: OS::Heat::SoftwareConfig
     properties:
@@ -63,6 +69,25 @@ resources:
            [[ $dm = *"ceph"* ]] && dmsetup remove -f  $dm
           done
         fi
+{% endif %}
+
+{% if enable_pcipassthrough is sameas true %}
+  compute_kernel_args:
+    type: OS::Heat::SoftwareConfig
+    properties:
+      config: |
+        #!/bin/bash
+        set -x
+        echo "First boot started" > /tmp/first-boot.log
+        # Set grub parameters
+        if hostname | grep compute >/dev/null
+        then
+                sed -i.orig 's/quiet"$/quiet intel_iommu=on iommu=pt"/' /etc/default/grub
+                grub2-mkconfig -o /etc/grub2.cfg
+                systemctl stop os-collect-config.service
+                /sbin/reboot
+        fi
+{% endif %}
 
 outputs:
   OS::stack_id:

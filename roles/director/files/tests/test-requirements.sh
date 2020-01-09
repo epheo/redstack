@@ -20,48 +20,31 @@ openstack role add --user redhat --project admin admin
 
 source ~stack/rcfiles/$project'rc'
 
-{% if provider_net is defined  %}
-echo "Creating tests networks"
-
-if ! openstack network list |grep  test{{ provider_net.vlanid }}_datacentre;
-then openstack network create test{{ provider_net.vlanid }}_datacentre --share  \
-       --provider-network-type vlan \
-       --provider-physical-network datacentre \
-       --provider-segment {{ provider_net.vlanid }}
-
-     openstack subnet create test{{ provider_net.vlanid }}_datacentre \
-       --network test{{ provider_net.vlanid }}_datacentre \
-       --subnet-range 10.8.22.0/24 \
-       --allocation-pool start=10.8.22.128,end=10.8.22.191
-fi   
-
 {% if enable_nfvi is sameas true %}
-if ! openstack network list |grep  test{{ provider_net.vlanid }}_sriov;
-then openstack network create test{{ provider_net.vlanid }}_sriov --share  \
-       --provider-network-type vlan \
-       --provider-physical-network sriov \
-       --provider-segment {{ provider_net.vlanid }}
-       
-     openstack subnet create test{{ provider_net.vlanid }}_sriov --no-dhcp  \
-       --network test{{ provider_net.vlanid }}_sriov  \
-       --subnet-range 10.8.22.0/24 \
-       --gateway 10.8.22.1 
-       #--allocation-pool start=10.8.22.5,end=10.8.22.127
-fi
-
-if ! openstack network list |grep  test{{ provider_net.vlanid }}_dpdk;
-then openstack network create test{{ provider_net.vlanid }}_dpdk --share  \
-       --provider-network-type vlan \
-       --provider-physical-network dpdk \
-       --provider-segment {{ provider_net.vlanid }}
-     
-     openstack subnet create test{{ provider_net.vlanid }}_dpdk \
-       --network test{{ provider_net.vlanid }}_dpdk  \
-       --subnet-range 10.8.{{ provider_net.vlanid }}.0/24 \
-       --allocation-pool start=10.8.{{ provider_net.vlanid }}.193,end=10.8.{{ provider_net.vlanid }}.254
-fi
-{% endif %}
-
+#if ! openstack network list |grep  test{{ provider_net.vlanid }}_sriov;
+#then openstack network create test{{ provider_net.vlanid }}_sriov --share  \
+#       --provider-network-type vlan \
+#       --provider-physical-network sriov \
+#       --provider-segment {{ provider_net.vlanid }}
+#       
+#     openstack subnet create test{{ provider_net.vlanid }}_sriov --no-dhcp  \
+#       --network test{{ provider_net.vlanid }}_sriov  \
+#       --subnet-range 10.8.22.0/24 \
+#       --gateway 10.8.22.1 
+#       #--allocation-pool start=10.8.22.5,end=10.8.22.127
+#fi
+#
+#if ! openstack network list |grep  test{{ provider_net.vlanid }}_dpdk;
+#then openstack network create test{{ provider_net.vlanid }}_dpdk --share  \
+#       --provider-network-type vlan \
+#       --provider-physical-network dpdk \
+#       --provider-segment {{ provider_net.vlanid }}
+#     
+#     openstack subnet create test{{ provider_net.vlanid }}_dpdk \
+#       --network test{{ provider_net.vlanid }}_dpdk  \
+#       --subnet-range 10.8.{{ provider_net.vlanid }}.0/24 \
+#       --allocation-pool start=10.8.{{ provider_net.vlanid }}.193,end=10.8.{{ provider_net.vlanid }}.254
+#fi
 {% endif %}
 
 echo "Creating user data files..."
@@ -91,30 +74,34 @@ export https_proxy=http://{{ proxy_url }}
 export no_proxy={{ undercloud_ip }}
 {% endif %}
 
-echo "Uploading images..."
-mkdir -p /home/stack/user-images
-
-if [ ! -f ~stack/user-images/fedora30.qcow2 ]; then 
-curl -o ~stack/user-images/fedora30.qcow2 http://ftp.cica.es/fedora/linux/releases/30/Cloud/x86_64/images/Fedora-Cloud-Base-30-1.2.x86_64.qcow2
-fi
-
 if ! openstack image list | grep fedora30\  ; then
-openstack image create fedora30 --file ~stack/user-images/fedora30.qcow2 --disk-format qcow2 --container-format bare --public;
+openstack image create fedora30 --file ~stack/user-images/fedora-30.qcow2 --disk-format qcow2 --container-format bare --public
 fi
 
 if ! openstack image list | grep rhel7\  ; then
-openstack image create rhel7 --file ~stack/user-images/rhel-server-7.7-x86_64-kvm.qcow2 --disk-format qcow2 --container-format bare --public
+openstack image create rhel7  --file ~stack/user-images/rhel-7.7.qcow2 --disk-format qcow2 --container-format bare --public
 fi
 
-
+if ! openstack image list | grep rhel8\  ; then
+openstack image create rhel8  --file ~stack/user-images/rhel-8.0.qcow2 --disk-format qcow2 --container-format bare --public
+fi
 
 echo "Creating flavor..."
-openstack flavor create --ram 512 --disk 1 --vcpus 1   --property epa=false   m1.tiny
-openstack flavor create --ram 2048 --disk 20 --vcpus 1  --property epa=false   m1.small
-openstack flavor create --ram 4096 --disk 40 --vcpus 2  --property epa=false   m1.medium
-openstack flavor create --ram 8192 --disk 80 --vcpus 4  --property epa=false   m1.large
-openstack flavor create --ram 8192 --disk 80 --vcpus 5  --property epa=false   m1.ixialm
-openstack flavor create --ram 16384 --disk 160 --vcpus 8  --property epa=false   m1.xlarge
+if ! openstack flavor list | grep m1.tiny\  ; then
+  openstack flavor create --ram 512 --disk 1 --vcpus 1   {% if enable_nfvi is sameas true %}--property epa=false{% endif %}   m1.tiny
+fi
+if ! openstack flavor list | grep m1.small\  ; then
+openstack flavor create --ram 2048 --disk 20 --vcpus 1  {% if enable_nfvi is sameas true %}--property epa=false{% endif %}   m1.small
+fi
+if ! openstack flavor list | grep m1.medium\  ; then
+openstack flavor create --ram 4096 --disk 40 --vcpus 2  {% if enable_nfvi is sameas true %}--property epa=false{% endif %}   m1.medium
+fi
+if ! openstack flavor list | grep m1.large\  ; then
+openstack flavor create --ram 8192 --disk 80 --vcpus 4  {% if enable_nfvi is sameas true %}--property epa=false{% endif %}   m1.large
+fi
+if ! openstack flavor list | grep m1.xlarge\  ; then
+openstack flavor create --ram 16384 --disk 160 --vcpus 8  {% if enable_nfvi is sameas true %}--property epa=false{% endif %}   m1.xlarge
+fi
 
 {% if enable_nfvi is sameas true %}
 openstack flavor create --ram 512 --disk 1 --vcpus 1  --property epa=true  epa.tiny
@@ -149,11 +136,11 @@ nova flavor-key epa.xlarge set hw:numa_mempolicy=strict
 {% endif %}
 
 
-openstack aggregate create --zone AZ1 --property epa=false agg1
-openstack aggregate add host agg1 compute-0.{{ customer_name }}.lab
-
-openstack aggregate create --zone AZ2 --property epa=false agg2
-openstack aggregate add host agg2 compute-1.{{ customer_name }}.lab
+#openstack aggregate create --zone AZ1 --property epa=false agg1
+#openstack aggregate add host agg1 compute-0.{{ customer_name }}.lab
+#
+#openstack aggregate create --zone AZ2 --property epa=false agg2
+#openstack aggregate add host agg2 compute-1.{{ customer_name }}.lab
 
 {% if enable_nfvi is sameas true %}
 echo "Creating aggregates and affinity groups..."
@@ -168,3 +155,48 @@ openstack aggregate add host dpdkaggmellanox computeovsdpdksriovmellanox-0.{{ cu
 
 #ID_antiaff=$(openstack server group create --policy anti-affinity gr-antiaff -c id -f value)
 #ID_aff=$(openstack server group create --policy affinity gr-aff -c id -f value)
+
+{% if external_net.fip_pool_start is defined %}
+
+if ! openstack network list |grep private\ ;
+then 
+  openstack network create private --share
+  openstack subnet create private --subnet-range 172.16.42.0/24   --network private
+fi
+if ! openstack router list |grep external\ ;
+then 
+  openstack router create external
+  openstack router add subnet external private
+fi
+
+if ! openstack network list |grep public\ ;
+then 
+  openstack network create public --external --provider-network-type vlan --provider-physical-network {{ external_net.physnet }} --provider-segment {{ external_net.vlanid }} --mtu 1500 --share
+  openstack subnet  create public --network public --allocation-pool start={{ external_net.fip_pool_start }},end={{ external_net.fip_pool_end }} --gateway {{ external_net.gateway }} --subnet-range {{ external_net.subnet }}
+  openstack router set external --external-gateway public
+fi
+{% endif %}
+
+{% if provider_networks is defined %}
+
+{% for net in provider_networks %}
+if ! openstack network list |grep {{ net.name }}\ ;
+then 
+  openstack network create {{ net.name }} \
+   --external --provider-network-type vlan \
+   --provider-physical-network {{ net.physnet }} \
+   --provider-segment {{ net.vlanid }} \
+   --mtu 1500 --share
+  openstack subnet  create {{ net.name }} \
+    --network {{ net.name }} \
+{% if net.pool_start is defined %}
+    --allocation-pool start={{ net.pool_start }},end={{ net.pool_end }} \
+{% endif %}
+{% if net.gateway is defined %}
+    --gateway {{ net.gateway }} \
+{% endif %}
+    --subnet-range {{ net.subnet }}
+fi
+{% endfor %}
+
+{% endif %}

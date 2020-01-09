@@ -1,11 +1,11 @@
 resource_registry:
-  OS::TripleO::Controller::Net::SoftwareConfig:  ../nic-config/controller.yaml
-  OS::TripleO::Compute::Net::SoftwareConfig:  ../nic-config/compute.yaml
+  OS::TripleO::Controller::Net::SoftwareConfig:  ../{{ nic_config }}/controller.yaml
+  OS::TripleO::Compute::Net::SoftwareConfig:  ../{{ nic_config }}/compute.yaml
 {% if enable_nfvi is sameas true %}
-  OS::TripleO::ComputeOvsDpdkSriov::Net::SoftwareConfig:  ../nic-config/computeovsdpdksriov.yaml
+  OS::TripleO::ComputeOvsDpdkSriov::Net::SoftwareConfig:  ../{{ nic_config }}/computeovsdpdksriov.yaml
 {% endif %}
 {% if enable_ceph is sameas true %}
-  OS::TripleO::CephStorage::Net::SoftwareConfig: ../nic-config/ceph-storage.yaml
+  OS::TripleO::CephStorage::Net::SoftwareConfig: ../{{ nic_config }}/ceph-storage.yaml
 {% endif %}
 
 {% if enable_nfvi is sameas true %}
@@ -55,15 +55,9 @@ parameter_defaults:
   # Neutron VLAN ranges per network, for example 'datacentre:1:499,tenant:500:1000':
   NeutronExternalNetworkBridge: "''"
 
-{% if enable_nfvi is sameas true %}
-  NeutronNetworkVLANRanges: 'datacentre:1:4094,dpdk:1:4094,sriov:1:4094'
-  NeutronBridgeMappings: 'datacentre:br-ex,dpdk:br-link0'
-  NeutronFlatNetworks: datacentre,dpdk
-{% else %}
-  NeutronNetworkVLANRanges: 'datacentre:1:4094'
-  NeutronBridgeMappings: 'datacentre:br-ex'
-  NeutronFlatNetworks: datacentre
-{% endif %}
+  NeutronNetworkVLANRanges: {{ neutron.vlan_ranges }}
+  NeutronBridgeMappings: {{ neutron.bridge_mappings }}
+  NeutronFlatNetworks: {{ neutron.flat_networks }}
 
   BondInterfaceOvsOptions: "bond_mode=active-backup"
 

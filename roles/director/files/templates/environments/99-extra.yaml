@@ -28,19 +28,32 @@ parameter_defaults:
 
   NovaSchedulerAvailableFilters: ["nova.scheduler.filters.all_filters","nova.scheduler.filters.pci_passthrough_filter.PciPassthroughFilter"]
   NovaSchedulerDefaultFilters:
-      - RetryFilter
-      - AggregateInstanceExtraSpecsFilter
-      - AvailabilityZoneFilter
-      - RamFilter
-      - DiskFilter
-      - ComputeFilter
-      - ComputeCapabilitiesFilter
-      - ImagePropertiesFilter
-      - ServerGroupAntiAffinityFilter
-      - ServerGroupAffinityFilter
-      - PciPassthroughFilter
-      - NUMATopologyFilter
+    - RetryFilter
+    - AggregateInstanceExtraSpecsFilter
+    - AvailabilityZoneFilter
+    - RamFilter
+    - DiskFilter
+    - ComputeFilter
+    - ComputeCapabilitiesFilter
+    - ImagePropertiesFilter
+    - ServerGroupAntiAffinityFilter
+    - ServerGroupAffinityFilter
+    - PciPassthroughFilter
+    - NUMATopologyFilter
 
+{% if enable_pcipassthrough is sameas true %}
+  NovaPCIPassthrough:
+    - vendor_id: "10de"
+      product_id: "1eb8"
+  
+  ControllerExtraConfig:
+    nova::api::pci_alias:
+      - name: nvidia_t4
+        vendor_id: '10de'
+        product_id: '1eb8'
+{% endif %}
+
+{% if enable_nfvi is sameas true %}
   ComputeParameters:
     NovaReservedHostMemory: 4096
 
@@ -74,8 +87,7 @@ parameter_defaults:
         physical_network: "sriov"
       - devname: "p3p2"
         physical_network: "sriov"
-  ControllerExtraConfig:
-    ceilometer::agent::polling::polling_interval: 60
+{% endif %}
   
   # Decrease Gnocchi polling time
   ManagePolling: true

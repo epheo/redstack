@@ -14,6 +14,7 @@ enable_telemetry: False
 enable_fencing: False
 enable_ovn: True
 enable_lowmemory: True
+enable_pcipassthrough: False
 
 undercloud_ip: '10.42.1.7'
 dns_ip: '10.42.1.4'

@@ -11,11 +11,11 @@ parameter_defaults:
   CloudNameStorageManagement: rhosp.storagemgmt.{{ customer_name }}.lab
 
   ControllerHostnameFormat: 'controller-%index%'
-  ControllerCount: 3
+  ControllerCount: 1
   OvercloudControllerFlavor: control
 
   ComputeHostnameFormat: 'compute-%index%'
-  ComputeCount: 2
+  ComputeCount: 3
   OvercloudComputeFlavor: compute
 
 {% if enable_nfvi is sameas true %}
@@ -28,4 +28,8 @@ parameter_defaults:
   CephStorageHostnameFormat: 'ceph-%index%'
   CephStorageCount: 3
   OvercloudCephStorageFlavor: ceph-storage
+{% endif %}
+
+{% if enable_ceph is sameas false and enable_ceph_external is sameas false %}
+  GlanceBackend: file
 {% endif %}

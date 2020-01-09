@@ -31,12 +31,12 @@ openstack subnet create subnet21a \
   --subnet-range 172.16.221.0/24
 
 idrouter=$(openstack router create external-$project -c id -f value)
-openstack router set $idrouter --external-gateway external_datacentre
+openstack router set $idrouter --external-gateway public
 openstack router add subnet $idrouter subnet20
 openstack router add subnet $idrouter subnet21
 
 idrouter=$(openstack router create external_a-$project -c id -f value)
-openstack router set $idrouter --external-gateway external_datacentre
+openstack router set $idrouter --external-gateway public
 openstack router add subnet $idrouter subnet21a
 
 
