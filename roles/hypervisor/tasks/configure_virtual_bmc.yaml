@@ -3,7 +3,7 @@
 - name: Install packages
   package:
     state: latest
-    name: python2-virtualbmc
+    name: python3-virtualbmc
 
 - name: Create etc directory
   file:

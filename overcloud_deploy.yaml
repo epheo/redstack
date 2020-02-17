@@ -5,7 +5,7 @@
     - common
     - director
   vars_files:
-    - roles/hypervisor/vars/overcloud.yaml
+    - roles/hypervisor/vars/openstack.yaml
   vars: 
     enable_fencing: yes
   tasks:

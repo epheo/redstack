@@ -15,13 +15,13 @@ parameter_defaults:
   OvercloudControllerFlavor: control
 
   ComputeHostnameFormat: 'compute-%index%'
-  ComputeCount: 3
+  ComputeCount: 0
   OvercloudComputeFlavor: compute
 
 {% if enable_nfvi is sameas true %}
-  ComputeOvsDpdkSriovCount: 2
-  ComputeOvsDpdkSriovHostnameFormat: 'computeovsdpdksriov-%index%'
-  OvercloudComputeOvsDpdkSriovFlavor: computeovsdpdksriov
+  ComputeNfviCount: 3
+  ComputeNfviHostnameFormat: 'computenfvi-%index%'
+  OvercloudComputeNfviFlavor: computenfvi
 {% endif %}
 
 {% if enable_ceph is sameas true %}

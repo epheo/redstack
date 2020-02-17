@@ -5,7 +5,7 @@
     - common
     - director
   vars_files:
-    - roles/hypervisor/vars/overcloud.yaml
+    - roles/hypervisor/vars/openstack.yaml
   tasks:
     - block:
         - include_tasks: roles/director/tasks/instackenv.yaml

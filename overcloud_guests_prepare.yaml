@@ -5,7 +5,7 @@
     - common
     - hypervisor
   vars_files:
-    - roles/hypervisor/vars/overcloud.yaml
+    - roles/hypervisor/vars/openstack.yaml
   tasks:
     - block:
       - include_tasks: roles/hypervisor/tasks/deploy_libvirt_nets.yaml

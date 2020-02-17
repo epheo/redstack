@@ -5,8 +5,8 @@ libvirt_guests:
   - name: repository
     root: rhel-7.7.qcow2 
     cloudinit: user-data
-    ram: 2048000
-    vcpu: 2
+    ram: 16000000
+    vcpu: 4
     volumes:
       - name: repo-data
         target: vdb

@@ -20,31 +20,30 @@ openstack role add --user redhat --project admin admin
 
 source ~stack/rcfiles/$project'rc'
 
-{% if enable_nfvi is sameas true %}
-#if ! openstack network list |grep  test{{ provider_net.vlanid }}_sriov;
-#then openstack network create test{{ provider_net.vlanid }}_sriov --share  \
-#       --provider-network-type vlan \
-#       --provider-physical-network sriov \
-#       --provider-segment {{ provider_net.vlanid }}
-#       
-#     openstack subnet create test{{ provider_net.vlanid }}_sriov --no-dhcp  \
-#       --network test{{ provider_net.vlanid }}_sriov  \
-#       --subnet-range 10.8.22.0/24 \
-#       --gateway 10.8.22.1 
-#       #--allocation-pool start=10.8.22.5,end=10.8.22.127
-#fi
-#
-#if ! openstack network list |grep  test{{ provider_net.vlanid }}_dpdk;
-#then openstack network create test{{ provider_net.vlanid }}_dpdk --share  \
-#       --provider-network-type vlan \
-#       --provider-physical-network dpdk \
-#       --provider-segment {{ provider_net.vlanid }}
-#     
-#     openstack subnet create test{{ provider_net.vlanid }}_dpdk \
-#       --network test{{ provider_net.vlanid }}_dpdk  \
-#       --subnet-range 10.8.{{ provider_net.vlanid }}.0/24 \
-#       --allocation-pool start=10.8.{{ provider_net.vlanid }}.193,end=10.8.{{ provider_net.vlanid }}.254
-#fi
+{% if enable_sriov is sameas true %}
+if ! openstack network list |grep  sriov_test_net;
+then openstack network create sriov_test_net --share  \
+       --provider-network-type vlan \
+       --provider-physical-network {{ sriov_test_net.physnet }} \
+       --provider-segment {{ sriov_test_net.vlanid }}
+       
+     openstack subnet create sriov_test_net --no-dhcp  \
+       --network sriov_test_net  \
+       --subnet-range {{ sriov_test_net.subnet }}
+fi
+{% endif %}
+{% if enable_dpdk is sameas true %}
+if ! openstack network list |grep  dpdk_test_net;
+then openstack network create dpdk_test_net --share  \
+       --provider-network-type vlan \
+       --provider-physical-network {{ dpdk_test_net.physnet }} \
+       --provider-segment {{ dpdk_test_net.vlanid }}
+       
+     openstack subnet create dpdk_test_net  \
+       --network dpdk_test_net  \
+       --subnet-range {{ dpdk_test_net.subnet }} \
+       --allocation-pool start={{ dpdk_test_net.pool_start }},end={{ dpdk_test_net.pool_end }}
+fi
 {% endif %}
 
 echo "Creating user data files..."
@@ -66,7 +65,6 @@ runcmd:
  -  service sshd restart
  - 'systemctl restart network'
 EOF
-
 
 {% if proxy_url is defined  %}
 export http_proxy=http://{{ proxy_url }}
@@ -104,53 +102,54 @@ openstack flavor create --ram 16384 --disk 160 --vcpus 8  {% if enable_nfvi is s
 fi
 
 {% if enable_nfvi is sameas true %}
+if ! openstack flavor list | grep epa.tiny\  ; then
 openstack flavor create --ram 512 --disk 1 --vcpus 1  --property epa=true  epa.tiny
 nova flavor-key epa.tiny set hw:cpu_policy=dedicated
 nova flavor-key epa.tiny set hw:cpu_thread_policy=isolate
 nova flavor-key epa.tiny set hw:mem_page_size=1048576
 nova flavor-key epa.tiny set hw:numa_mempolicy=strict
-
+fi
+if ! openstack flavor list | grep epa.small\  ; then
 openstack flavor create --ram 2048 --disk 20 --vcpus 2  --property epa=true   epa.small
 nova flavor-key epa.small set hw:cpu_policy=dedicated
 nova flavor-key epa.small set hw:cpu_thread_policy=isolate
 nova flavor-key epa.small set hw:mem_page_size=1048576
 nova flavor-key epa.small set hw:numa_mempolicy=strict
-
+fi
+if ! openstack flavor list | grep epa.medium\  ; then
 openstack flavor create --ram 4096 --disk 40 --vcpus 2  --property epa=true   epa.medium
 nova flavor-key epa.medium set hw:cpu_policy=dedicated
 nova flavor-key epa.medium set hw:cpu_thread_policy=isolate
 nova flavor-key epa.medium set hw:mem_page_size=1048576
 nova flavor-key epa.medium set hw:numa_mempolicy=strict
-
+fi
+if ! openstack flavor list | grep epa.large\  ; then
 openstack flavor create --ram 8192 --disk 80 --vcpus 4  --property epa=true   epa.large
 nova flavor-key epa.large set hw:cpu_policy=dedicated
 nova flavor-key epa.large set hw:cpu_thread_policy=isolate
 nova flavor-key epa.large set hw:mem_page_size=1048576
 nova flavor-key epa.large set hw:numa_mempolicy=strict
-
+fi
+if ! openstack flavor list | grep epa.xlarge\  ; then
 openstack flavor create --ram 16384 --disk 160 --vcpus 8  --property epa=true   epa.xlarge
 nova flavor-key epa.xlarge set hw:cpu_policy=dedicated
 nova flavor-key epa.xlarge set hw:cpu_thread_policy=isolate
 nova flavor-key epa.xlarge set hw:mem_page_size=1048576
 nova flavor-key epa.xlarge set hw:numa_mempolicy=strict
+fi
 {% endif %}
 
 
-#openstack aggregate create --zone AZ1 --property epa=false agg1
-#openstack aggregate add host agg1 compute-0.{{ customer_name }}.lab
-#
-#openstack aggregate create --zone AZ2 --property epa=false agg2
-#openstack aggregate add host agg2 compute-1.{{ customer_name }}.lab
-
 {% if enable_nfvi is sameas true %}
-echo "Creating aggregates and affinity groups..."
+openstack aggregate create --zone LOW --property epa=false low
+for i in $(openstack hypervisor list --matching compute- -f value -c 'Hypervisor Hostname'); do
+ openstack aggregate add host low $i
+done
 
-openstack aggregate create --zone DPDK-INTEL --property epa=true dpdkagg1
-openstack aggregate add host dpdkagg1 computeovsdpdksriov-0.{{ customer_name }}.lab
-openstack aggregate add host dpdkagg1 computeovsdpdksriov-1.{{ customer_name }}.lab
-
-openstack aggregate create --zone DPDK-MELLANOX --property epa=true dpdkaggmellanox
-openstack aggregate add host dpdkaggmellanox computeovsdpdksriovmellanox-0.{{ customer_name }}.lab
+openstack aggregate create --zone NFVI --property epa=true nfvi
+for i in $(openstack hypervisor list --matching computenfvi- -f value -c 'Hypervisor Hostname'); do
+  openstack aggregate add host nfvi $i
+done
 {% endif %}
 
 #ID_antiaff=$(openstack server group create --policy anti-affinity gr-antiaff -c id -f value)

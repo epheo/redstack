@@ -3,7 +3,7 @@
 - name: Create partition
   become: yes
   parted:
-    device: /dev/vdb
+    device: /dev/sdb
     number: 1
     label: gpt
     state: present
@@ -12,7 +12,7 @@
   become: yes
   filesystem:
     fstype: ext4
-    dev: /dev/vdb1
+    dev: /dev/sdb1
 
 - name: Create mount directory
   become: yes
@@ -24,6 +24,6 @@
   become: yes
   mount:
     path: /mnt/data/
-    src: /dev/vdb1
+    src: /dev/sdb1
     fstype: ext4
     state: mounted

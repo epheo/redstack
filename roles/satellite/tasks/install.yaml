@@ -1,0 +1,19 @@
+---
+
+- name: Install the Satellite Server package
+  become: yes
+  package:
+    state: latest
+    name:  satellite
+
+
+- name: Install Satellite Server and perform the initial configuration
+  become: yes
+  shell: |
+    satellite-installer --scenario satellite \
+      --foreman-initial-admin-username "{{ admin_username }}" \
+      --foreman-initial-admin-password "{{ admin_password }}" \
+      --foreman-proxy-puppetca true \
+      --foreman-proxy-tftp true \
+      --enable-foreman-plugin-discovery
+  

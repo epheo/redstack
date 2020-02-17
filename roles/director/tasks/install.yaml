@@ -4,7 +4,14 @@
   become: yes
   package:
     state: latest
-    name: ['python-tripleoclient', 'ceph-ansible']
+    name: python-tripleoclient
+
+- name: Install needed packages
+  become: yes
+  package:
+    state: latest
+    name: ceph-ansible
+  when: enable_ceph is sameas true
 
 - name: Configure Undercloud
   template:
@@ -42,13 +49,13 @@
   shell: "source /home/stack/stackrc &&  openstack subnet set --dns-nameserver {{ dns_ip }} ctlplane-subnet"
   ignore_errors: yes
 
-- name: Create Flavor for OvsDpdkSriov
+- name: Create Flavor for Nfvi
   become: yes
   shell: |
     source /home/stack/stackrc
-    openstack flavor create --id auto --ram 4096 --disk 40 --vcpus 1 computeovsdpdksriov
-    openstack flavor set --property "cpu_arch"="x86_64" --property "capabilities:boot_option"="local" --property "capabilities:profile"="computeovsdpdksriov" computeovsdpdksriov
-    openstack flavor set --property resources:VCPU=0 --property resources:MEMORY_MB=0 --property resources:DISK_GB=0 --property resources:CUSTOM_BAREMETAL=1 computeovsdpdksriov
+    openstack flavor create --id auto --ram 4096 --disk 40 --vcpus 1 computenfvi
+    openstack flavor set --property "cpu_arch"="x86_64" --property "capabilities:boot_option"="local" --property "capabilities:profile"="computenfvi" computenfvi
+    openstack flavor set --property resources:VCPU=0 --property resources:MEMORY_MB=0 --property resources:DISK_GB=0 --property resources:CUSTOM_BAREMETAL=1 computenfvi
   when: enable_nfvi is sameas true
 
 #- name: Copy OVS Vlan network config

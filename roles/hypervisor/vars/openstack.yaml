@@ -13,6 +13,21 @@ vbmc_ports:
 
 libvirt_guests:
 
+  - name: director
+    root: rhel-8.0.qcow2 
+    cloudinit: user-data
+    ram: 16384000
+    vcpu: 6
+    ports:
+      - name: eth0
+        network: internal
+        address: 10.42.1.7/24
+      - name: eth1
+        network: external
+        address: 10.42.42.7/24
+        gateway: 10.42.42.1
+        defroute: true
+
   - name: controller-0
     ram: 20480000
     vcpu: 4
