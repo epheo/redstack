@@ -40,6 +40,17 @@
   with_filetree: 'roles/director/files/tests/'
   when: item.state == 'file'
 
+- name: Ensure Nic Config directory structure exists
+  file:
+    path: '/home/stack/templates/nic-config/'
+    state: directory
+- name: Ensure Nic Config files are populated from templates
+  template:
+    src: '{{ item.src }}'
+    dest: '/home/stack/templates/nic-config/{{ item.path }}'
+  with_filetree: 'roles/director/files/{{ nic_config }}/'
+  when: item.state == 'file'
+
   
 - name: Create directory scripts
   file:

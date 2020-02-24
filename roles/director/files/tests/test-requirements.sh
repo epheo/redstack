@@ -170,7 +170,7 @@ fi
 
 if ! openstack network list |grep public\ ;
 then 
-  openstack network create public --external --provider-network-type vlan --provider-physical-network {{ external_net.physnet }} --provider-segment {{ external_net.vlanid }} --mtu 1500 --share
+  openstack network create public --external --provider-network-type vlan --provider-physical-network {{ external_net.physnet | default('datacentre')  }} --provider-segment {{ external_net.vlanid }} --mtu 1500 --share
   openstack subnet  create public --network public --allocation-pool start={{ external_net.fip_pool_start }},end={{ external_net.fip_pool_end }} --gateway {{ external_net.gateway }} --subnet-range {{ external_net.subnet }}
   openstack router set external --external-gateway public
 fi

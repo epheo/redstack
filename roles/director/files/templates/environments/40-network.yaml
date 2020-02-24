@@ -1,11 +1,11 @@
 resource_registry:
-  OS::TripleO::Controller::Net::SoftwareConfig:  ../{{ nic_config }}/controller.yaml
-  OS::TripleO::Compute::Net::SoftwareConfig:  ../{{ nic_config }}/compute.yaml
+  OS::TripleO::Controller::Net::SoftwareConfig:  ../nic-config/controller.yaml
+  OS::TripleO::Compute::Net::SoftwareConfig:  ../nic-config/compute.yaml
 {% if enable_nfvi is sameas true %}
-  OS::TripleO::ComputeNfvi::Net::SoftwareConfig:  ../{{ nic_config }}/computenfvi.yaml
+  OS::TripleO::ComputeNfvi::Net::SoftwareConfig:  ../nic-config/computenfvi.yaml
 {% endif %}
 {% if enable_ceph is sameas true %}
-  OS::TripleO::CephStorage::Net::SoftwareConfig: ../{{ nic_config }}/ceph-storage.yaml
+  OS::TripleO::CephStorage::Net::SoftwareConfig: ../nic-config/ceph-storage.yaml
 {% endif %}
 
 {% if enable_sriov is sameas true %}

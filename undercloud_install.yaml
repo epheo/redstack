@@ -6,19 +6,16 @@
     - director
   vars:
     enable_repos:
-      - rhel-7-server-rpms
-      - rhel-7-server-rh-common-rpms
-      - rhel-7-server-extras-rpms
-      - rhel-7-server-optional-rpms
-      - rhel-7-server-openstack-13-rpms
-      - rhel-7-server-rhceph-3-mon-rpms
-      - rhel-7-server-rhceph-3-osd-rpms
-      - rhel-7-server-rhceph-3-tools-rpms
-      - rhel-ha-for-rhel-7-server-rpms
+      - rhel-8-for-x86_64-baseos-rpms
+      - rhel-8-for-x86_64-appstream-rpms
+      - rhel-8-for-x86_64-highavailability-rpms
+      - ansible-2.8-for-rhel-8-x86_64-rpms
+      - openstack-16-for-rhel-8-x86_64-rpms
+      - fast-datapath-for-rhel-8-x86_64-rpms
   tasks:
     - block:
         - include_tasks: roles/common/tasks/predeploy.yaml
-        - include_tasks: roles/common/tasks/manage_repo.yaml
+        - include_tasks: roles/common/tasks/subscribe_rhsm.yaml
         - include_tasks: roles/director/tasks/generate_certs.yaml
         - include_tasks: roles/director/tasks/install.yaml
         - include_tasks: roles/director/tasks/conf_docker_proxy.yaml

@@ -6,4 +6,4 @@ downloads/
 dev.yaml
 ssh.cfg
 ansible.cfg
-roles/director/files/templates/nic-config.*
+roles/director/files/nic-config.*

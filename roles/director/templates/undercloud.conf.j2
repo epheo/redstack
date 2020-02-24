@@ -6,6 +6,11 @@ local_ip = {{ undercloud_ip }}/24
 local_interface = {{ undercloud_br_nic }}
 local_mtu = 1500
 
+undercloud_public_host = {{ undercloud_public }}
+undercloud_admin_host = {{ undercloud_admin }}
+
+container_images_file = /home/stack/containers-prepare-parameter.yaml
+
 enable_routed_networks = true
 
 undercloud_nameservers = {{ dns_ip }}
@@ -21,6 +26,11 @@ enable_tempest = true
 ipxe_enabled = true
 inspection_enable_uefi = true
 {% endif %}
+
+{% if undercloud_custom_env is defined %}
+custom_env_files = {{ undercloud_custom_env }}
+{% endif %}
+
 
 [ctlplane-subnet]
 cidr = {{ ctlplane_net.subnet }}

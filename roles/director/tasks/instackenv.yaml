@@ -1,7 +1,7 @@
 ---
 
 - name: Get mac addresses
-  delegate_to: hetznet
+  delegate_to: node13
   shell: |
     virsh domiflist {{ item.name }} | awk '$3 == "internal" {print "{{ item.name }}="$NF}'
   register: node_mac_map
@@ -10,7 +10,7 @@
   when: instack_vars is not defined
 
 - name: Get existing BMC ports
-  delegate_to: hetznet
+  delegate_to: node13
   shell: |
      vbmc list | awk '$4 ~ /(running|down)/ {print $2"="$8}'
   register: bmc_list
