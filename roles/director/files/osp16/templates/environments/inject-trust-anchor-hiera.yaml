@@ -1,0 +1,86 @@
+# *******************************************************************
+# This file was created automatically by the sample environment
+# generator. Developers should use `tox -e genconfig` to update it.
+# Users are recommended to make changes to a copy of the file instead
+# of the original, if any customizations are needed.
+# *******************************************************************
+# title: Inject SSL Trust Anchor on Overcloud Nodes
+# description: |
+#   When using an SSL certificate signed by a CA that is not in the default
+#   list of CAs, this environment allows adding a custom CA certificate to
+#   the overcloud nodes.
+parameter_defaults:
+  # Map containing the CA certs and information needed for deploying them.
+  # Type: json
+  CAMap:
+    overcloud-cacert:
+      content: |
+        -----BEGIN CERTIFICATE-----
+        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
+        n6P6XmRMp3llrjdF5Jlu
+        -----END CERTIFICATE-----
+
+
+
+    undercloud-cacert:
+      content: |
+        Bag Attributes
+            localKeyID: 8B 48 CE 35 BF B4 F0 14 30 CE 81 FB 82 52 64 B7 A2 D6 67 78 
+            friendlyName: Local Signing Authority
+        subject=CN = Local Signing Authority, CN = 9431c176-b56a4edc-bd8bf34b-c8060e29
+
+        issuer=CN = Local Signing Authority, CN = 9431c176-b56a4edc-bd8bf34b-c8060e29
+
+        -----BEGIN CERTIFICATE-----
+        MIIDjjCCAnagAwIBAgIRAJQxwXa1ak7cvYvzS8gGDikwDQYJKoZIhvcNAQELBQAw
+        UDEgMB4GA1UEAwwXTG9jYWwgU2lnbmluZyBBdXRob3JpdHkxLDAqBgNVBAMMIzk0
+        MzFjMTc2LWI1NmE0ZWRjLWJkOGJmMzRiLWM4MDYwZTI5MB4XDTIwMDIyMDA5MTMy
+        OVoXDTIxMDIyMDA5MTMyOVowUDEgMB4GA1UEAwwXTG9jYWwgU2lnbmluZyBBdXRo
+        b3JpdHkxLDAqBgNVBAMMIzk0MzFjMTc2LWI1NmE0ZWRjLWJkOGJmMzRiLWM4MDYw
+        ZTI5MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsfIONxL0xoIG4x9H
+        nxrgC+DRNilg8Z+mt9ksREh/GvKz5wB0HmKV7yRYmicnl4ucFXECJ8g1pSr5zyx7
+        FW881t8X505DqSSCAclpt2MQKiOmbwk0bz6DcfBTc/sy3g0rwPM5Hg9ZFeA0tJ2i
+        dK4XtXbkSfhhMOX0O4KTyNukzQwYQpuejKZVkCF1BtX810RhtVDX6WcHfqBl03ph
+        loMgN9+QLqG3HIyb0uDNunvS0r2tRWL++l2/iGqB9/YfkINNCP4GvNvboMLukkoX
+        4qrgyguWswzVq//Ubk7aaH1F75FtDSKFKC6mqjMPWV7nCa261Ay9y48j5xqb3kZm
+        KwwuywIDAQABo2MwYTAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBT21BZ+iPxR
+        Vs8dUoKdS9Ks6dLCmzAfBgNVHSMEGDAWgBT21BZ+iPxRVs8dUoKdS9Ks6dLCmzAO
+        BgNVHQ8BAf8EBAMCAYYwDQYJKoZIhvcNAQELBQADggEBAI2OZgNxfmroP0Hij2xu
+        mOP6dvvYy1x1NHGc9q7Gm+xPat9iccMoATlXQMOG93MpRdDvtyzDqiAgup6jWece
+        8IjwgkyORy/f13ipAIsYcfvA87ZCgESPUUfqyShRNegh0pgibq0EGjDpRl+EyhxA
+        yknpdyqkn7vnUYmaRi3QbKVM9snslDaphdTLbBo+bAvjFvB5ZR1AtJjWFlJYH0Ab
+        U0vCv6Uq5nbany72ZcTUWmhg/g4Ruk/7Je15dxK5/8Im2AdFQTv459cZO4VvMGcZ
+        LvpiY3Ym0hxktsYzl8xKg8FGhlneJIkCetkVoB57Fz1pfxfCu/kSPc+V/MesFEPD
+        4gw=
+        -----END CERTIFICATE-----

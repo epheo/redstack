@@ -1,0 +1,37 @@
+# Generated with the following on 2020-02-19T17:45:47.137171
+#
+#   openstack tripleo container image prepare default --local-push-destination --output-env-file containers-prepare-parameter.yaml
+#
+
+parameter_defaults:
+  ContainerImagePrepare:
+  - push_destination: true
+    set:
+      ceph_alertmanager_image: ose-prometheus-alertmanager
+      ceph_alertmanager_namespace: registry.redhat.io/openshift4
+      ceph_alertmanager_tag: 4.1
+      ceph_grafana_image: ose-grafana
+      ceph_grafana_namespace: registry.redhat.io/openshift4
+      ceph_grafana_tag: 4.1
+      ceph_image: rhceph-4-rhel8
+      ceph_namespace: registry.redhat.io/rhceph
+      ceph_node_exporter_image: ose-prometheus-node-exporter
+      ceph_node_exporter_namespace: registry.redhat.io/openshift4
+      ceph_node_exporter_tag: v4.1
+      ceph_prometheus_image: ose-prometheus
+      ceph_prometheus_namespace: registry.redhat.io/openshift4
+      ceph_prometheus_tag: 4.1
+      ceph_tag: latest
+      name_prefix: openstack-
+      name_suffix: ''
+      namespace: registry.redhat.io/rhosp-rhel8
+      neutron_driver: null
+      rhel_containers: false
+      tag: '16.0'
+    tag_from_label: '{version}-{release}'
+  ContainerImageRegistryCredentials:
+    registry.redhat.io:
+      12195570|JPHBC30qhCaV7sih2Icvx2VGd: eyJhbGciOiJSUzUxMiJ9.eyJzdWIiOiI0OTM4MmI0NTQ3NDA0Yzg5Yjg1NmI5N2I2ZTVkNWNlYyJ9.kPrbVjTZJ1_kG2719H9kw10GVNgWgwzZmFQmzN3t1zdg-eU7nMUGM1BdtDg7Qin5fw79w1pKpCLqoEnEvT_iyBqQMxnxlzdJuKcYbWN_98Jl_R09tbHxrbrrPrZ_nK9te8GjCg_oP3s_I4Q0706VOaXlHLE4_RtZY3uj2E9VF0BTrfbtfR24fFacaAaV4WyOGHHYZ5C-_OhiVNa0rbBY59cSNQNaZq85wNo2Sz7RB5djWkgFRMalLYtnuamhl687t8fQp0_e66fIerbpuaM8XnEbH3iF5-hQ1xzv66c4YUhNhAMLyo9c67XzQ3NmPJFfjA-5GaOBoxRZwfy3lj6QgbOSD_kKfhxTthuV5FERvMd3Q3J6k05UDN0NqtHX98WPt7LLB4-AOjbrx2U0tacXUbbT23dvwOzYCP2i2WWT-5w4QcjhDvMjIS5NPhQhybdVPmzcNk1YUUpliJmsHv--rK6jCqB_jyp953EpKgv7kkEi2YklqQlj2-ILszgQSeSW5YDTNkmLF0BwIFo6G_OXij0XCYAyvAXTjwaizMA4cQuEZKp4o0BMN2v8JWaPdXhOagKKuCvdXeQRWN9GxEfU7T9UOsLEpu9nM2CwmtSzeNBnYfZsKkMy_zd_869bURMpBXuk6KAXHFcKa9QpLXPy9hlCqiA9E12Tr7gr8mOvAYA
+
+
+

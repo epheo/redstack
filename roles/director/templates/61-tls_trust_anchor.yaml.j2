@@ -19,7 +19,6 @@ parameter_defaults:
 
 
 
-# from /etc/pki/ca-trust/source/anchors/cm-local-ca.pem
-#    undercloud-cacert:
-#      content: |
-#        {{ undercloud_cacert.stdout |indent(8, False) }}
+    undercloud-cacert:
+      content: |
+        {{ undercloud_cacert.stdout |indent(8, False) }}

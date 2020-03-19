@@ -1,0 +1,40 @@
+parameter_defaults:
+
+  NeutronNetworkType: 'vxlan,vlan'
+  NeutronNetworkVLANRanges:
+    - datacentre:1:4000
+    - physnet:200:220
+  NeutronTunnelTypes: 'vxlan'
+
+  NovaSchedulerDefaultFilters: 
+    - AvailabilityZoneFilter
+    - ComputeFilter
+    - ComputeCapabilitiesFilter
+    - ImagePropertiesFilter
+    - ServerGroupAntiAffinityFilter
+    - ServerGroupAffinityFilter
+    - PciPassthroughFilter
+    - AggregateInstanceExtraSpecsFilter
+
+  ComputeSriovParameters:
+    IsolCpusList: 2-15
+    KernelArgs: default_hugepagesz=1GB hugepagesz=1G hugepages=62 intel_iommu=on iommu=pt
+      isolcpus=2-15
+    TunedProfileName: "cpu-partitioning"
+    NeutronBridgeMappings:
+      - physnet:br-link0
+    NeutronPhysicalDevMappings:
+      - physnet:enp7s0f0
+      - physnet:enp7s0f1
+      - datacentre:br-ex
+    NeutronSriovNumVFs:
+      - enp7s0f0:8
+      - enp7s0f1:8
+    NovaPCIPassthrough:
+      - devname: "enp7s0f0"
+        physical_network: "physnet"
+      - devname: "enp7s0f1"
+        physical_network: "physnet"
+    NovaComputeCpuDedicatedSet: 2-15
+    NovaComputeCpuSharedSet: 0-1
+    NovaReservedHostMemory: 4096

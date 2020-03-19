@@ -1,0 +1,14 @@
+clouds:
+  openstack:
+    auth:
+      auth_url: https://10.42.34.17:13000
+      password: redhat
+      project_id: 6e52ff7d338049b0a4a0482783ff4646
+      project_name: larizmen-ocp
+      user_domain_name: Default
+      username: larizmen
+    cacert: /home/stack/ssl/ca.crt.pem
+    endpoint_type: public
+    identity_api_version: "3"
+    region_name: regionOne
+    verify: true

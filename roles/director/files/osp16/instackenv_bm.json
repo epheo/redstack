@@ -1,0 +1,43 @@
+{
+  "nodes": [
+    {
+      "mac": [
+        "52:54:00:98:c2:dc"
+      ],
+      "capabilities": "profile:control",
+      "name": "control_0",
+      "arch": "x86_64",
+      "pm_type": "ipmi",
+      "pm_user": "root",
+      "pm_port": "6231",
+      "pm_password": "Redhat01",
+      "pm_addr": "10.42.34.4"
+    },
+    {
+      "mac": [
+        "10:7d:1a:7f:50:1d",
+        "10:7d:1a:7f:50:20"
+      ],
+      "capabilities": "profile:compute",
+      "name": "compute_1",
+      "arch": "x86_64",
+      "pm_type": "ipmi",
+      "pm_user": "root",
+      "pm_password": "Redhat01",
+      "pm_addr": "10.11.173.244"
+    },
+    {
+      "mac": [
+        "10:7d:1a:7f:4e:43",
+        "10:7d:1a:7f:4e:46"
+      ],
+      "capabilities": "profile:compute",
+      "name": "compute_2",
+      "arch": "x86_64",
+      "pm_type": "ipmi",
+      "pm_user": "root",
+      "pm_password": "Redhat01",
+      "pm_addr": "10.11.173.245"
+    }
+  ]
+}

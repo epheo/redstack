@@ -20,6 +20,8 @@ parameter_defaults:
   GnocchiRbdPoolName: metrics
 {% endif %}
 
+
+
 {% if enable_ceph is sameas true %}
 resource_registry:
   OS::TripleO::Services::CephMgr: /usr/share/openstack-tripleo-heat-templates/docker/services/ceph-ansible/ceph-mgr.yaml

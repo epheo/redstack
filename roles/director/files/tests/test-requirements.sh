@@ -199,3 +199,10 @@ fi
 {% endfor %}
 
 {% endif %}
+
+
+openstack flavor create --ram 16384 --disk 50 --vcpus 4  epa.xlarge
+nova flavor-key epa.openshift set hw:cpu_policy=dedicated
+nova flavor-key epa.openshift set hw:cpu_thread_policy=isolate
+nova flavor-key epa.openshift set hw:mem_page_size=1048576
+nova flavor-key epa.openshift set hw:numa_mempolicy=strict

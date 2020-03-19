@@ -18,7 +18,8 @@ done
 echo "Creating new SR-IOV metadata and ports ..."
 
 openstack port create --network $network --vnic-type direct $portname
-STATIC_IP=$(openstack port show $portname -f value -c fixed_ips | awk -F \' '{print$2}')
+#STATIC_IP=$(openstack port show $portname -f value -c fixed_ips | awk -F \' '{print$2}')
+STATIC_IP=$(openstack port show $portname -f value -c fixed_ips | awk -F "'" '{print$8}')
 STATIC_GW=$(openstack subnet show $(openstack port show $portname -f value -c fixed_ips | awk -F \' '{print$4}') -c gateway_ip -f value)
 STATIC_PREFIX=$(openstack subnet show $(openstack port show $portname -f value -c fixed_ips | awk -F \' '{print$4}') -c cidr -f value | awk -F \/ '{print$2}')
 
@@ -46,5 +47,6 @@ runcmd:
  -  sed -i'.orig' -e's/without-password/yes/' /etc/ssh/sshd_config
  -  service sshd restart
  - 'systemctl restart network'
+ - 'ifup eth0'
 EOF
 
