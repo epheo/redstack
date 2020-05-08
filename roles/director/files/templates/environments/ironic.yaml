@@ -1,0 +1,8 @@
+parameter_defaults:
+
+  IronicCleaningDiskErase: metadata
+
+  IronicInspectorSubnets:
+    - ip_range: 10.42.34.241,10.42.34.250
+  IPAImageURLs: '["http://10.42.34.5:8088/agent.kernel", "http://10.42.34.5:8088/agent.ramdisk"]'
+  IronicInspectorInterface: 'br-ex' 

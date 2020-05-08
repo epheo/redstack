@@ -1,0 +1,18 @@
+resource_registry:
+  OS::TripleO::Controller::Net::SoftwareConfig:  ../nic-config/controller.yaml
+  OS::TripleO::Compute::Net::SoftwareConfig:  ../nic-config/compute.yaml
+  OS::TripleO::ComputeSriov::Net::SoftwareConfig:  ../nic-config/compute.yaml
+
+parameter_defaults:
+  DnsServers: [ "10.38.5.26" ]
+  NtpServer: 10.11.160.238
+  TimeZone: 'UTC'
+  EC2MetadataIp: 10.42.30.5
+  PublicVirtualFixedIPs: [{ 'ip_address' : '10.42.34.17' }]
+
+  NeutronBridgeMappings: 'datacentre:br-ex'
+  NeutronFlatNetworks: 'datacentre'
+
+  ServiceNetMap:
+    IronicApiNetwork: oc_provisioning
+    IronicNetwork: oc_provisioning

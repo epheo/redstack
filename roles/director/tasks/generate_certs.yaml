@@ -93,10 +93,10 @@
 
 - name: Copy 60-tls.yaml
   template:
-    src: ../templates/60-tls.yaml.j2
-    dest: /home/stack/templates/environments/60-tls.yaml
+    src: ../templates/enable-tls.yaml.j2
+    dest: /home/stack/templates/environments/enable-tls.yaml
 
-- name: Copy 61-tls_trust_anchor.yaml.j2
+- name: Copy inject-trust-anchor-hiera.yaml.j2
   template:
-    src: ../templates/61-tls_trust_anchor.yaml.j2
-    dest: /home/stack/templates/environments/61-tls_trust_anchor.yaml
+    src: ../templates/inject-trust-anchor-hiera.yaml.j2
+    dest: /home/stack/templates/environments/inject-trust-anchor-hiera.yaml.j2
