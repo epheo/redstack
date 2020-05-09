@@ -4,27 +4,27 @@
   become: yes
   package:
     state: latest
-    name: ntp
+    name: chrony
 
 - name: replace line
   become: yes
   lineinfile: 
-    dest: /etc/ntp.conf 
-    regexp: 'restrict 127.0.0.1' 
-    line: 'restrict 10.0.0.0 netmask 255.0.0.0 nomodify notrap'
+    dest: /etc/chrony.conf 
+    regexp: 'allow 192.168'
+    line: 'allow {{ ctlplane_net.subnet }}'
 
 - name: Enable NTP in firewalld
   become: yes
   ignore_errors: true
   firewalld:
-    service: ntp
+    service: chronyd
     permanent: yes
     state: enabled
 
 - name: enable service npd and ensure it is not masked
   become: yes
   systemd:
-    name: ntpd
+    name: chronyd
     enabled: yes
     masked: no
 
@@ -33,4 +33,4 @@
   systemd:
     state: restarted
     daemon_reload: yes
-    name: ntpd
+    name: chronyd

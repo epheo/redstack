@@ -37,5 +37,7 @@ cidr = {{ ctlplane_net.subnet }}
 dhcp_start = {{ ctlplane_net.dhcp_start }}
 dhcp_end = {{ ctlplane_net.dhcp_end }}
 inspection_iprange = {{ ctlplane_net.inspection_iprange }}
+{% if ctlplane_net.gateway is defined %}
 gateway = {{ ctlplane_net.gateway }}
+{% endif %}
 masquerade = true

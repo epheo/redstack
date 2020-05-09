@@ -74,22 +74,3 @@
     openstack flavor set --property "cpu_arch"="x86_64" --property "capabilities:boot_option"="local" --property "capabilities:profile"="computenfvi" computenfvi
     openstack flavor set --property resources:VCPU=0 --property resources:MEMORY_MB=0 --property resources:DISK_GB=0 --property resources:CUSTOM_BAREMETAL=1 computenfvi
   when: enable_nfvi is sameas true
-
-#- name: Copy OVS Vlan network config
-#  become: yes
-#  copy:
-#    src: files/network-scripts/
-#    dest: /etc/sysconfig/network-scripts/
-#
-#- name: restart network service
-#  become: yes
-#  systemd:
-#    state: restarted
-#    name: network
-#
-#
-#- name: Adding the Certificate Authority to Director
-#  become: yes
-#  shell: |
-#    cp ~stack/ssl/ca.crt.pem /etc/pki/ca-trust/source/anchors/
-#    update-ca-trust extract

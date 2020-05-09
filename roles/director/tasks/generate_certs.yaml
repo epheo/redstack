@@ -91,12 +91,12 @@
   shell: cat /etc/pki/ca-trust/source/anchors/cm-local-ca.pem
   register: undercloud_cacert
 
-- name: Copy 60-tls.yaml
+- name: Copy enable-tls.yaml
   template:
     src: ../templates/enable-tls.yaml.j2
     dest: /home/stack/templates/environments/enable-tls.yaml
 
-- name: Copy inject-trust-anchor-hiera.yaml.j2
+- name: Copy inject-trust-anchor.yaml.j2
   template:
-    src: ../templates/inject-trust-anchor-hiera.yaml.j2
-    dest: /home/stack/templates/environments/inject-trust-anchor-hiera.yaml.j2
+    src: ../templates/inject-trust-anchor.yaml.j2
+    dest: /home/stack/templates/environments/inject-trust-anchor.yaml.j2
