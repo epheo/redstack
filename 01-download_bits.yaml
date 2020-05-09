@@ -1,6 +1,6 @@
 ---
 
-- hosts: localhost
+- hosts: hypervisor
   roles:
     - common
   tasks:

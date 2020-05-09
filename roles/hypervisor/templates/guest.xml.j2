@@ -5,14 +5,19 @@
   <vcpu placement="static">{{ item.vcpu }}</vcpu>
   <os>
     <type arch="x86_64" machine="pc">hvm</type>
-    <boot dev="hd"/>
   </os>
   <features>
     <acpi/>
     <apic/>
-    <pae/>
   </features>
-  <clock offset="utc"/>
+  <cpu mode="host-model" check="partial">
+    <model fallback="allow"/>
+  </cpu>
+  <clock offset="utc">
+    <timer name="rtc" tickpolicy="catchup"/>
+    <timer name="pit" tickpolicy="delay"/>
+    <timer name="hpet" present="no"/>
+  </clock>
   <on_poweroff>destroy</on_poweroff>
   <on_reboot>restart</on_reboot>
   <on_crash>destroy</on_crash>
@@ -66,6 +71,13 @@
 {% if port.bridge is defined %}
     <interface type="bridge">
       <source bridge="{{ port.bridge }}"/>
+      <model type="virtio"/>
+    </interface>
+{% endif %}
+{% if port.direct is defined %}
+    <interface type="direct">
+      <source dev="{{ port.direct }}" mode="bridge"/>
+      <model type="virtio"/>
     </interface>
 {% endif %}
 {% endfor %}

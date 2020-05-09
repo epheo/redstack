@@ -1,6 +1,6 @@
 ---
 
-- import_playbook: overcloud_guests_delete.yaml
+# - import_playbook: 78-overcloud_guests_delete.yaml
 
 - hosts: hypervisor
   roles:

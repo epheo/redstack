@@ -10,7 +10,7 @@
 - name: Cleanup root Volumes
   ignore_errors: yes
   shell: |
-    {% if item.root is sameas true %}
+    {% if item.root is defined %}
     virsh vol-delete --pool {{ guests_rootdisk_pool }} {{ item.name }}-root
     {% else %}
     true
@@ -37,5 +37,5 @@
     virsh net-destroy {{ item.name }}
     virsh net-undefine {{ item.name }}
   loop: '{{ libvirt_networks }}'
-  notify: reboot
+  # notify: reboot
   when: cleanup_networks is sameas true

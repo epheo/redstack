@@ -20,12 +20,12 @@
   register: command_result
   changed_when: "command_result.stdout != ''"
 
-#- name: Copy Guest Root Image
-#  synchronize:
-#    src: '{{ item.localpath }}'
-#    dest: '{{ guests_rootdisk_pool_path }}/{{ item.name }}'
-#    checksum: yes
-#  loop: '{{ guests_rootimg }}'
+- name: Copy guest image
+  copy: 
+    remote_src: True
+    src: '{{ item.localpath }}'
+    dest: '{{ guests_rootdisk_pool_path }}/{{ item.name }}'
+  loop: '{{ guests_rootimg }}'
 
 - name: Refresh Image pool
   shell: |

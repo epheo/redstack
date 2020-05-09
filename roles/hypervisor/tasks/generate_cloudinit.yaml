@@ -6,21 +6,33 @@
     state: directory
   loop: '{{ libvirt_guests }}'
 
-- name: Write CloudInit UserData
-  template:
-    src: ../files/cloudinit/user-data
-    dest: cloudinit/cloudinit_{{ item.name }}/user-data
-  loop: '{{ libvirt_guests }}'
-
-- name: Write CloudInit Metadata
+- name: Write Cloud-init meta-data
   template:
     src: ../files/cloudinit/meta-data
     dest: cloudinit/cloudinit_{{ item.name }}/meta-data
   loop: '{{ libvirt_guests }}'
 
-- name: Generate cloudinit Metadata ISO
+- name: Write Cloud-init user-data
+  template:
+    src: ../files/cloudinit/user-data
+    dest: cloudinit/cloudinit_{{ item.name }}/user-data
+  loop: '{{ libvirt_guests }}'
+
+- name: Write Cloud-init network-config
+  template:
+    src: ../files/cloudinit/network-config
+    dest: cloudinit/cloudinit_{{ item.name }}/network-config
+  loop: '{{ libvirt_guests }}'
+
+- name: Generate cloudinit ISO
   shell: |
     cd cloudinit/cloudinit_{{ item.name }}/
-    genisoimage -output {{ guests_rootdisk_pool_path }}/cloudinit_{{ item.name }}.iso -volid cidata -joliet -rock user-data meta-data
+    genisoimage -output {{ guests_rootdisk_pool_path }}/cloudinit_{{ item.name }}.iso -volid cidata -joliet -rock user-data meta-data network-config
     virsh pool-refresh --pool {{ guests_rootdisk_pool }}
+  loop: '{{ libvirt_guests }}'
+
+- name: Delete directory
+  file:
+    path: cloudinit/cloudinit_{{ item.name }}
+    state: absent
   loop: '{{ libvirt_guests }}'

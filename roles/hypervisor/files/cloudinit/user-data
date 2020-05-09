@@ -1,55 +1,17 @@
 #cloud-config
 ssh_pwauth: True
-disable_root: false
 users:
   - name: stack
     sudo: ALL=(ALL) NOPASSWD:ALL
-    ssh_authorized_keys:
-{% for pubkey in guests_pubkey %}
-      - {{ pubkey }}
-{% endfor %}
+    ssh_authorized_keys: {{ guests_pubkey }}
 chpasswd:
   list: |
-    root:{{ guests_passwd }}
-  expire: false
-write_files:
-  - content: "{{ item.name }}"
-    path: /root/name
-{% for port in item.ports %}
-{% if port.address is defined %}
-  - content: |
-      NAME={{ port.name }}
-      DEVICE={{ port.name }}
-      BOOTPROTO=none
-      ONBOOT=yes
-      IPADDR={{ port.address.split("/")[0] }}
-      PREFIX={{ port.address.split("/")[1] }}
-{% if port.gateway is defined %}
-      GATEWAY={{ port.gateway }}
-{% endif %}
-{% if port.defroute is sameas true %}
-      DEFROUTE=yes
-{% if dns_ip is defined %}
-      DNS1={{ dns_ip }}
-{% endif %}
-{% endif %}
-{% if port.defroute is sameas false %}
-      DEFROUTE=no
-{% endif %}
-    path: /etc/sysconfig/network-scripts/ifcfg-{{ port.name }}
-{% endif %}
-{% endfor %}
+    stack:{{ guests_passwd }}
+  expire: False
 runcmd:
   - sed -i'.orig' -e's/without-password/yes/' /etc/ssh/sshd_config
-{% for port in item.ports %}
-{% if port.address is defined %}
-  - "ifdown {{ port.name }} && ifup {{ port.name }}"
-{% endif %}
-{% endfor %}
   - systemctl restart sshd
-ssh_authorized_keys:
-  - {{ guests_pubkey }}
-growpart:
-    mode: auto
-    devices: ["/"]
-    ignore_growroot_disabled: false
+rh_subscription:
+  activation-key: {{ subscription.activation_key }}
+  org: {{ subscription.org }}
+  auto-attach: True
