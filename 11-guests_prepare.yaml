@@ -6,12 +6,19 @@
     - hypervisor
   vars_files:
     - roles/hypervisor/vars/infrastructure.yaml
+  gather_facts: no
   tasks:
     - block:
       - include_tasks: roles/hypervisor/tasks/deploy_libvirt_nets.yaml
       - include_tasks: roles/hypervisor/tasks/create_libvirt_volumes.yaml
+        tags:
+          - guests
       - include_tasks: roles/hypervisor/tasks/generate_cloudinit.yaml
+        tags:
+          - guests
       - include_tasks: roles/hypervisor/tasks/deploy_libvirt_guests.yaml
+        tags:
+          - guests
       rescue:
         - set_fact: 
             message: "KVM guests havn't been created"

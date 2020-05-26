@@ -1,18 +1,20 @@
 resource_registry:
   OS::TripleO::Controller::Net::SoftwareConfig:  ../nic-config/controller.yaml
   OS::TripleO::Compute::Net::SoftwareConfig:  ../nic-config/compute.yaml
+  OS::TripleO::ComputeHCI::Net::SoftwareConfig:  ../nic-config/comphci.yaml
+  OS::TripleO::ComputeHCIOvsDpdk::Net::SoftwareConfig:  ../nic-config/comphci.yaml
   OS::TripleO::ComputeSriov::Net::SoftwareConfig:  ../nic-config/compute.yaml
+  OS::TripleO::ComputeOvsDpdkSriov::Net::SoftwareConfig:  ../nic-config/compute.yaml
 
 parameter_defaults:
-  DnsServers: [ "10.38.5.26" ]
-  NtpServer: 10.11.160.238
+  DnsServers: [ "{{ dns_ip }}" ]
+  NtpServer: "{{ ntp_ip }}"
   TimeZone: 'UTC'
-  EC2MetadataIp: 10.42.30.5
-  PublicVirtualFixedIPs: [{ 'ip_address' : '10.42.34.17' }]
+  EC2MetadataIp: "{{ undercloud_ip }}"
+  ControlPlaneDefaultRoute: "{{ undercloud_ip }}"
+  PublicVirtualFixedIPs: [{ 'ip_address' : "{{ overcloud_vip }}" }]
 
-  NeutronBridgeMappings: 'datacentre:br-ex'
-  NeutronFlatNetworks: 'datacentre'
+  NeutronBridgeMappings: "{{ neutron.bridge_mappings }}"
+  NeutronFlatNetworks: "{{ neutron.flat_networks }}"
 
-  ServiceNetMap:
-    IronicApiNetwork: oc_provisioning
-    IronicNetwork: oc_provisioning
+  NetworkDeploymentActions: ['CREATE','UPDATE']

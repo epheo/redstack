@@ -1,0 +1,21 @@
+---
+
+- set_fact:
+    dir_full_hostname: "{{ inventory_hostname }}.{{ customer_name }}.lab"
+
+- name: Ensure hostname set 
+  become: yes
+  shell: hostnamectl set-hostname {{ dir_full_hostname }}
+  when: not inventory_hostname is match('(\d{1,3}\.){3}\d{1,3}')
+
+- name: Ensure hostname set 
+  become: yes
+  shell: hostnamectl set-hostname --transient {{ dir_full_hostname }}
+  when: not inventory_hostname is match('(\d{1,3}\.){3}\d{1,3}')
+
+- name: Ensure hostname is in /etc/hosts
+  become: yes
+  lineinfile:
+    dest: /etc/hosts
+    line: "{{ undercloud_ip }} \t{{ dir_full_hostname }}\t{{ inventory_hostname }}"
+    insertbefore: BOF

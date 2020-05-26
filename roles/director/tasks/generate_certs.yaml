@@ -99,4 +99,4 @@
 - name: Copy inject-trust-anchor.yaml.j2
   template:
     src: ../templates/inject-trust-anchor.yaml.j2
-    dest: /home/stack/templates/environments/inject-trust-anchor.yaml.j2
+    dest: /home/stack/templates/environments/inject-trust-anchor.yaml

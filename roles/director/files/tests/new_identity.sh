@@ -1,10 +1,10 @@
 #!/bin/bash
-source ~stack/stackrc
-RCFILE="$(openstack stack list -c 'Stack Name' -f value)rc"
+
+RCFILE=overcloudrc
 source ~stack/$RCFILE
 
 if [ -z $1 ]
-then echo "Please call with $1"
+then echo 'Please call with $1'
      exit 1
 fi
 project=$1

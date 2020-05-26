@@ -1,4 +1,4 @@
 ---
 
 - name: Write Fencing Environment File
-  shell: ~/scripts/undercloud_generate_fencing.yaml > ~/templates/environments/91-fencing.yaml
+  shell: ~/scripts/undercloud_generate_fencing.yaml > ~/templates/environments/fencing.yaml

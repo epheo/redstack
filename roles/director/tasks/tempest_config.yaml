@@ -1,55 +1,51 @@
 ---
-- hosts: undercloud
-  remote_user: stack
-  gather_facts: False
 
-  tasks:
-  - name: initialize tempest
-    shell: |
-      source ~stack/overcloudrc
-      tempest init mytempest
-      cd mytempest
-      tempest workspace list
+- name: initialize tempest
+  shell: |
+    source ~stack/overcloudrc
+    tempest init mytempest
+    cd mytempest
+    tempest workspace list
 
 
-  - name: Generate tempest.conf
-    shell: |
-      source ~stack/overcloudrc
-      cd mytempest
-      discover-tempest-config --deployer-input ~/tempest-deployer-input.conf \
-      --debug --create \
-      compute-feature-enabled.attach_encrypted_volume False \
-      network.build_timeout 500 \
-      volume.build_timeout 500 \
-      volume.storage_protocol ceph \
-      auth.admin_password $OS_PASSWORD \
-      auth.admin_username $OS_USERNAME \
-      auth.use_dynamic_credentials true \
-      volume-feature-enabled.api_v1 False \
-      volume-feature-enabled.backup False \
-      validation.image_ssh_user cirros \
-      validation.ssh_user cirros \
-      identity.uri $OS_AUTH_URL \
-      identity-feature-enabled.immutable_user_source True \
-      orchestration.stack_owner_role heat_stack_owner \
-      --network-id `openstack network list |grep external_da |awk '{print $2}'`
-      sed -i s/swift\ =\ True/swift\ =\ False/g etc/tempest.conf
-      tempest verify-config -o tempestconf_validate.log
-      # tempest cleanup --init-saved-state
-      
-  - name: Run all tempest tests
-    shell: |
-      source ~stack/overcloudrc
-      cd mytempest
-      #tempest run
+- name: Generate tempest.conf
+  shell: |
+    source ~stack/overcloudrc
+    cd mytempest
+    discover-tempest-config --deployer-input ~/tempest-deployer-input.conf \
+    --debug --create \
+    compute-feature-enabled.attach_encrypted_volume False \
+    network.build_timeout 500 \
+    volume.build_timeout 500 \
+    volume.storage_protocol ceph \
+    auth.admin_password $OS_PASSWORD \
+    auth.admin_username $OS_USERNAME \
+    auth.use_dynamic_credentials true \
+    volume-feature-enabled.api_v1 False \
+    volume-feature-enabled.backup False \
+    validation.image_ssh_user cirros \
+    validation.ssh_user cirros \
+    identity.uri $OS_AUTH_URL \
+    identity-feature-enabled.immutable_user_source True \
+    orchestration.stack_owner_role heat_stack_owner \
+    --network-id `openstack network list |grep external_da |awk '{print $2}'`
+    sed -i s/swift\ =\ True/swift\ =\ False/g etc/tempest.conf
+    tempest verify-config -o tempestconf_validate.log
+    # tempest cleanup --init-saved-state
+    
+- name: Run all tempest tests
+  shell: |
+    source ~stack/overcloudrc
+    cd mytempest
+    #tempest run
 
-  #- name: Gather Fails
-  #  shell: |
-  #    stestr failing |grep FAIL | sed -e 's/\[.*\].*//g' -e 's/FAIL\: //' > ~stack/fails.log
+#- name: Gather Fails
+#  shell: |
+#    stestr failing |grep FAIL | sed -e 's/\[.*\].*//g' -e 's/FAIL\: //' > ~stack/fails.log
 
-  #- name: Copy Fails
-  #  synchronize:
-  #    mode: pull
-  #    src: /home/stack/fails.log
-  #    dest: ./demo/fails.log
+#- name: Copy Fails
+#  synchronize:
+#    mode: pull
+#    src: /home/stack/fails.log
+#    dest: ./demo/fails.log
 

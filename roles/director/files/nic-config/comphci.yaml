@@ -1,7 +1,7 @@
 
 heat_template_version: rocky
 description: >
-  Software Config to drive os-net-config with 2 bonded nics on a bridge with VLANs attached for the Compute role.
+  Software Config to drive os-net-config to configure multiple interfaces for the ComputeHCIOvsDpdk role.
 parameters:
   ControlPlaneIp:
     default: ''
@@ -33,12 +33,56 @@ parameters:
       (The parameter is automatically resolved from the ctlplane network's mtu attribute.)
     type: number
 
+  InternalApiIpSubnet:
+    default: ''
+    description: IP address/subnet on the internal_api network
+    type: string
+  InternalApiNetworkVlanID:
+    default: 120
+    description: Vlan ID for the internal_api network traffic.
+    type: number
+  InternalApiMtu:
+    default: 1500
+    description: The maximum transmission unit (MTU) size(in bytes) that is
+      guaranteed to pass through the data path of the segments in the
+      InternalApi network.
+    type: number
+  InternalApiInterfaceRoutes:
+    default: []
+    description: >
+      Routes for the internal_api network traffic.
+      JSON route e.g. [{'destination':'10.0.0.0/16', 'nexthop':'10.0.0.1'}]
+      Unless the default is changed, the parameter is automatically resolved
+      from the subnet host_routes attribute.
+    type: json
+  TenantIpSubnet:
+    default: ''
+    description: IP address/subnet on the tenant network
+    type: string
+  TenantNetworkVlanID:
+    default: 150
+    description: Vlan ID for the tenant network traffic.
+    type: number
+  TenantMtu:
+    default: 1500
+    description: The maximum transmission unit (MTU) size(in bytes) that is
+      guaranteed to pass through the data path of the segments in the
+      Tenant network.
+    type: number
+  TenantInterfaceRoutes:
+    default: []
+    description: >
+      Routes for the tenant network traffic.
+      JSON route e.g. [{'destination':'10.0.0.0/16', 'nexthop':'10.0.0.1'}]
+      Unless the default is changed, the parameter is automatically resolved
+      from the subnet host_routes attribute.
+    type: json
   StorageIpSubnet:
     default: ''
     description: IP address/subnet on the storage network
     type: string
   StorageNetworkVlanID:
-    default: 301
+    default: 130
     description: Vlan ID for the storage network traffic.
     type: number
   StorageMtu:
@@ -55,78 +99,29 @@ parameters:
       Unless the default is changed, the parameter is automatically resolved
       from the subnet host_routes attribute.
     type: json
-  InternalApiIpSubnet:
+  StorageMgmtIpSubnet:
     default: ''
-    description: IP address/subnet on the internal_api network
+    description: IP address/subnet on the storage_mgmt network
     type: string
-  InternalApiNetworkVlanID:
-    default: 101
-    description: Vlan ID for the internal_api network traffic.
+  StorageMgmtNetworkVlanID:
+    default: 131
+    description: Vlan ID for the storage_mgmt network traffic.
     type: number
-  InternalApiMtu:
+  StorageMgmtMtu:
     default: 1500
     description: The maximum transmission unit (MTU) size(in bytes) that is
       guaranteed to pass through the data path of the segments in the
-      Internal network.
+      StorageMgmt network.
     type: number
-  InternalApiInterfaceRoutes:
+  StorageMgmtInterfaceRoutes:
     default: []
     description: >
-      Routes for the internal_api network traffic.
-      JSON route e.g. [{'destination':'10.0.0.0/16', 'nexthop':'10.0.0.1'}]
-      Unless the default is changed, the parameter is automatically resolved
-      from the subnet host_routes attribute.
-    type: json
-  TenantIpSubnet:
-    default: ''
-    description: IP address/subnet on the tenant network
-    type: string
-  TenantNetworkVlanID:
-    default: 201
-    description: Vlan ID for the tenant network traffic.
-    type: number
-  TenantMtu:
-    default: 1500
-    description: The maximum transmission unit (MTU) size(in bytes) that is
-      guaranteed to pass through the data path of the segments in the
-      Tenant network.
-    type: number
-
-  ExternalIpSubnet:
-    default: ''
-    description: IP address/subnet on the external network
-    type: string
-  ExternalNetworkVlanID:
-    default: 1
-    description: Vlan ID for the external network traffic.
-    type: number
-  ExternalMtu:
-    default: 1500
-    description: The maximum transmission unit (MTU) size(in bytes) that is
-      guaranteed to pass through the data path of the segments in the
-      External network.
-    type: number
-  ExternalInterfaceDefaultRoute:
-    default: ''
-    description: default route for the external network
-    type: string
-  ExternalInterfaceRoutes:
-    default: []
-    description: >
-      Routes for the external network traffic.
+      Routes for the storage_mgmt network traffic.
       JSON route e.g. [{'destination':'10.0.0.0/16', 'nexthop':'10.0.0.1'}]
       Unless the default is changed, the parameter is automatically resolved
       from the subnet host_routes attribute.
     type: json
 
-  TenantInterfaceRoutes:
-    default: []
-    description: >
-      Routes for the tenant network traffic.
-      JSON route e.g. [{'destination':'10.0.0.0/16', 'nexthop':'10.0.0.1'}]
-      Unless the default is changed, the parameter is automatically resolved
-      from the subnet host_routes attribute.
-    type: json
   DnsServers: # Override this via parameter_defaults
     default: []
     description: >
@@ -138,36 +133,7 @@ parameters:
     default: []
     description: A list of DNS search domains to be added (in order) to resolv.conf.
     type: comma_delimited_list
-  EC2MetadataIp:
-    default: ''
-    description: The IP address of the EC2 metadata server. (The parameter
-      is automatically resolved from the ctlplane subnet's host_routes attribute.)
-    type: string
-  BondInterfaceOvsOptions:
-    default: bond_mode=active-backup
-    description: 'The ovs_options or bonding_options string for the bond
-      interface. Set things like lacp=active and/or bond_mode=balance-slb
-      for OVS bonds or like mode=4 for Linux bonds using this option.'
-    type: string
 resources:
-
-  MinViableMtu:
-    # This resource resolves the minimum viable MTU for interfaces, bonds and
-    # bridges that carry multiple VLANs. Each VLAN may have different MTU. The
-    # bridge, bond or interface must have an MTU to allow the VLAN with the
-    # largest MTU.
-    type: OS::Heat::Value
-    properties:
-      type: number
-      value:
-        yaql:
-          expression: $.data.max()
-          data:
-            - {get_param: ControlPlaneMtu}
-            - {get_param: StorageMtu}
-            - {get_param: InternalApiMtu}
-            - {get_param: TenantMtu}
-
   OsNetConfigImpl:
     type: OS::Heat::SoftwareConfig
     properties:
@@ -184,6 +150,8 @@ resources:
                 name: eno1
                 mtu: {get_param: ControlPlaneMtu}
                 use_dhcp: false
+                dns_servers: {get_param: DnsServers}
+                domain: {get_param: DnsSearchDomains}
                 addresses:
                 - ip_netmask:
                     list_join:
@@ -193,72 +161,68 @@ resources:
                 routes:
                   list_concat_unique:
                     - get_param: ControlPlaneStaticRoutes
-                    - - ip_netmask: 169.254.169.254/32
-                        next_hop: {get_param: EC2MetadataIp}
-
-              - type: ovs_bridge
-                name: bridge_name
-                dns_servers: {get_param: DnsServers}
-                use_dhcp: false
-                members:
-
-                - type: interface
-                  name: eno2
-
-                - type: vlan
-                  mtu: {get_param: TenantMtu}
-                  vlan_id: {get_param: TenantNetworkVlanID}
-                  addresses:
-                  - ip_netmask: {get_param: TenantIpSubnet}
-                  routes:
-                    list_concat_unique:
-                      - get_param: TenantInterfaceRoutes
-
-                - type: vlan
-                  mtu: {get_param: StorageMtu}
-                  vlan_id: {get_param: StorageNetworkVlanID}
-                  addresses:
-                  - ip_netmask: {get_param: StorageIpSubnet}
-                  routes:
-                    list_concat_unique:
-                      - get_param: StorageInterfaceRoutes
-
-                - type: vlan
-                  mtu: {get_param: InternalApiMtu}
-                  vlan_id: {get_param: InternalApiNetworkVlanID}
-                  addresses:
-                  - ip_netmask: {get_param: InternalApiIpSubnet}
-                  routes:
-                    list_concat_unique:
-                      - get_param: InternalApiInterfaceRoutes
-
-                - type: vlan
-                  mtu: {get_param: ExternalMtu}
-                  vlan_id: {get_param: ExternalNetworkVlanID}
-                  addresses:
-                  - ip_netmask: {get_param: ExternalIpSubnet}
-                  routes:
-                    list_concat_unique:
-                      - get_param: ExternalInterfaceRoutes
-                      - - default: true
-                          next_hop: {get_param: ExternalInterfaceDefaultRoute}
-
+                    - - default: true
+                        next_hop:
+                          get_param: ControlPlaneDefaultRoute
+              
+              # OPENSTACK NETWORKS
               - type: interface
-                name: enp7s0f0
-                mtu: 9000
+                name: nic2
+                mtu: {get_param: InternalApiMtu}
+                use_dhcp: false
+
+              - type: vlan
+                device: nic2
+                mtu: {get_param: InternalApiMtu}
+                vlan_id: {get_param: InternalApiNetworkVlanID}
+                addresses:
+                - ip_netmask:
+                    get_param: InternalApiIpSubnet
+                routes:
+                  list_concat_unique:
+                    - get_param: InternalApiInterfaceRoutes
+
+              - type: vlan
+                mtu: {get_param: StorageMtu}
+                vlan_id: {get_param: StorageNetworkVlanID}
+                device: nic2
+                addresses:
+                - ip_netmask: {get_param: StorageIpSubnet}
+                routes:
+                  list_concat_unique:
+                    - get_param: StorageInterfaceRoutes
+
+              - type: vlan
+                mtu: {get_param: StorageMgmtMtu}
+                vlan_id: {get_param: StorageMgmtNetworkVlanID}
+                device: nic2
+                addresses:
+                - ip_netmask: {get_param: StorageMgmtIpSubnet}
+                routes:
+                  list_concat_unique:
+                    - get_param: StorageMgmtInterfaceRoutes
+
+              - type: vlan
+                device: nic2
+                mtu: {get_param: TenantMtu}
+                vlan_id: {get_param: TenantNetworkVlanID}
+                addresses:
+                - ip_netmask: {get_param: TenantIpSubnet}
+                routes:
+                  list_concat_unique:
+                    - get_param: TenantInterfaceRoutes
+
+              # SRIOV
+              - type: interface
+                name: nic3
                 use_dhcp: false
                 defroute: false
-                nm_controlled: true
-                hotplug: true
 
+               # UNUSED
               - type: interface
-                name: enp7s0f1
-                mtu: 9000
+                name: nic4
                 use_dhcp: false
                 defroute: false
-                nm_controlled: true
-                hotplug: true
-
 outputs:
   OS::stack_id:
     description: The OsNetConfigImpl resource.

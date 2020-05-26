@@ -1,0 +1,18 @@
+
+parameter_defaults:
+
+  ComputeHCIOvsDpdkExtraConfig:
+    nova::cpu_allocation_ratio: 1.95
+  ComputeHCIOvsDpdkParameters:
+    IsolCpusList: 1-19,21-39,41-59,61-79
+    KernelArgs: default_hugepagesz=1GB hugepagesz=1G hugepages=190 intel_iommu=on iommu=pt
+      isolcpus=1-19,21-39,41-59,61-79
+    NeutronPhysnetNUMANodesMapping:
+      physnet0:
+      - 0
+    NovaComputeCpuDedicatedSet: 1-10,12-19,22-39,41-50,52-59,62-79
+    NovaComputeCpuSharedSet: 0,20,40,60
+    NovaReservedHostMemory: 86016
+    OvsDpdkCoreList: 0,20,40,60
+    OvsDpdkSocketMemory: 3072,1024
+    OvsPmdCoreList: 11,21,51,61 

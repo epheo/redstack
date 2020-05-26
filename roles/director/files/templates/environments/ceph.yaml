@@ -1,0 +1,19 @@
+parameter_defaults:
+
+  CephPoolDefaultPgNum: 16
+
+  CephAnsibleDisksConfig:
+    devices:
+      - /dev/nvme0n1
+      - /dev/nvme1n1
+    osd_scenario: collocated
+    journal_size: 512
+
+  CephAnsibleExtraConfig:
+    is_hci: true
+  
+  CephConfigOverrides:
+    mon_max_pg_per_osd: 2048
+    osd_recovery_op_priority: 3
+    osd_recovery_max_active: 3
+    osd_max_backfills: 1

@@ -1,12 +1,16 @@
 ---
 
-- hosts: undercloud
+- hosts: 
+    - undercloud
+
+  gather_facts: no
   roles:
     - common
     - director
   tasks:
     - block:
         - include_tasks: roles/director/tasks/templates_update.yaml
+          tags: [ 'templates', 'scripts', 'tests' ]
         - set_fact: 
             message: "Just updated the Overcloud templates"
           changed_when: True

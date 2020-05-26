@@ -1,5 +1,7 @@
 ---
 
+# Deprecated ?
+
 - name: Restart network service 
   become: yes
   systemd:

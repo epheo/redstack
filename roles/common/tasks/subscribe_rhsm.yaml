@@ -57,7 +57,6 @@
 - name: Subscribe repositories
   become: yes
   shell: |
-    subscription-manager repos --enable={{ item }}
-  loop: "{{ enable_repos }}"
+    subscription-manager repos {% for item in enable_repos %} --enable={{ item }} {% endfor %}
 
 - include_tasks: update.yaml

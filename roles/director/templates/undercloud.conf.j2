@@ -11,33 +11,27 @@ undercloud_admin_host = {{ undercloud_admin }}
 
 container_images_file = /home/stack/containers-prepare-parameter.yaml
 
-enable_routed_networks = true
-
-undercloud_nameservers = {{ dns_ip }}
 undercloud_ntp_servers = {{ ntp_ip }}
-
-subnets = ctlplane-subnet
-local_subnet = ctlplane-subnet
-
-store_events = true
-enable_tempest = true
 
 {% if enable_uefi is sameas true %}
 ipxe_enabled = true
 inspection_enable_uefi = true
-{% endif %}
 
+{% endif %}
 {% if undercloud_custom_env is defined %}
 custom_env_files = {{ undercloud_custom_env }}
-{% endif %}
 
+{% endif %}
+{% if enable_ceph is sameas true %}
+clean_nodes=true
+
+{% endif %}
 
 [ctlplane-subnet]
 cidr = {{ ctlplane_net.subnet }}
 dhcp_start = {{ ctlplane_net.dhcp_start }}
 dhcp_end = {{ ctlplane_net.dhcp_end }}
 inspection_iprange = {{ ctlplane_net.inspection_iprange }}
-{% if ctlplane_net.gateway is defined %}
 gateway = {{ ctlplane_net.gateway }}
-{% endif %}
 masquerade = true
+

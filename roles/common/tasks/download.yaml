@@ -5,48 +5,60 @@
     state: directory
     path: Downloads
 
-- name: Download Rhel 7 Qcow2 Image
+- name: Download Rhel 8.1 Qcow2 Image
   get_url:
-    url: "{{ private_cdn.url }}/rhel-server-7.7-x86_64-kvm.qcow2"
-    dest: Downloads/rhel-7.7.qcow2
+    url: "{{ private_cdn.url }}/rhel-8.1-x86_64-kvm.qcow2"
+    dest: Downloads/rhel-8.1.qcow2
     force_basic_auth: yes
     url_username: "{{ private_cdn.username }}"
     url_password: "{{ private_cdn.password }}"
-    checksum: "sha1:5c82def77db1535cee0b5df7b40edbd30b385d8b"
+    checksum: "sha1:f1bff27c16a71ba4a4e83d84f860f243d25a4413"
 
-- name: Download Rhel 8 Qcow2 Image
+- name: Download Rhel 8.2 Qcow2 Image
   get_url:
     url: "{{ private_cdn.url }}/rhel-8.2-x86_64-kvm.qcow2"
     dest: Downloads/rhel-8.2.qcow2
     force_basic_auth: yes
     url_username: "{{ private_cdn.username }}"
     url_password: "{{ private_cdn.password }}"
-    # checksum: "sha1:d83b7a4a2b22525cbfdecbc81bfb084dee40dea8"
+    checksum: "sha1:88a4134f16b2e45e34eec6550bb4cbb2ffcae3f9"
 
-- name: Download Ansible Tower Setup
-  get_url:
-    url: https://releases.ansible.com/ansible-tower/setup-bundle/ansible-tower-setup-bundle-latest.el8.tar.gz
-    dest: Downloads/ansible-tower-setup-bundle-latest.el8.tar.gz
-    # checksum: "sha1:e048294c4d442bb763f3279b4589863488727386"
-
-- name: Download Fedora Qcow2 Image
+- name: Download Fedora 32 stable
   get_url:
     url: https://download.fedoraproject.org/pub/fedora/linux/releases/32/Cloud/x86_64/images/Fedora-Cloud-Base-32-1.6.x86_64.qcow2
     dest: Downloads/fedora-32.qcow2
     checksum: "sha256:423a4ce32fa32c50c11e3d3ff392db97a762533b81bef9d00599de518a7469c8"
 
-# https://mirror.openshift.com/pub/openshift-v4/clients/ocp-dev-preview/latest-4.4/
+- name: Get Rawhide latest build number,
+  shell: curl -L https://ftp.lip6.fr/ftp/pub/linux/distributions/fedora/development/rawhide/Cloud/x86_64/images/ |grep qcow2 |awk -F '"' '{print $8}'
+  register: latest_fedora
+
+- name: Download latest Fedora Rawhide
+  get_url:
+    url: "https://ftp.lip6.fr/ftp/pub/linux/distributions/fedora/development/rawhide/Cloud/x86_64/images/{{ latest_fedora.stdout }}"
+    dest: Downloads/fedora-rawhide.qcow2
+
+# OpenShift
+# https://mirror.openshift.com/pub/openshift-v4/clients/ocp-dev-preview/
+
 - name: Download OpenShift Client
   get_url:
-    url: https://mirror.openshift.com/pub/openshift-v4/clients/ocp-dev-preview/latest-4.4/openshift-client-linux.tar.gz
+    url: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/stable/openshift-client-linux.tar.gz
     dest: Downloads/openshift-client-linux.tar.gz
-    # checksum: "sha1:3302c6b80a423528832a32686671e1cb8ba0e77a"
 
 - name: Download OpenShift Installer
   get_url:
-    url: https://mirror.openshift.com/pub/openshift-v4/clients/ocp-dev-preview/latest-4.4/openshift-install-linux.tar.gz
+    url: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/stable/openshift-install-linux.tar.gz
     dest: Downloads/openshift-install-linux.tar.gz
-    # checksum: "sha1:09aa0c29bd3bf65410a0dfaaa88b49d303342c8e"
+
+# Ansible
+
+- name: Download Ansible Tower Setup
+  get_url:
+    url: https://releases.ansible.com/ansible-tower/setup-bundle/ansible-tower-setup-bundle-latest.el8.tar.gz
+    dest: Downloads/ansible-tower-setup-bundle-latest.el8.tar.gz
+
+# --- WIP ---
 
 ## Download Rhel8 from CDN 
 # Generate CDN Debug Certs

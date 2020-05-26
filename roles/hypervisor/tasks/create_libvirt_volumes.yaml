@@ -44,6 +44,8 @@
   loop: '{{ libvirt_guests }}'
   register: command_result
   changed_when: "command_result.stdout != ''"
+  tags:
+    - guests
 
 - name: Create Qcow2 volumes
   shell: |
@@ -59,3 +61,5 @@
   loop: '{{ libvirt_guests }}'
   register: command_result
   changed_when: "command_result != ''"
+  tags:
+    - guests

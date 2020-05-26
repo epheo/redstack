@@ -1,16 +1,13 @@
 #!/bin/bash
-set -x
 
-source /home/stack/stackrc
+RCFILE=overcloudrc
+source ~stack/$RCFILE
 
-RCFILE="$(openstack stack list -c 'Stack Name' -f value)rc"
-EXTVLANID={{ external_guest_net.vlanid }}
-NETEXT={{ external_guest_net.subnet }}
-EXTGW={{ external_guest_net.gateway }}
-EXTSTART={{ external_guest_net.fip_pool_start }}
-EXTEND={{ external_guest_net.fip_pool_end }}
-
-source ~/$RCFILE
+EXTVLANID={{ external_net.vlanid }}
+NETEXT={{ external_net.subnet }}
+EXTGW={{ external_net.gateway }}
+EXTSTART={{ external_net.fip_pool_start }}
+EXTEND={{ external_net.fip_pool_end }}
 
 openstack network create private --share
 openstack subnet create private --subnet-range 172.16.42.0/24   --network private

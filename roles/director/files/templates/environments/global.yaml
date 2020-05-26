@@ -1,19 +1,30 @@
-resource_registry:
-  OS::TripleO::Services::SwiftProxy: OS::Heat::None
-  OS::TripleO::Services::SwiftStorage: OS::Heat::None
-  OS::TripleO::Services::SwiftRingBuilder: OS::Heat::None
-
 parameter_defaults:
 
   CloudDomain: {{ customer_name }}.lab 
   CloudName: rhosp.{{ customer_name }}.lab
 
   ControllerHostnameFormat: 'controller-%index%'
-  ControllerCount: 1
+  ControllerCount: 3
   OvercloudControllerFlavor: control
 
   ComputeHostnameFormat: 'compute-%index%'
   ComputeCount: 1
   OvercloudComputeFlavor: compute
 
-  GlanceBackend: file
+  ComputeHCIHostnameFormat: 'computehci-%index%'
+  ComputeHCICount: 3
+  OvercloudComputeHCIFlavor: comphci
+
+  ComputeHCIOvsDpdkHostnameFormat: 'computehcidpdk-%index%'
+  ComputeHCIOvsDpdkCount: 0
+  OvercloudComputeHCIOvsDpdkFlavor: comphci
+
+  ComputeSriovHostnameFormat: 'computesriov-%index'
+  ComputeSriovCount: 0
+  OvercloudComputeSriovFlavor: compute
+
+  ComputeOvsDpdkSriovHostnameFormat: 'computeovsdpdksriov-%index%'
+  ComputeOvsDpdkSriovCount: 0
+  OvercloudComputeOvsDpdkSriovFlavor: compute
+
+  #GlanceBackend: file

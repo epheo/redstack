@@ -1,21 +1,17 @@
 #!/bin/bash
 project='redhat'
 
-source ~stack/stackrc
-RCFILE="$(openstack stack list -c 'Stack Name' -f value)rc"
-if [ ! -f ~stack/$RCFILE ]; then
-    echo "~stack/$RCFILE not found!"
-    exit -1
-fi
+RCFILE=overcloudrc
+source ~stack/$RCFILE
 
 cd $( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
 
 mkdir -p ~stack/rcfiles/
-sed -i 's/\/\/v3/\/v3/g' ~stack/$RCFILE
+sed -i 's/\/\/v3/\/v3/g' ~stack/overcloudrc
 
 ./new_identity.sh $project
 
-source ~/$RCFILE
+source ~stack/$RCFILE
 openstack role add --user redhat --project admin admin
 
 source ~stack/rcfiles/$project'rc'
@@ -53,17 +49,18 @@ mkdir -p /home/stack/user-data-scripts
 cat > /home/stack/user-data-scripts/userdata-enableroot << EOF
 #cloud-config
 # vim:syntax=yaml
-debug: True
 ssh_pwauth: True
-disable_root: false
+users:
+  - name: stack
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    ssh_authorized_keys: {{ guests_pubkey }}
 chpasswd:
   list: |
-    root:redhat
-  expire: false
+    stack:{{ guests_passwd }}
+  expire: False
 runcmd:
- -  sed -i'.orig' -e's/without-password/yes/' /etc/ssh/sshd_config
- -  service sshd restart
- - 'systemctl restart network'
+  - sed -i'.orig' -e's/without-password/yes/' /etc/ssh/sshd_config
+  - systemctl restart sshd
 EOF
 
 {% if proxy_url is defined  %}
@@ -72,17 +69,11 @@ export https_proxy=http://{{ proxy_url }}
 export no_proxy={{ undercloud_ip }}
 {% endif %}
 
-if ! openstack image list | grep fedora30\  ; then
-openstack image create fedora30 --file ~stack/user-images/fedora-30.qcow2 --disk-format qcow2 --container-format bare --public
+{% for image in guests_rootimg %}
+if ! openstack image list | grep {{ image.name }}\  ; then
+openstack image create image.name --file ~stack/{{ image.localpath }} --disk-format qcow2 --container-format bare --public
 fi
-
-if ! openstack image list | grep rhel7\  ; then
-openstack image create rhel7  --file ~stack/user-images/rhel-7.7.qcow2 --disk-format qcow2 --container-format bare --public
-fi
-
-if ! openstack image list | grep rhel8\  ; then
-openstack image create rhel8  --file ~stack/user-images/rhel-8.0.qcow2 --disk-format qcow2 --container-format bare --public
-fi
+{% endfor %}
 
 echo "Creating flavor..."
 if ! openstack flavor list | grep m1.tiny\  ; then
@@ -101,7 +92,7 @@ if ! openstack flavor list | grep m1.xlarge\  ; then
 openstack flavor create --ram 16384 --disk 160 --vcpus 8  {% if enable_nfvi is sameas true %}--property epa=false{% endif %}   m1.xlarge
 fi
 
-{% if enable_nfvi is sameas true %}
+{% if enable_sriov is sameas true or enable_dpdk is sameas true %}
 if ! openstack flavor list | grep epa.tiny\  ; then
 openstack flavor create --ram 512 --disk 1 --vcpus 1  --property epa=true  epa.tiny
 nova flavor-key epa.tiny set hw:cpu_policy=dedicated
@@ -140,14 +131,14 @@ fi
 {% endif %}
 
 
-{% if enable_nfvi is sameas true %}
+{% if enable_sriov is sameas true or enable_dpdk is sameas true %}
 openstack aggregate create --zone LOW --property epa=false low
 for i in $(openstack hypervisor list --matching compute- -f value -c 'Hypervisor Hostname'); do
  openstack aggregate add host low $i
 done
 
 openstack aggregate create --zone NFVI --property epa=true nfvi
-for i in $(openstack hypervisor list --matching computenfvi- -f value -c 'Hypervisor Hostname'); do
+for i in $(openstack hypervisor list --matching computehci- -f value -c 'Hypervisor Hostname'); do
   openstack aggregate add host nfvi $i
 done
 {% endif %}
@@ -200,8 +191,7 @@ fi
 
 {% endif %}
 
-
-openstack flavor create --ram 16384 --disk 50 --vcpus 4  epa.xlarge
+openstack flavor create --ram 16384 --disk 50 --vcpus 4  epa.openshift
 nova flavor-key epa.openshift set hw:cpu_policy=dedicated
 nova flavor-key epa.openshift set hw:cpu_thread_policy=isolate
 nova flavor-key epa.openshift set hw:mem_page_size=1048576

@@ -1,77 +1,84 @@
 ---
 
-- name: Create directory templates
+- name: TEMPLATES; Copy and jinja2 processing 
   file:
     path: /home/stack/templates
     state: directory
     owner: stack
     group: stack
-- name: Ensure directory structure exists
-  file:
+  tags: [ 'templates' ]
+- file:
     path: '/home/stack/templates/{{ item.path }}'
     state: directory
   with_filetree: 'roles/director/files/templates/'
   when: item.state == 'directory'
-- name: Ensure files are populated from templates
-  template:
+  tags: [ 'templates' ]
+- template:
     src: '{{ item.src }}'
     dest: '/home/stack/templates/{{ item.path }}'
   with_filetree: 'roles/director/files/templates/'
   when: item.state == 'file'
-- name: Copy answers
-  template:
+  tags: [ 'templates' ]
+- template:
     src: ../templates/answers.yaml.j2
     dest: /home/stack/answers.yaml
-- name: Copy deploy script
-  copy:
+  tags: [ 'templates' ]
+- copy:
     src: ../files/deploy.sh
     dest: /home/stack/deploy.sh
+  tags: [ 'templates' ]
 
-- name: Ensure Test directory structure exists
+- name: Nic-Config; Copy 
+  file:
+    path: '/home/stack/templates/nic-config/'
+    state: directory
+  tags: [ 'templates' ]
+- copy:
+    src: '{{ item.src }}'
+    dest: "/home/stack/templates/nic-config/{{ item.path }}"
+  with_filetree: "roles/director/files/{{ nic_config }}/"
+  when: item.state == 'file'
+  tags: [ 'templates' ]
+
+- name: TESTS; Copy and jinja2 processing 
   file:
     path: '/home/stack/tests/{{ item.path }}'
     state: directory
   with_filetree: 'roles/director/files/tests/'
   when: item.state == 'directory'
-- name: Ensure Test files are populated from templates
-  template:
+  tags: [ 'tests' ]
+- template:
     src: '{{ item.src }}'
     dest: '/home/stack/tests/{{ item.path }}'
   with_filetree: 'roles/director/files/tests/'
   when: item.state == 'file'
+  tags: [ 'tests' ]
 
-- name: Ensure Nic Config directory structure exists
-  file:
-    path: '/home/stack/templates/nic-config/'
-    state: directory
-- name: Ensure Nic Config files are populated from templates
-  template:
-    src: '{{ item.src }}'
-    dest: '/home/stack/templates/nic-config/{{ item.path }}'
-  with_filetree: 'roles/director/files/{{ nic_config }}/'
-  when: item.state == 'file'
-
-  
-- name: Create directory scripts
+- name: SCRIPTS; Copy and jinja2 processing 
   file:
     path: /home/stack/scripts
     state: directory
     owner: stack
     group: stack
-- name: Ensure scripts directory structure exists
-  file:
+  tags: [ 'scripts' ]
+- file:
     path: '/home/stack/scripts/{{ item.path }}'
     state: directory
   with_filetree: 'roles/director/files/scripts/'
   when: item.state == 'directory'
-- name: Ensure scripts files are populated from templates
-  template:
+  tags: [ 'scripts' ]
+- template:
     src: '{{ item.src }}'
     dest: '/home/stack/scripts/{{ item.path }}'
   with_filetree: 'roles/director/files/scripts/'
   when: item.state == 'file'
-- name: Set permission on the script folder
-  shell: |
+  tags: [ 'scripts' ]
+- shell: |
     chmod +x -R ~/scripts/
     chmod +x -R ~/tests/
     chmod +x ~/deploy.sh
+  ignore_errors: yes
+  tags: [ 'scripts', 'tests', 'templates' ]
+
+- name: Generate role file.
+  shell: openstack overcloud roles generate Controller Compute ComputeHCI ComputeHCIOvsDpdk ComputeSriov ComputeOvsDpdkSriov > templates/roles_data.yaml

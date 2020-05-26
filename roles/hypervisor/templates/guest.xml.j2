@@ -5,6 +5,7 @@
   <vcpu placement="static">{{ item.vcpu }}</vcpu>
   <os>
     <type arch="x86_64" machine="pc">hvm</type>
+    
   </os>
   <features>
     <acpi/>
@@ -26,7 +27,7 @@
     <disk type="volume" device="disk">
       <driver name="qemu" type="qcow2"/>
       <source pool="{{ guests_rootdisk_pool }}" volume="{{ item.name }}-root"/>
-      <target dev="vda" bus="sata"/>
+      <target dev="vda" bus="virtio"/>
       <serial>{{ range(100000000, 999999999) | random }}</serial>
     </disk>
 {% endif %}
@@ -35,7 +36,7 @@
     <disk type="volume" device="disk">
       <driver name="qemu" type="qcow2"/>
       <source pool="{{ vol.pool }}" volume="{{ vol.name }}"/>
-      <target dev="{{ vol.target }}" bus="sata"/>
+      <target dev="{{ vol.target }}" bus="virtio"/>
       <serial>{{ range(100000000, 999999999) | random }}</serial>
     </disk>
 {% endfor %}

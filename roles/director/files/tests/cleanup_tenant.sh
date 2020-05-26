@@ -1,6 +1,6 @@
 #!/bin/bash
-source ~stack/stackrc
-RCFILE="$(openstack stack list -c 'Stack Name' -f value)rc"
+
+RCFILE=overcloudrc
 source ~stack/$RCFILE
 
 project=$1

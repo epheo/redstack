@@ -9,6 +9,8 @@
   loop: '{{ libvirt_guests }}'
   register: command_result
   changed_when: "command_result.stdout != ''"
+  tags:
+    - guests
 
 - name: Start Guests
   shell: |
@@ -18,5 +20,7 @@
   loop: '{{ libvirt_guests }}'
   register: command_result
   changed_when: "command_result.stdout != ''"
+  tags:
+    - guests
 
 - shell: 'sleep 15'
