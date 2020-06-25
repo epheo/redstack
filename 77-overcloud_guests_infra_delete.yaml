@@ -4,6 +4,7 @@
   roles:
     - common
     - hypervisor
+  gather_facts: no
   vars_files:
     - roles/openstack/vars/infrastructure_guests.yaml
   tasks:

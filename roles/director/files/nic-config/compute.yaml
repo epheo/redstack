@@ -152,36 +152,35 @@ resources:
                 - type: interface
                   name: nic2
 
-              # VLANS
-              - type: vlan
-                device: nic2
-                mtu: {get_param: InternalApiMtu}
-                vlan_id: {get_param: InternalApiNetworkVlanID}
-                addresses:
-                - ip_netmask: {get_param: InternalApiIpSubnet}
-                routes:
-                  list_concat_unique:
-                    - get_param: InternalApiInterfaceRoutes
+                - type: vlan
+                  device: nic2
+                  mtu: {get_param: InternalApiMtu}
+                  vlan_id: {get_param: InternalApiNetworkVlanID}
+                  addresses:
+                  - ip_netmask: {get_param: InternalApiIpSubnet}
+                  routes:
+                    list_concat_unique:
+                      - get_param: InternalApiInterfaceRoutes
 
-              - type: vlan
-                device: nic2
-                mtu: {get_param: TenantMtu}
-                vlan_id: {get_param: TenantNetworkVlanID}
-                addresses:
-                - ip_netmask: {get_param: TenantIpSubnet}
-                routes:
-                  list_concat_unique:
-                    - get_param: TenantInterfaceRoutes
+                - type: vlan
+                  device: nic2
+                  mtu: {get_param: TenantMtu}
+                  vlan_id: {get_param: TenantNetworkVlanID}
+                  addresses:
+                  - ip_netmask: {get_param: TenantIpSubnet}
+                  routes:
+                    list_concat_unique:
+                      - get_param: TenantInterfaceRoutes
 
-              - type: vlan
-                device: nic2
-                mtu: {get_param: StorageMtu}
-                vlan_id: {get_param: StorageNetworkVlanID}
-                addresses:
-                - ip_netmask: {get_param: StorageIpSubnet}
-                routes:
-                  list_concat_unique:
-                    - get_param: StorageInterfaceRoutes
+                - type: vlan
+                  device: nic2
+                  mtu: {get_param: StorageMtu}
+                  vlan_id: {get_param: StorageNetworkVlanID}
+                  addresses:
+                  - ip_netmask: {get_param: StorageIpSubnet}
+                  routes:
+                    list_concat_unique:
+                      - get_param: StorageInterfaceRoutes
 
               # SRIOV
               - type: interface

@@ -2,6 +2,7 @@ resource_registry:
   OS::TripleO::Controller::Net::SoftwareConfig:  ../nic-config/controller.yaml
   OS::TripleO::Compute::Net::SoftwareConfig:  ../nic-config/compute.yaml
   OS::TripleO::ComputeHCI::Net::SoftwareConfig:  ../nic-config/comphci.yaml
+  OS::TripleO::ComputeHCIens1::Net::SoftwareConfig:  ../nic-config/comphci.yaml
   OS::TripleO::ComputeHCIOvsDpdk::Net::SoftwareConfig:  ../nic-config/comphci.yaml
   OS::TripleO::ComputeSriov::Net::SoftwareConfig:  ../nic-config/compute.yaml
   OS::TripleO::ComputeOvsDpdkSriov::Net::SoftwareConfig:  ../nic-config/compute.yaml
@@ -10,11 +11,11 @@ parameter_defaults:
   DnsServers: [ "{{ dns_ip }}" ]
   NtpServer: "{{ ntp_ip }}"
   TimeZone: 'UTC'
-  EC2MetadataIp: "{{ undercloud_ip }}"
-  ControlPlaneDefaultRoute: "{{ undercloud_ip }}"
+  EC2MetadataIp: "{{ undercloud.ip }}"
+  ControlPlaneDefaultRoute: "{{ undercloud.ip }}"
   PublicVirtualFixedIPs: [{ 'ip_address' : "{{ overcloud_vip }}" }]
 
-  NeutronBridgeMappings: "{{ neutron.bridge_mappings }}"
-  NeutronFlatNetworks: "{{ neutron.flat_networks }}"
-
   NetworkDeploymentActions: ['CREATE','UPDATE']
+  
+  NeutronEnableIsolatedMetadata: True
+  NeutronEnableForceMetadata: True

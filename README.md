@@ -19,7 +19,7 @@ The following variables can be set:
      token: xxxxxxxxxxxxx
    
    undercloud_br_nic: nic1
-   undercloud_ip: 'xxxxxxxxxxxx'
+   undercloud.ip: 'xxxxxxxxxxxx'
    undercloud_admin: 'xxxxxxxxxxxx'
    undercloud_public: 'xxxxxxxxxxxx'
    

@@ -6,7 +6,8 @@ environments:
   - /usr/share/openstack-tripleo-heat-templates/environments/network-isolation.yaml
   - /home/stack/templates/environments/network.yaml
 {% if enable_ssl is sameas true %}
-  - /usr/share/openstack-tripleo-heat-templates/environments/ssl/tls-endpoints-public-dns.yaml
+  #- /usr/share/openstack-tripleo-heat-templates/environments/ssl/tls-endpoints-public-dns.yaml
+  - /usr/share/openstack-tripleo-heat-templates/environments/ssl/tls-endpoints-public-ip.yaml
   - /home/stack/templates/environments/inject-trust-anchor.yaml
   - /home/stack/templates/environments/enable-tls.yaml
 {% endif %}

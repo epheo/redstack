@@ -7,6 +7,7 @@
   loop: '{{ libvirt_guests }}'
   tags:
     - guests
+    - cloudinit
 
 - name: Write Cloud-init meta-data
   template:
@@ -15,6 +16,7 @@
   loop: '{{ libvirt_guests }}'
   tags:
     - guests
+    - cloudinit
 
 - name: Write Cloud-init user-data
   template:
@@ -23,6 +25,7 @@
   loop: '{{ libvirt_guests }}'
   tags:
     - guests
+    - cloudinit
 
 - name: Write Cloud-init network-config
   template:
@@ -31,6 +34,7 @@
   loop: '{{ libvirt_guests }}'
   tags:
     - guests
+    - cloudinit
 
 - name: Generate cloudinit ISO
   shell: |
@@ -40,6 +44,7 @@
   loop: '{{ libvirt_guests }}'
   tags:
     - guests
+    - cloudinit
 
 - name: Delete directory
   file:
@@ -48,3 +53,4 @@
   loop: '{{ libvirt_guests }}'
   tags:
     - guests
+    - cloudinit

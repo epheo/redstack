@@ -3,6 +3,7 @@ secrets/
 inventory*
 !inventory.sample
 downloads/
+Downloads/
 dev.yaml
 ssh.cfg
 ansible.cfg

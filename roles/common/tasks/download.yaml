@@ -4,6 +4,8 @@
   file:
     state: directory
     path: Downloads
+  tags: 
+    - always
 
 - name: Download Rhel 8.1 Qcow2 Image
   get_url:
@@ -13,6 +15,9 @@
     url_username: "{{ private_cdn.username }}"
     url_password: "{{ private_cdn.password }}"
     checksum: "sha1:f1bff27c16a71ba4a4e83d84f860f243d25a4413"
+  tags: 
+    - rhel
+    - rhel81
 
 - name: Download Rhel 8.2 Qcow2 Image
   get_url:
@@ -22,21 +27,31 @@
     url_username: "{{ private_cdn.username }}"
     url_password: "{{ private_cdn.password }}"
     checksum: "sha1:88a4134f16b2e45e34eec6550bb4cbb2ffcae3f9"
+  tags: 
+    - rhel
+    - rhel82
 
 - name: Download Fedora 32 stable
   get_url:
     url: https://download.fedoraproject.org/pub/fedora/linux/releases/32/Cloud/x86_64/images/Fedora-Cloud-Base-32-1.6.x86_64.qcow2
     dest: Downloads/fedora-32.qcow2
     checksum: "sha256:423a4ce32fa32c50c11e3d3ff392db97a762533b81bef9d00599de518a7469c8"
+  tags: 
+    - fedora
 
 - name: Get Rawhide latest build number,
   shell: curl -L https://ftp.lip6.fr/ftp/pub/linux/distributions/fedora/development/rawhide/Cloud/x86_64/images/ |grep qcow2 |awk -F '"' '{print $8}'
   register: latest_fedora
+  tags: 
+    - fedora
+    - rawhide
 
 - name: Download latest Fedora Rawhide
   get_url:
     url: "https://ftp.lip6.fr/ftp/pub/linux/distributions/fedora/development/rawhide/Cloud/x86_64/images/{{ latest_fedora.stdout }}"
     dest: Downloads/fedora-rawhide.qcow2
+  tags: 
+    - fedora
 
 # OpenShift
 # https://mirror.openshift.com/pub/openshift-v4/clients/ocp-dev-preview/
@@ -45,11 +60,17 @@
   get_url:
     url: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/stable/openshift-client-linux.tar.gz
     dest: Downloads/openshift-client-linux.tar.gz
+  tags: 
+    - openshift
+    - openshift-client
 
 - name: Download OpenShift Installer
   get_url:
     url: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/stable/openshift-install-linux.tar.gz
     dest: Downloads/openshift-install-linux.tar.gz
+  tags: 
+    - openshift
+    - openshift-install
 
 # Ansible
 
@@ -57,6 +78,8 @@
   get_url:
     url: https://releases.ansible.com/ansible-tower/setup-bundle/ansible-tower-setup-bundle-latest.el8.tar.gz
     dest: Downloads/ansible-tower-setup-bundle-latest.el8.tar.gz
+  tags: 
+    - tower
 
 # --- WIP ---
 

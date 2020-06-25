@@ -29,10 +29,11 @@
   ip_subnet: '{{ storage_net.subnet }}'
   allocation_pools: [{'start': '{{ storage_net.pool_start }}', 'end': '{{ storage_net.pool_end }}'}]
 
+{% if enable_ceph is sameas true %}
 - name: StorageMgmt
   name_lower: storage_mgmt
   vip: true
   vlan: '{{ storagemgmt_net.vlanid }}'
   ip_subnet: '{{ storagemgmt_net.subnet }}'
   allocation_pools: [{'start': '{{ storagemgmt_net.pool_start }}', 'end': '{{ storagemgmt_net.pool_end }}'}]
-
+{% endif %}

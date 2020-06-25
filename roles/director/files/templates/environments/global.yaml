@@ -15,6 +15,10 @@ parameter_defaults:
   ComputeHCICount: 3
   OvercloudComputeHCIFlavor: comphci
 
+  ComputeHCIens1HostnameFormat: 'computehci-%index%'
+  ComputeHCIens1Count: 0
+  OvercloudCens1omputeHCIFlavor: comphci
+
   ComputeHCIOvsDpdkHostnameFormat: 'computehcidpdk-%index%'
   ComputeHCIOvsDpdkCount: 0
   OvercloudComputeHCIOvsDpdkFlavor: comphci

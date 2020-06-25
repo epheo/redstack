@@ -2,12 +2,12 @@
 
 overcloud_domain_name = {{ customer_name }}.lab
 
-local_ip = {{ undercloud_ip }}/24
-local_interface = {{ undercloud_br_nic }}
+local_ip = {{ undercloud.ip }}/{{ undercloud.netmask }}
+local_interface = {{ undercloud.br_nic }}
 local_mtu = 1500
 
-undercloud_public_host = {{ undercloud_public }}
-undercloud_admin_host = {{ undercloud_admin }}
+undercloud_public_host = {{ undercloud.public_ip }}
+undercloud_admin_host = {{ undercloud.admin_ip }}
 
 container_images_file = /home/stack/containers-prepare-parameter.yaml
 

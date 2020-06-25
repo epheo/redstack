@@ -2,12 +2,14 @@
 
 - hosts: 
     - hypervisor
-    - onboarding
   roles:
     - common
+  gather_facts: no
   tasks:
     - block:
       - include_tasks: roles/common/tasks/download.yaml
+        tags: 
+          - always
       rescue:
         - set_fact: 
             message: "Downloads have failed"

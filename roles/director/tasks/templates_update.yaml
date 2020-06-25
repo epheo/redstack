@@ -32,13 +32,13 @@
   file:
     path: '/home/stack/templates/nic-config/'
     state: directory
-  tags: [ 'templates' ]
+  tags: [ 'templates', 'nic-config' ]
 - copy:
     src: '{{ item.src }}'
     dest: "/home/stack/templates/nic-config/{{ item.path }}"
   with_filetree: "roles/director/files/{{ nic_config }}/"
   when: item.state == 'file'
-  tags: [ 'templates' ]
+  tags: [ 'templates', 'nic-config' ]
 
 - name: TESTS; Copy and jinja2 processing 
   file:
@@ -81,4 +81,4 @@
   tags: [ 'scripts', 'tests', 'templates' ]
 
 - name: Generate role file.
-  shell: openstack overcloud roles generate Controller Compute ComputeHCI ComputeHCIOvsDpdk ComputeSriov ComputeOvsDpdkSriov > templates/roles_data.yaml
+  shell: openstack overcloud roles generate Controller ComputeOvsDpdkSriov ComputeOvsDpdkSriovRT > templates/roles_data.yaml

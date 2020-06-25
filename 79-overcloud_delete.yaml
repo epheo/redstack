@@ -3,6 +3,7 @@
 - hosts: undercloud
   roles:
     - director
+  gather_facts: no
   tasks:
     - include_tasks: roles/director/tasks/delete.yaml
     - include_tasks: roles/director/tasks/baremetal_delete.yaml

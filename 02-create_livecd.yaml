@@ -1,0 +1,13 @@
+---
+
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  roles:
+   - common
+  tasks:
+    - include_tasks: roles/common/tasks/download.yaml
+      tags: 
+        - rawhide
+    - include_tasks: roles/common/tasks/fedora_livecd.yaml
+    - include_tasks: roles/hypervisor/tasks/generate_cloudinit.yaml
