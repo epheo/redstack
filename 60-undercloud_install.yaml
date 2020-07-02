@@ -23,6 +23,7 @@
         - include_tasks: roles/director/tasks/set_hostname.yaml
         - include_tasks: roles/common/tasks/subscribe_rhsm.yaml
         - include_tasks: roles/director/tasks/generate_certs.yaml
+          tags: ssl
         - include_tasks: roles/director/tasks/install.yaml
         # - include_tasks: roles/director/tasks/conf_docker_proxy.yaml
         - set_fact: 

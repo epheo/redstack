@@ -38,3 +38,7 @@ environments:
   - /home/stack/templates/environments/ceph.yaml
   - /home/stack/templates/environments/ports.yaml
 {% endif %}
+{% if enable_ceph_external is sameas true %}
+  - /usr/share/openstack-tripleo-heat-templates/environments/ceph-ansible/ceph-ansible-external.yaml
+  - /home/stack/templates/environments/ceph-external.yaml
+{% endif %}

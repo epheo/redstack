@@ -2,6 +2,7 @@
 
 - hosts: 
     - hypervisor
+    - undercloud
   roles:
     - common
   gather_facts: no

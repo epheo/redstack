@@ -2,21 +2,18 @@ parameter_defaults:
 
   NeutronNetworkType: 'vxlan,vlan'
 
-  NeutronNetworkVLANRanges:
-    - physnet0:1:4094
-    - sriov:1:4094
+  NeutronNetworkVLANRanges: 
+    - datacentre:1:4094
+    - vran-1:1:4094
+    - vran-2:1:4094'
 
-  NeutronBridgeMappings:
-    - physnet0:br-data
+  NeutronFlatNetworks: physnet0,sriov,dpdk
 
-  NeutronFlatNetworks: physnet0,dpdk
   NeutronOVSFirewallDriver: noop
 
-  NeutronMechanismDrivers: ['sriovnicswitch','openvswitch']
+  ComputeHostnameFormat: "cpt"
 
-  NeutronVhostuserSocketDir: "/var/lib/vhost_sockets"
-  NeutronDpdkDriverType: vfio-pci
-  NeutronDatapathType: netdev
+  NeutronMechanismDrivers: ['sriovnicswitch','openvswitch']
 
   NovaSchedulerDefaultFilters: 
     - AvailabilityZoneFilter
@@ -28,43 +25,34 @@ parameter_defaults:
     - PciPassthroughFilter
     - AggregateInstanceExtraSpecsFilter
 
-  ComputeHCIExtraConfig:
+  ComputeOvsDpdkSriovRTExtraConfig:
     nova::cpu_allocation_ratio: 1.95
-  ComputeHCIParameters:
-    IsolCpusList: 1-19,21-39,41-59,61-79
-    KernelArgs: default_hugepagesz=1GB hugepagesz=1G hugepages=190 intel_iommu=on iommu=pt
-      isolcpus=1-19,21-39,41-59,61-79
-    NovaComputeCpuDedicatedSet: 1-19,21-39,41-59,61-79
-    NovaComputeCpuSharedSet: 0,20,40,60
-    NovaReservedHostMemory: 86016
-    TunedProfileName: "cpu-partitioning"
+  ComputeOvsDpdkSriovRTParameters:
+    IsolCpusList: 2-35,38-71
+    KernelArgs: default_hugepagesz=1GB hugepagesz=1G hugepages=126 intel_iommu=on iommu=pt
+      isolcpus=2-35,38-71
+    NovaComputeCpuDedicatedSet: 2-35,38-71
+    NovaComputeCpuSharedSet: 0-1,36-37
+    NovaReservedHostMemory: 4096
 
-    NeutronPhysicalDevMappings:
-      - sriov:ens4f1
-    NeutronSriovNumVFs:
-      - ens4f1:64
-    NovaPCIPassthrough:
-      - devname: ens4f1
-        physical_network: "sriov"
-
-  ComputeHCIens1ExtraConfig:
-    nova::cpu_allocation_ratio: 1.95
-    nova::compute::resume_guests_state_on_host_boot: true
-  ComputeHCIens1Parameters:
-    IsolCpusList: 1-19,21-39,41-59,61-79
-    KernelArgs: default_hugepagesz=1GB hugepagesz=1G hugepages=190 intel_iommu=on iommu=pt
-      isolcpus=1-19,21-39,41-59,61-79
-    NovaComputeCpuDedicatedSet: 1-19,21-39,41-59,61-79
-    NovaComputeCpuSharedSet: 0,20,40,60
-    NovaReservedHostMemory: 86016
-    TunedProfileName: "cpu-partitioning"
-    
     NeutronBridgeMappings:
-      - physnet0:br-data
+      - datacentre:br-vnfmgt
+      - vran-1:br-vran1
+      - vran-2:br-vran2
+    NeutronPhysnetNUMANodesMapping: { vran-1: [0], vran-2: [1] }
+    NeutronVhostuserSocketDir: "/var/lib/vhost_sockets"
+    NeutronDpdkDriverType: vfio-pci
+    NeutronDatapathType: netdev
+    VhostuserSocketGroup: hugetlbfs
+
     NeutronPhysicalDevMappings:
       - sriov:ens1f1
+      - sriov:ens7f1
     NeutronSriovNumVFs:
       - ens1f1:64
+      - ens7f1:64
     NovaPCIPassthrough:
       - devname: ens1f1
+        physical_network: "sriov"
+      - devname: ens7f1
         physical_network: "sriov"

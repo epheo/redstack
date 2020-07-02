@@ -9,3 +9,4 @@ ssh.cfg
 ansible.cfg
 roles/director/files/nic-config.*
 site-*.yaml
+roles/director/files/templates/environments/ceph-external.yaml

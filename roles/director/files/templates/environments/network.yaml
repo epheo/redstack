@@ -1,11 +1,6 @@
 resource_registry:
   OS::TripleO::Controller::Net::SoftwareConfig:  ../nic-config/controller.yaml
-  OS::TripleO::Compute::Net::SoftwareConfig:  ../nic-config/compute.yaml
-  OS::TripleO::ComputeHCI::Net::SoftwareConfig:  ../nic-config/comphci.yaml
-  OS::TripleO::ComputeHCIens1::Net::SoftwareConfig:  ../nic-config/comphci.yaml
-  OS::TripleO::ComputeHCIOvsDpdk::Net::SoftwareConfig:  ../nic-config/comphci.yaml
-  OS::TripleO::ComputeSriov::Net::SoftwareConfig:  ../nic-config/compute.yaml
-  OS::TripleO::ComputeOvsDpdkSriov::Net::SoftwareConfig:  ../nic-config/compute.yaml
+  OS::TripleO::ComputeOvsDpdkSriovRT::Net::SoftwareConfig:  ../nic-config/compute.yaml
 
 parameter_defaults:
   DnsServers: [ "{{ dns_ip }}" ]
@@ -14,6 +9,9 @@ parameter_defaults:
   EC2MetadataIp: "{{ undercloud.ip }}"
   ControlPlaneDefaultRoute: "{{ undercloud.ip }}"
   PublicVirtualFixedIPs: [{ 'ip_address' : "{{ overcloud_vip }}" }]
+  
+  BondInterfaceOvsOptions: "bond_mode=active-backup"
+  BondInterfaceOptions: "mode=active-backup"
 
   NetworkDeploymentActions: ['CREATE','UPDATE']
   
