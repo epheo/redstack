@@ -81,4 +81,4 @@
   tags: [ 'scripts', 'tests', 'templates' ]
 
 - name: Generate role file.
-  shell: openstack overcloud roles generate Controller ComputeOvsDpdkSriovRT > templates/roles_data.yaml
+  shell: openstack overcloud roles generate Controller ComputeSriovRT > templates/roles_data.yaml

@@ -1,13 +1,12 @@
 ---
 
-# Deprecated ?
-
 - name: Restart network service 
   become: yes
   systemd:
     state: restarted
     daemon_reload: yes
     name: network
+  when: proxy_url is defined
 
 - name: Prepare container images
   shell: |
@@ -20,8 +19,10 @@
     {% if enable_ceph is sameas true %}
       -e /usr/share/openstack-tripleo-heat-templates/environments/ceph-ansible/ceph-ansible.yaml \
     {% endif %}
-    {% if enable_nfvi is sameas true %}
+    {% if enable_sriov is sameas true %}
       -e /usr/share/openstack-tripleo-heat-templates/environments/services-docker/neutron-sriov.yaml \
+    {% endif %}
+    {% if enable_dpdk is sameas true %}
       -e /usr/share/openstack-tripleo-heat-templates/environments/services-docker/neutron-ovs-dpdk.yaml \
     {% endif %}
     {% if enable_extra is sameas true %}
@@ -41,9 +42,9 @@
     {% if enable_ovn is sameas true %}
       -e /usr/share/openstack-tripleo-heat-templates/environments/services-docker/neutron-ovn-dvr-ha.yaml \
     {% endif %}
-    {% if enable_ceph is sameas true %}
-      --set ceph_namespace={{ ceph.namespace }} \
-      --set ceph_image={{ ceph.image }} \
+    {% if registry.ceph_namespace is defined %}
+      --set ceph_namespace={{ registry.ceph_namespace }} \
+      --set ceph_image={{ registry.ceph_image }} \
     {% endif %}
       --environment-directory ~stack/templates/environments/ \
       --roles-file /home/stack/templates/roles_data.yaml \
@@ -51,13 +52,13 @@
       --push-destination={{ registry.ip }}:{{ registry.port }} \
       --prefix=openstack- \
       --tag-from-label {version}-{release} \
-      --output-env-file={{ registry.env }} \
-      --output-images-file {{ registry.images }}
+      --output-env-file={{ registry.env_file }} \
+      --output-images-file {{ registry.images_file }}
     
 - name: Upload container images
   shell: |
     openstack overcloud container image upload \
-      --config-file {{ registry.images }} \
+      --config-file {{ registry.images_file }} \
       --verbose
 
 - name: Validate uploaded images

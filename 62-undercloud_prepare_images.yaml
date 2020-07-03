@@ -4,6 +4,7 @@
   roles:
     - common
     - director
+  gather_facts: no
   tasks:
     - block:
         - include_tasks: roles/director/tasks/docker_images.yaml

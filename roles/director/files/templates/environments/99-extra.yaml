@@ -1,0 +1,65 @@
+{% if resource_registry is defined %}
+resource_registry:
+{% for k, v in resource_registry.items() %}
+  {{ k }}: {{ v }}
+{% endfor %}
+{% endif %}
+
+parameter_defaults:
+
+{% if parameter_defaults is defined %}
+{% for k, v in parameter_defaults.items() %}
+  {{ k }}: {{ v | to_json }}
+{% endfor %}
+{% endif %}
+
+  #  Debug: true
+  #  ConfigDebug: true
+  #  DockerPuppetDebug: True
+
+  # Create user name on install
+  #extra_username: redhatstack
+  #extra_username_pass: $6$somesaltsalt$kK.nEcss6K201neKzVQFgcGiNg9kIAiWZyhZhKRs9zDAZ.w8aRWfEJpoUE23AdmdEHhE3jcuD7iv82qSEvtQC/
+
+  KeystoneNotificationFormat: cadf
+
+  NovaSchedulerAvailableFilters: ["nova.scheduler.filters.all_filters","nova.scheduler.filters.pci_passthrough_filter.PciPassthroughFilter"]
+  NovaSchedulerDefaultFilters:
+    - RetryFilter
+    - AggregateInstanceExtraSpecsFilter
+    - AvailabilityZoneFilter
+    - RamFilter
+    - DiskFilter
+    - ComputeFilter
+    - ComputeCapabilitiesFilter
+    - ImagePropertiesFilter
+    - ServerGroupAntiAffinityFilter
+    - ServerGroupAffinityFilter
+    - PciPassthroughFilter
+    - NUMATopologyFilter
+
+{% if enable_pcipassthrough is sameas true %}
+  NovaPCIPassthrough:
+    - vendor_id: "10de"
+      product_id: "1eb8"
+  
+  ControllerExtraConfig:
+    nova::api::pci_alias:
+      - name: nvidia_t4
+        vendor_id: '10de'
+        product_id: '1eb8'
+{% endif %}
+  
+  # Decrease Gnocchi polling time
+  ManagePolling: true
+  ManagePipeline: true
+  PipelinePublishers:
+    - gnocchi://?archive_policy=medium
+  EventPipelinePublishers:
+    - gnocchi://?archive_policy=medium
+    - panko://
+  GnocchiArchivePolicy: 'medium'
+
+  ExtraConfig:
+    heat::engine::heat_waitcondition_server_url: "http://10.245.32.69:8000/v1/waitcondition"
+    tripleo::instanceha::no_shared_storage: false

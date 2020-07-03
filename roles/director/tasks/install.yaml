@@ -4,7 +4,7 @@
   become: yes
   package:
     state: latest
-    name: python3-tripleoclient
+    name: python-tripleoclient
 
 - name: Install needed packages
   become: yes
@@ -17,23 +17,6 @@
   template:
     src: ../templates/undercloud.conf.j2
     dest: ~stack/undercloud.conf
-
-- name: Generate the default container image preparation file
-  shell: |
-    openstack tripleo container image prepare default \
-      --local-push-destination \
-      --output-env-file containers-prepare-parameter.yaml
-
-- name: Add username and password to authenticate to that registry
-  blockinfile:
-    insertafter: EOF
-    path: "containers-prepare-parameter.yaml"
-    block: |
-      #
-        ContainerImageRegistryCredentials:
-          registry.redhat.io:
-            {{ rh_service.username }}: {{ rh_service.token }}
-
 
 - name: Run undercloud installation
   shell: "openstack undercloud install"

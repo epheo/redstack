@@ -1,0 +1,64 @@
+{% if enable_ceph_external is sameas true %}
+parameter_defaults:
+
+  CinderEnableIscsiBackend: False
+  CinderEnableRbdBackend: True
+  CinderBackupBackend: ceph
+  #NovaEnableRbdBackend: True
+  #GlanceBackend: rbd
+  GlanceBackend: file
+  GnocchiBackend: rbd
+
+  CephClientUserName: {{ ceph_external.ClientUserName }}
+  CephClientKey: {{ ceph_external.ClientKey }}
+  CephClusterFSID: {{ ceph_external.ClusterFSID }}
+  CephExternalMonHost: {{ ceph_external.ExternalMonHost  }}
+
+  CinderRbdPoolName: {{ ceph_external.CinderRbdPoolName }}
+  #GlanceRbdPoolName: {{ ceph_external.GlanceRbdPoolName }}
+  #NovaRbdPoolName: {{ ceph_external.NovaRbdPoolName }}
+  CinderRbdExtraPools: {{ ceph_external.CinderRbdExtraPools }}
+  GnocchiRbdPoolName: {{ ceph_external.GnocchiRbdPoolName }}
+{% endif %}
+
+{% if enable_ceph is sameas true %}
+resource_registry:
+  OS::TripleO::Services::CephMgr: /usr/share/openstack-tripleo-heat-templates/docker/services/ceph-ansible/ceph-mgr.yaml
+  OS::TripleO::Services::CephMon: /usr/share/openstack-tripleo-heat-templates/docker/services/ceph-ansible/ceph-mon.yaml
+  OS::TripleO::Services::CephOSD: /usr/share/openstack-tripleo-heat-templates/docker/services/ceph-ansible/ceph-osd.yaml
+  OS::TripleO::Services::CephClient: /usr/share/openstack-tripleo-heat-templates/docker/services/ceph-ansible/ceph-client.yaml
+  OS::TripleO::Services::CephMds: /usr/share/openstack-tripleo-heat-templates/docker/services/ceph-ansible/ceph-mds.yaml
+  OS::TripleO::Services::CephRgw: /usr/share/openstack-tripleo-heat-templates/docker/services/ceph-ansible/ceph-rgw.yaml
+
+  OS::TripleO::Services::SwiftProxy: OS::Heat::None
+  OS::TripleO::Services::SwiftStorage: OS::Heat::None
+  OS::TripleO::Services::SwiftRingBuilder: OS::Heat::None
+
+  OS::TripleO::Services::CinderBackup: /usr/share/openstack-tripleo-heat-templates/docker/services/pacemaker/cinder-backup.yaml
+
+parameter_defaults:
+
+  CephAnsiblePlaybookVerbosity: 1
+
+  CinderEnableIscsiBackend: false
+  CinderEnableRbdBackend: true
+  CinderBackupBackend: ceph
+  NovaEnableRbdBackend: true
+  GlanceBackend: rbd
+  GnocchiBackend: rbd
+
+  CephPoolDefaultSize: '{{ ceph.pool_default_size }}'
+  CephPoolDefaultPgNum: 32
+  ManilaCephFSDataPoolPGNum: 32
+  ManilaCephFSMetadataPoolPGNum: 32
+
+  CephConfigOverrides:
+    mon_max_pg_per_osd: 2048
+
+  CephAnsibleDisksConfig:
+    osd_objectstore: bluestore
+    osd_scenario: lvm
+    devices:
+      - /dev/sdc
+      - /dev/sdb
+{% endif %}

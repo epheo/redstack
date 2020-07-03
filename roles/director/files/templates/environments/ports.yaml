@@ -1,5 +1,0 @@
-resource_registry:                                                                                                                                                           
-  OS::TripleO::ComputeOvsDpdkSriovRT::Ports::ExternalPort: /usr/share/openstack-tripleo-heat-templates/network/ports/external.yaml
-  OS::TripleO::ComputeOvsDpdkSriovRT::InternalApiPort: /usr/share/openstack-tripleo-heat-templates/network/ports/internal_api.yaml
-  OS::TripleO::ComputeOvsDpdkSriovRT::StoragePort: /usr/share/openstack-tripleo-heat-templates/network/ports/storage.yaml
-  OS::TripleO::ComputeOvsDpdkSriovRT::TenantPort: /usr/share/openstack-tripleo-heat-templates/network/ports/tenant.yaml

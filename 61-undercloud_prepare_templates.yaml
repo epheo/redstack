@@ -2,7 +2,6 @@
 
 - hosts: 
     - undercloud
-
   gather_facts: no
   roles:
     - common

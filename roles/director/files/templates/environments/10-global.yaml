@@ -7,8 +7,10 @@ parameter_defaults:
   ControllerCount: 1
   OvercloudControllerFlavor: control
 
-  ComputeOvsDpdkSriovRTHostnameFormat: 'compute-%index%'
-  ComputeOvsDpdkSriovRTCount: 2
-  OvercloudComputeOvsDpdkSriovRTFlavor: compute
+  ComputeSriovRTHostnameFormat: 'compute-%index%'
+  ComputeSriovRTCount: 2
+  OvercloudComputeSriovRTFlavor: compute
 
-  #GlanceBackend: file
+{% if enable_ceph is sameas false and enable_ceph_external is sameas false %}
+  GlanceBackend: file
+{% endif %}

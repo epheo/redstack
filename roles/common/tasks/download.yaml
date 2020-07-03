@@ -19,17 +19,15 @@
     - rhel
     - rhel81
 
-- name: Download Rhel 8.2 Qcow2 Image
+- name: Download Rhel 7.7 Qcow2 Image
   get_url:
-    url: "{{ private_cdn.url }}/rhel-8.2-x86_64-kvm.qcow2"
-    dest: Downloads/rhel-8.2.qcow2
+    url: "{{ private_cdn.url }}/rhel-server-7.7-x86_64-kvm.qcow2"
+    dest: Downloads/rhel-7.7.qcow2
     force_basic_auth: yes
     url_username: "{{ private_cdn.username }}"
     url_password: "{{ private_cdn.password }}"
-    checksum: "sha1:88a4134f16b2e45e34eec6550bb4cbb2ffcae3f9"
   tags: 
     - rhel
-    - rhel82
 
 - name: Download Fedora 32 stable
   get_url:

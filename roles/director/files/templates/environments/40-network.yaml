@@ -1,0 +1,47 @@
+resource_registry:
+  OS::TripleO::Controller::Net::SoftwareConfig:  ../nic-config/controller.yaml
+  OS::TripleO::ComputeSriovRT::Net::SoftwareConfig:  ../nic-config/compute.yaml
+
+parameter_defaults:
+  DnsServers: [ "{{ dns_ip }}" ]
+  NtpServer: "{{ ntp_ip }}"
+  TimeZone: 'UTC'
+  EC2MetadataIp: "{{ undercloud.ip }}"
+  ControlPlaneDefaultRoute: "{{ undercloud.ip }}"
+  PublicVirtualFixedIPs: [{ 'ip_address' : "{{ overcloud_vip }}" }]
+  
+  BondInterfaceOvsOptions: "bond_mode=active-backup"
+  BondInterfaceOptions: "mode=active-backup"
+
+  NetworkDeploymentActions: ['CREATE','UPDATE']
+  
+  NeutronEnableIsolatedMetadata: True
+  NeutronEnableForceMetadata: True
+
+{% if enable_sriov is sameas true %}
+  NeutronMechanismDrivers: ['sriovnicswitch','openvswitch']
+  NeutronOVSFirewallDriver: noop
+{% else %}
+  NeutronMechanismDrivers: ['openvswitch']
+{% endif %}
+
+  NeutronServicePlugins: "qos,router,trunk"
+
+{% if enable_ovn is sameas true %}
+  NeutronNetworkType: 'geneve,vlan'
+  NeutronTunnelTypes: 'geneve'
+{% else %}
+  NeutronNetworkType: 'vxlan,vlan'
+  NeutronTunnelTypes: 'vxlan'
+{% endif %}
+
+  # Neutron VLAN ranges per network, for example 'datacentre:1:499,tenant:500:1000':
+  NeutronExternalNetworkBridge: "''"
+
+  ExternalNetworkVlanID: {{ external_net.vlanid }}
+  InternalApiNetworkVlanID: {{ internal_net.vlanid }}
+  TenantNetworkVlanID: {{ tenant_net.vlanid }}
+  StorageNetworkVlanID: {{ storage_net.vlanid }}
+{% if storagemgmt_net is defined %}
+  StorageMgmtNetworkVlanID: {{ storagemgmt_net.vlanid }}
+{% endif %}

@@ -1,30 +1,25 @@
 [DEFAULT]
 
-overcloud_domain_name = {{ customer_name }}.lab
+overcloud_domain_name = {{ customer_name }}.{{ customer_extention }}
 
 local_ip = {{ undercloud.ip }}/{{ undercloud.netmask }}
 local_interface = {{ undercloud.br_nic }}
 local_mtu = 1500
 
+enable_routed_networks = true
+
 undercloud_public_host = {{ undercloud.public_ip }}
 undercloud_admin_host = {{ undercloud.admin_ip }}
 
-container_images_file = /home/stack/containers-prepare-parameter.yaml
-
+undercloud_nameservers = {{ dns_ip }}
 undercloud_ntp_servers = {{ ntp_ip }}
+
+subnets = ctlplane-subnet
+local_subnet = ctlplane-subnet
 
 {% if enable_uefi is sameas true %}
 ipxe_enabled = true
 inspection_enable_uefi = true
-
-{% endif %}
-{% if undercloud_custom_env is defined %}
-custom_env_files = {{ undercloud_custom_env }}
-
-{% endif %}
-{% if enable_ceph is sameas true %}
-clean_nodes=true
-
 {% endif %}
 
 [ctlplane-subnet]
