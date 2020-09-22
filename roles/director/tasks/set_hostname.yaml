@@ -17,5 +17,5 @@
   become: yes
   lineinfile:
     dest: /etc/hosts
-    line: "{{ undercloud_ip }} \t{{ dir_full_hostname }}\t{{ inventory_hostname }}"
+    line: "{{ undercloud.ip }} \t{{ dir_full_hostname }}\t{{ inventory_hostname }}"
     insertbefore: BOF

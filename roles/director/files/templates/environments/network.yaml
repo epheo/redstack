@@ -10,8 +10,8 @@ parameter_defaults:
   DnsServers: [ "{{ dns_ip }}" ]
   NtpServer: "{{ ntp_ip }}"
   TimeZone: 'UTC'
-  EC2MetadataIp: "{{ undercloud_ip }}"
-  ControlPlaneDefaultRoute: "{{ undercloud_ip }}"
+  EC2MetadataIp: "{{ undercloud.ip }}"
+  ControlPlaneDefaultRoute: "{{ undercloud.ip }}"
   PublicVirtualFixedIPs: [{ 'ip_address' : "{{ overcloud_vip }}" }]
 
   NeutronBridgeMappings: "{{ neutron.bridge_mappings }}"

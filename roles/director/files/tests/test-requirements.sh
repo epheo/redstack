@@ -66,7 +66,7 @@ EOF
 {% if proxy_url is defined  %}
 export http_proxy=http://{{ proxy_url }}
 export https_proxy=http://{{ proxy_url }}
-export no_proxy={{ undercloud_ip }}
+export no_proxy={{ undercloud.ip }}
 {% endif %}
 
 {% for image in guests_rootimg %}
