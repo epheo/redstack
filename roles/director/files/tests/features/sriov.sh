@@ -5,22 +5,15 @@ cd $( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
 ../new_identity.sh $project
 source ~stack/rcfiles/$project'rc'
 
-antiaff=$(openstack server group create \
-              --policy anti-affinity gr-antiaff-$project \
-              -c id -f value)
-
 portname='vf0'
-~stack/scripts/new_sriov_userdata.sh $portname eth1 test130_sriov
+../new_sriov_userdata.sh $portname eth0 sriov_test_net
 
 echo "Creating SR-IOV VMs ..."
-openstack server create sriov-$project \
+openstack server create rawhide-$project \
   --config-drive true \
   --user-data /home/stack/user-data-scripts/userdata-sriov_$portname \
-  --hint group=$antiaff \
   --key-name undercloud-key \
   --security-group allowall_$project \
   --flavor epa.medium \
-  --image fedora30 \
-  --nic port-id=$(openstack port list | grep $portname"\ " | awk '{print $2}') \
-  --availability-zone DPDK-INTEL
-
+  --image fedora-rawhide.qcow2 \
+  --nic port-id=$(openstack port list | grep $portname"\ " | awk '{print $2}')

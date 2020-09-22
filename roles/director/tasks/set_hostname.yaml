@@ -1,7 +1,7 @@
 ---
 
 - set_fact:
-    dir_full_hostname: "{{ inventory_hostname }}.{{ customer_name }}.lab"
+    dir_full_hostname: "{{ inventory_hostname }}.{{ customer_name }}.{{ customer_extention }}"
 
 - name: Ensure hostname set 
   become: yes

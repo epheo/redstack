@@ -2,13 +2,13 @@
 
 if [ -z $1 ]; then echo '$1 must be set as new sriov port name'; exit 0; fi
 if [ -z $2 ]; then echo '$2 must be set as guest sriov interface'; exit 0; fi
-if [ -z $3 ]; then echo '$3 must be set as network'; 3="test130_sriov" ; fi
+if [ -z $3 ]; then echo '$3 must be set as network'; 3="sriov_test_net" ; fi
 
 portname=$1
 interface=$2
 network=$3
 
-for i in $(openstack port list -c Name -f value); 
+for i in $(openstack port list -c Name -f value |grep vf); 
 do if [ $i == $portname ]; 
      then echo  "Port $portname exists already"; 
      exit 1
@@ -25,11 +25,15 @@ STATIC_PREFIX=$(openstack subnet show $(openstack port show $portname -f value -
 
 cat > /home/stack/user-data-scripts/userdata-sriov_$portname << EOF
 #cloud-config
-disable_root: false
+ssh_pwauth: True
+users:
+  - name: stack
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    ssh_authorized_keys: {{ guests_pubkey }}
 chpasswd:
   list: |
-    root:redhat
-  expire: false
+    stack:{{ guests_passwd }}
+  expire: False
 write_files:
   - path: "/etc/sysconfig/network-scripts/ifcfg-$interface"
     permissions: "0644"
@@ -47,6 +51,6 @@ runcmd:
  -  sed -i'.orig' -e's/without-password/yes/' /etc/ssh/sshd_config
  -  service sshd restart
  - 'systemctl restart network'
- - 'ifup eth0'
+ - 'ifup $interface'
 EOF
 
