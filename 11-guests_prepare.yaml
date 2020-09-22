@@ -16,6 +16,7 @@
       - include_tasks: roles/hypervisor/tasks/generate_cloudinit.yaml
         tags:
           - guests
+          - cloudinit
       - include_tasks: roles/hypervisor/tasks/deploy_libvirt_guests.yaml
         tags:
           - guests

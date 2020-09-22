@@ -48,15 +48,10 @@
   shell: |
     subscription-manager attach --pool={{ pool_id.stdout }}
   when: already_defined_subs.stdout == ""
-    
-- name: Disable repositories
-  become: yes
-  shell: |
-    subscription-manager repos --disable=*
 
-- name: Subscribe repositories
+- name: Disable all and subscribe repositories
   become: yes
   shell: |
-    subscription-manager repos {% for item in enable_repos %} --enable={{ item }} {% endfor %}
+    subscription-manager repos  --disable=* {% for item in enable_repos %} --enable={{ item }} {% endfor %}
 
 - include_tasks: update.yaml

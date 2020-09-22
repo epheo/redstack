@@ -10,7 +10,7 @@
   tasks:
     - block:
         - include_tasks: roles/director/tasks/templates_update.yaml
-          tags: [ 'templates', 'scripts', 'tests' ]
+          tags: always
         - set_fact: 
             message: "Just updated the Overcloud templates"
           changed_when: True

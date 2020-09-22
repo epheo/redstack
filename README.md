@@ -18,13 +18,10 @@ The following variables can be set:
      username: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
      token: xxxxxxxxxxxxx
    
-
-  undercloud:
-    br_nic: ethx
-    ip: 'xxxxxxxxxxx'
-    netmask: xx
-    admin_ip: 'xxxxxxxxxxx'
-    public_ip: 'xxxxxxxxxxx'
+   undercloud_br_nic: nic1
+   undercloud.ip: 'xxxxxxxxxxxx'
+   undercloud_admin: 'xxxxxxxxxxxx'
+   undercloud_public: 'xxxxxxxxxxxx'
    
    dns_ip: '1.1.1.1'
    ntp_ip: 'xxxxxxxxxxxx'
