@@ -18,22 +18,19 @@
 - name: Create log file
   shell: touch /var/log/virtualbmc.log
 
-- name: Disable SSH StrictHostKeyChecking
-  copy:
-    dest: "~/.ssh/config"
-    content: |
-      Host *
-        StrictHostKeyChecking no
-
-#- set_fact:
-#    external_ip: "{{ (libvirt_networks |  selectattr('name', 'search', 'external') | list | first).gateway }}"
+# - name: Disable SSH StrictHostKeyChecking
+#   copy:
+#     dest: "~/.ssh/config"
+#     content: |
+#       Host *
+#         StrictHostKeyChecking no
 
 - name: Configure vbmc ports
   shell: |
     if [ -z "$(vbmc list |grep \ {{ item.name }}\ )" ]; then
-      vbmc add {{ item.name  }} --port {{ item.port }} --username {{ bmc_username }} --password {{ bmc_password }} --libvirt-uri qemu:///system
+      vbmc add {{ item.name  }} --port {{ item.port }} --username {{ bmc_username }} --password {{ bmc_password }} --address {{ vbmc.ip }} --libvirt-uri qemu:///system
     fi
-  loop: "{{ vbmc_ports }}"
+  loop: "{{ vbmc.ports }}"
   register: command_result
   changed_when: "command_result.stdout != ''"
 
@@ -58,29 +55,29 @@
 
 - name: Configure vbmc-ports.sh content
   shell: "echo 'vbmc start {{ item.name  }}' >> /usr/local/sbin/vbmc-ports.sh"
-  loop: "{{ vbmc_ports }}"
+  loop: "{{ vbmc.ports }}"
 
 - name: Open firewalld vbmc ports
-  shell: "firewall-cmd --zone=public --add-port={{ item.port }}/udp --permanent"
-  loop: "{{ vbmc_ports }}"
+  shell: "firewall-cmd  --permanent --zone=libvirt --add-port={{ item.port }}/udp"
+  loop: "{{ vbmc.ports }}"
 
 - name: Enable forwarding
   shell: "firewall-cmd --permanent --direct --add-rule ipv4 filter FORWARD 1 -s 0.0.0.0/0 -j ACCEPT"
 
-- name: Enable forwarding
-  shell: "iptables -I FORWARD 1  -d 0.0.0.0/0 -j ACCEPT"
-
 - name: Reload firewalld
   shell: "firewall-cmd --reload"
 
-- name: Open IPTABLES vbmc ports
-  shell: "iptables -I INPUT -p udp --dport {{ item.port }} -m state --state NEW  -j ACCEPT"
-  loop: "{{ vbmc_ports }}"
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
-
-- name: Save IPTABLES
-  shell: "iptables-save |sudo tee /etc/sysconfig/iptables"
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+# - name: Open IPTABLES vbmc ports
+#   shell: "iptables -I INPUT -p udp --dport {{ item.port }} -m state --state NEW  -j ACCEPT"
+#   loop: "{{ vbmc.ports }}"
+#   when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+# 
+# - name: Enable forwarding
+#   shell: "iptables -I FORWARD 1  -d 0.0.0.0/0 -j ACCEPT"
+# 
+# - name: Save IPTABLES
+#   shell: "iptables-save |sudo tee /etc/sysconfig/iptables"
+#   when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
 - name: Enable vbmc-ports service 
   become: yes
@@ -90,6 +87,7 @@
     name: vbmc-ports
 
 - name: Restart vbmc-ports service 
+  ignore_errors: yes # https://github.com/ansible/ansible/issues/71528
   become: yes
   systemd:
     state: restarted

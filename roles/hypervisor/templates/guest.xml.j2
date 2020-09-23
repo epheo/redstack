@@ -5,7 +5,9 @@
   <vcpu placement="static">{{ item.vcpu }}</vcpu>
   <os>
     <type arch="x86_64" machine="pc">hvm</type>
-    
+{% if enable_uefi is sameas true %}
+    <loader type="rom">/usr/share/edk2/ovmf/OVMF_CODE.fd</loader> 
+{% endif %}
   </os>
   <features>
     <acpi/>
@@ -26,7 +28,7 @@
 {% if item.root is defined %}
     <disk type="volume" device="disk">
       <driver name="qemu" type="qcow2"/>
-      <source pool="{{ guests_rootdisk_pool }}" volume="{{ item.name }}-root"/>
+      <source pool="{{ guests.rootdisk.pool }}" volume="{{ item.name }}-root"/>
       <target dev="vda" bus="virtio"/>
       <serial>{{ range(100000000, 999999999) | random }}</serial>
     </disk>
@@ -44,7 +46,7 @@
 {% if item.cloudinit is defined %}
     <disk type="file" device="cdrom">
       <driver name="qemu" type="raw"/>
-      <source file="{{ guests_rootdisk_pool_path }}/cloudinit_{{ item.name }}.iso"/>
+      <source file="{{ guests.rootdisk.pool_path }}/cloudinit_{{ item.name }}.iso"/>
       <backingStore/>
       <target dev="hda" bus="ide"/>
       <readonly/>

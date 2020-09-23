@@ -5,8 +5,6 @@
     - common
     - director
   gather_facts: no
-  vars_files:
-    - roles/hypervisor/vars/openstack.yaml
   tasks:
     - block:
         - include_tasks: roles/director/tasks/instackenv.yaml

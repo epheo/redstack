@@ -6,21 +6,24 @@
       echo '{{ lookup("template", "roles/hypervisor/templates/guest.xml.j2") }}' > guest.xml
       virsh define guest.xml
     fi
-  loop: '{{ libvirt_guests }}'
+  loop: '{{ libvirt.guests }}'
   register: command_result
   changed_when: "command_result.stdout != ''"
   tags:
     - guests
+  when: libvirt.guests is defined
 
 - name: Start Guests
   shell: |
     if [ -z "$(virsh list |grep \ {{ item.name }}\ )" ]; then
       virsh start {{ item.name }}
     fi
-  loop: '{{ libvirt_guests }}'
+  loop: '{{ libvirt.guests }}'
   register: command_result
   changed_when: "command_result.stdout != ''"
   tags:
     - guests
+  when: libvirt.guests is defined
 
 - shell: 'sleep 15'
+  when: libvirt.guests is defined

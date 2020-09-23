@@ -55,7 +55,7 @@
 
 - name: untar images
   shell: "for i in $(ls /usr/share/rhosp-director-images/overcloud-full-latest*) $(ls /usr/share/rhosp-director-images/ironic-python-agent-latest-*); do tar -xvf $i -C /home/stack/images/; done"
-
+  
 - name: upload images
   shell: |
     source /home/stack/stackrc && openstack overcloud image upload --update-existing --image-path /home/stack/images/

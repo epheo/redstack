@@ -191,76 +191,57 @@ resources:
                   list_concat_unique:
                     - get_param: ControlPlaneStaticRoutes
 
-              # NIC 2 - OpenStack
-              - type: interface
-                name: nic2
-                use_dhcp: false
-                defroute: false
               - type: vlan
                 mtu: {get_param: InternalApiMtu}
                 vlan_id: {get_param: InternalApiNetworkVlanID}
-                device: nic2
+                device: nic1
                 addresses:
                 - ip_netmask: {get_param: InternalApiIpSubnet}
                 routes:
                   list_concat_unique:
                     - get_param: InternalApiInterfaceRoutes
+
+              - type: ovs_bridge
+                name: bridge_name
+                dns_servers: {get_param: DnsServers}
+                use_dhcp: false
+                members:
+                - type: interface
+                  name: nic2
+
               - type: vlan
+                device: nic2
+                mtu: {get_param: ExternalMtu}
+                vlan_id: {get_param: ExternalNetworkVlanID}
+                addresses:
+                - ip_netmask: {get_param: ExternalIpSubnet}
+                routes:
+                  list_concat_unique:
+                    - get_param: ExternalInterfaceRoutes
+                    - - default: true
+                        next_hop:
+                          get_param: ExternalInterfaceDefaultRoute
+
+              - type: vlan
+                device: nic2
                 mtu: {get_param: TenantMtu}
                 vlan_id: {get_param: TenantNetworkVlanID}
-                device: nic2
                 addresses:
                 - ip_netmask: {get_param: TenantIpSubnet}
                 routes:
                   list_concat_unique:
                     - get_param: TenantInterfaceRoutes
 
-              # NIC 3 - External; Storage
-              - type: ovs_bridge
-                name: bridge_name
+              - type: vlan
+                device: nic2
                 mtu: {get_param: StorageMtu}
-                dns_servers: {get_param: DnsServers}
-                use_dhcp: false
-                members:
-                - type: interface
-                  name: nic3
-                  mtu: {get_param: StorageMtu}
-                  use_dhcp: false
-                  primary: true
-                - type: vlan
-                  mtu: {get_param: ExternalMtu}
-                  vlan_id: {get_param: ExternalNetworkVlanID}
-                  addresses:
-                  - ip_netmask: {get_param: ExternalIpSubnet}
-                  routes:
-                    list_concat_unique:
-                      - get_param: ExternalInterfaceRoutes
-                      - - default: true
-                          next_hop:
-                            get_param: ExternalInterfaceDefaultRoute
-                - type: vlan
-                  mtu: {get_param: StorageMtu}
-                  vlan_id: {get_param: StorageNetworkVlanID}
-                  addresses:
-                  - ip_netmask: {get_param: StorageIpSubnet}
-                  routes:
-                    list_concat_unique:
-                      - get_param: StorageInterfaceRoutes
-                - type: vlan
-                  mtu: {get_param: StorageMgmtMtu}
-                  vlan_id: {get_param: StorageMgmtNetworkVlanID}
-                  addresses:
-                  - ip_netmask: {get_param: StorageMgmtIpSubnet}
-                  routes:
-                    list_concat_unique:
-                      - get_param: StorageMgmtInterfaceRoutes
-
-               # UNUSED
-              - type: interface
-                name: nic4
-                use_dhcp: false
-                defroute: false
-
+                vlan_id: {get_param: StorageNetworkVlanID}
+                addresses:
+                - ip_netmask: {get_param: StorageIpSubnet}
+                routes:
+                  list_concat_unique:
+                    - get_param: StorageInterfaceRoutes
+                    
 outputs:
   OS::stack_id:
     description: The OsNetConfigImpl resource.

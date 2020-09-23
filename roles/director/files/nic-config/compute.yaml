@@ -126,7 +126,7 @@ resources:
               
               # INTERFACES
               - type: interface
-                name: eno1
+                name: nic1
                 mtu: {get_param: ControlPlaneMtu}
                 use_dhcp: false
                 dns_servers:
@@ -144,17 +144,8 @@ resources:
                         next_hop:
                           get_param: ControlPlaneDefaultRoute
 
-              - type: ovs_bridge
-                name: br-data
-                dns_servers: {get_param: DnsServers}
-                use_dhcp: false
-                members:
-                - type: interface
-                  name: nic2
-
-              # VLANS
               - type: vlan
-                device: nic2
+                device: nic1
                 mtu: {get_param: InternalApiMtu}
                 vlan_id: {get_param: InternalApiNetworkVlanID}
                 addresses:
@@ -162,6 +153,14 @@ resources:
                 routes:
                   list_concat_unique:
                     - get_param: InternalApiInterfaceRoutes
+
+              - type: ovs_bridge
+                name: bridge_name
+                dns_servers: {get_param: DnsServers}
+                use_dhcp: false
+                members:
+                - type: interface
+                  name: nic2
 
               - type: vlan
                 device: nic2
@@ -182,18 +181,6 @@ resources:
                 routes:
                   list_concat_unique:
                     - get_param: StorageInterfaceRoutes
-
-              # SRIOV
-              - type: interface
-                name: nic3
-                use_dhcp: false
-                defroute: false
-
-               # UNUSED
-              - type: interface
-                name: nic4
-                use_dhcp: false
-                defroute: false
 
 outputs:
   OS::stack_id:

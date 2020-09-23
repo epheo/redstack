@@ -26,12 +26,12 @@ resources:
           - name: stack
             sudo: ALL=(ALL) NOPASSWD:ALL
             ssh_authorized_keys:
-{% for pubkey in guests_pubkey %}
+{% for pubkey in guests.pubkey %}
               - {{ pubkey }}
 {% endfor %}
         chpasswd:
           list: |
-            root:{{ guests_passwd }}
+            root:{{ guests.passwd }}
           expire: false
 
 {% if enable_ceph is sameas true %}

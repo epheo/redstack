@@ -1,30 +1,14 @@
 parameter_defaults:
 
-  CloudDomain: {{ customer_name }}.lab 
-  CloudName: rhosp.{{ customer_name }}.lab
+  CloudDomain: {{ cloud.customer_name }}.{{ cloud.customer_extention }} 
+  CloudName: rhosp.{{ cloud.customer_name }}.{{ cloud.customer_extention }}
 
   ControllerHostnameFormat: 'controller-%index%'
-  ControllerCount: 3
+  ControllerCount: 1
   OvercloudControllerFlavor: control
 
   ComputeHostnameFormat: 'compute-%index%'
   ComputeCount: 1
   OvercloudComputeFlavor: compute
 
-  ComputeHCIHostnameFormat: 'computehci-%index%'
-  ComputeHCICount: 3
-  OvercloudComputeHCIFlavor: comphci
-
-  ComputeHCIOvsDpdkHostnameFormat: 'computehcidpdk-%index%'
-  ComputeHCIOvsDpdkCount: 0
-  OvercloudComputeHCIOvsDpdkFlavor: comphci
-
-  ComputeSriovHostnameFormat: 'computesriov-%index'
-  ComputeSriovCount: 0
-  OvercloudComputeSriovFlavor: compute
-
-  ComputeOvsDpdkSriovHostnameFormat: 'computeovsdpdksriov-%index%'
-  ComputeOvsDpdkSriovCount: 0
-  OvercloudComputeOvsDpdkSriovFlavor: compute
-
-  #GlanceBackend: file
+  GlanceBackend: file

@@ -1,7 +1,7 @@
 ---
 
 - set_fact:
-    dir_full_hostname: "{{ inventory_hostname }}.{{ customer_name }}.{{ customer_extention }}"
+    dir_full_hostname: "{{ inventory_hostname }}.{{ cloud.customer_name }}.{{ cloud.customer_extention }}"
 
 - name: Ensure hostname set 
   become: yes

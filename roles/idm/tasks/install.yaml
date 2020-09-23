@@ -68,14 +68,14 @@
 - name : Set Hostname
   become: yes
   shell: |
-    hostnamectl set-hostname {{ ansible_nodename }}.{{ customer_name }}.{{ customer_extention }}
-    hostnamectl set-hostname --transient {{ ansible_nodename }}.{{ customer_name }}.{{ customer_extention }}
+    hostnamectl set-hostname {{ ansible_nodename }}.{{ cloud.customer_name }}.{{ cloud.customer_extention }}
+    hostnamectl set-hostname --transient {{ ansible_nodename }}.{{ cloud.customer_name }}.{{ cloud.customer_extention }}
 
 - name: Ensure hostname is in /etc/hosts
   become: yes
   lineinfile:
     dest: /etc/hosts
-    line:  "{{ansible_default_ipv4.address}}\t{{ ansible_nodename }}\t{{ ansible_hostname }}.{{ customer_name }}.{{ customer_extention }}"
+    line:  "{{ansible_default_ipv4.address}}\t{{ ansible_nodename }}\t{{ ansible_hostname }}.{{ cloud.customer_name }}.{{ cloud.customer_extention }}"
     insertbefore: BOF
 
 - name: Install IPA server

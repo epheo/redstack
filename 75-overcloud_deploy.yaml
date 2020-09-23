@@ -5,8 +5,6 @@
     - common
     - director
   gather_facts: no
-  vars_files:
-    - roles/hypervisor/vars/openstack.yaml
   vars: 
     enable_fencing: yes
   tasks:

@@ -25,7 +25,6 @@
         - include_tasks: roles/director/tasks/generate_certs.yaml
           tags: ssl
         - include_tasks: roles/director/tasks/install.yaml
-        - include_tasks: roles/director/tasks/conf_docker_proxy.yaml
         - set_fact: 
             message: "OSP Undercloud have been deployed"
           changed_when: True

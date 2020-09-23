@@ -1,0 +1,15 @@
+---
+
+- hosts: idm
+  roles:
+    - idm
+  tasks:
+    - block:
+      - include_tasks: roles/idm/tasks/install.yaml
+      rescue:
+        - set_fact: 
+            message: "IPA installation have failed..."
+          changed_when: True
+          notify: telegram
+        - fail:
+            msg: "{{ message }}"

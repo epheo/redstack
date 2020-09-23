@@ -29,10 +29,10 @@ ssh_pwauth: True
 users:
   - name: stack
     sudo: ALL=(ALL) NOPASSWD:ALL
-    ssh_authorized_keys: {{ guests_pubkey }}
+    ssh_authorized_keys: {{ guests.pubkey }}
 chpasswd:
   list: |
-    stack:{{ guests_passwd }}
+    stack:{{ guests.passwd }}
   expire: False
 write_files:
   - path: "/etc/sysconfig/network-scripts/ifcfg-$interface"
