@@ -40,7 +40,7 @@ openstack server create limited_$project \
   --user-data /home/stack/user-data-scripts/userdata-enableroot \
   --key-name undercloud-key \
   --flavor m1.medium \
-  --image rhel7 \
+  --image fedora-rawhide \
   --security-group allowall_$project \
   --nic port-id=$(openstack port list | grep $portname | awk '{print $2}')
 
@@ -52,7 +52,7 @@ openstack server create unlimited_$project \
   --user-data /home/stack/user-data-scripts/userdata-enableroot \
   --key-name undercloud-key \
   --flavor m1.medium \
-  --image rhel7 \
+  --image fedora-rawhide \
   --security-group allowall_$project \
   --nic port-id=$(openstack port list | grep $portname | awk '{print $2}')
 

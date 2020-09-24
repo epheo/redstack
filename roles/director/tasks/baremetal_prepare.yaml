@@ -45,4 +45,4 @@
     source ~stack/stackrc
     openstack flavor set --property capabilities:boot_mode='uefi' control                                 
     openstack flavor set --property capabilities:boot_mode='uefi' compute
-  when: 
+  when: enable_uefi is sameas true

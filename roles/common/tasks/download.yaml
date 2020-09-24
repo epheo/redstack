@@ -14,12 +14,6 @@
     url_password: "{{ private_cdn.password }}"
     checksum: "sha1:88a4134f16b2e45e34eec6550bb4cbb2ffcae3f9"
 
-- name: Download Fedora 32 stable
-  get_url:
-    url: https://download.fedoraproject.org/pub/fedora/linux/releases/32/Cloud/x86_64/images/Fedora-Cloud-Base-32-1.6.x86_64.qcow2
-    dest: Downloads/fedora-32.qcow2
-    checksum: "sha256:423a4ce32fa32c50c11e3d3ff392db97a762533b81bef9d00599de518a7469c8"
-
 - name: Get Rawhide latest build number,
   shell: curl -L https://ftp.lip6.fr/ftp/pub/linux/distributions/fedora/development/rawhide/Cloud/x86_64/images/ |grep qcow2 |awk -F '"' '{print $8}'
   register: latest_fedora

@@ -50,7 +50,7 @@
   changed_when: "command_result.stdout != ''"
   tags:
     - guests
-  when: item.volumes is defined
+  when: item.root is defined
 
 - name: Create Qcow2 volumes
   shell: |

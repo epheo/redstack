@@ -182,17 +182,24 @@ Delete the existing
 ---
 
 ```
-   ansible-playbook -i inventory.lab -e @secrets/lab.yaml 79-overcloud_delete.yaml
 
-   ansible-playbook -i inventory.lab -e @secrets/lab.yaml -e @roles/director/vars/overcloud-reducedscale.yaml 12-guests_delete.yaml
+   ansible-playbook -i inventory.lab -e @secrets/lab.yaml \
+     79-overcloud_delete.yaml
 
-   ansible-playbook -i inventory.lab -e @secrets/lab.yaml 12-guests_delete.yaml
+   ansible-playbook -i inventory.lab -e @secrets/lab.yaml \
+     -e @roles/director/vars/overcloud-reducedscale.yaml  \
+     12-guests_delete.yaml
+
+   ansible-playbook -i inventory.lab -e @secrets/lab.yaml \
+     12-guests_delete.yaml
+
 ```
 
 Deploy the Undercloud
 ---
 
 ```
+
    ansible-playbook -i inventory.lab -e @secrets/lab.yaml \
      01-download_bits.yaml
    
@@ -203,10 +210,6 @@ Deploy the Undercloud
      11-guests_prepare.yaml
    
    ansible-playbook -i inventory.lab -e @secrets/lab.yaml \
-     -e @roles/director/vars/overcloud-reducedscale.yaml  \
-     11-guests_prepare.yaml
-   
-   ansible-playbook -i inventory.lab -e @secrets/lab.yaml \
      60-undercloud_install.yaml
    
    ansible-playbook -i inventory.lab -e @secrets/lab.yaml \
@@ -214,9 +217,14 @@ Deploy the Undercloud
    
    ansible-playbook -i inventory.lab -e @secrets/lab.yaml \
      -e @roles/director/vars/overcloud-reducedscale.yaml  \
+     11-guests_prepare.yaml
+
+   ansible-playbook -i inventory.lab -e @secrets/lab.yaml \
+     -e @roles/director/vars/overcloud-reducedscale.yaml  \
      70-overcloud_vbmc.yaml
    
    ansible-playbook -i inventory.lab -e @secrets/lab.yaml \
      -e @roles/director/vars/overcloud-reducedscale.yaml  \
      71-overcloud_baremetal_prepare.yaml
+
 ```

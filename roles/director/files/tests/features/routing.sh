@@ -47,7 +47,7 @@ openstack server create linux-1-$project \
   --key-name undercloud-key \
   --security-group allowall_$project \
   --flavor  m1.medium \
-  --image rhel7 \
+  --image fedora-rawhide \
   --network net20
 
 openstack floating ip create \
@@ -60,7 +60,7 @@ openstack server create linux-2-$project \
   --key-name undercloud-key \
   --security-group allowall_$project \
   --flavor  m1.medium \
-  --image rhel7 \
+  --image fedora-rawhide \
   --network net20
 
 openstack server create linux-3-$project \
@@ -70,7 +70,7 @@ openstack server create linux-3-$project \
   --key-name undercloud-key \
   --security-group allowall_$project \
   --flavor  m1.medium \
-  --image rhel7 \
+  --image fedora-rawhide \
   --network net20
 
 openstack server create linux-4-$project \
@@ -80,7 +80,7 @@ openstack server create linux-4-$project \
   --key-name undercloud-key \
   --security-group allowall_$project \
   --flavor  m1.medium \
-  --image rhel7 \
+  --image fedora-rawhide \
   --network net21
 
 openstack server create linux-5-$project \
@@ -90,5 +90,5 @@ openstack server create linux-5-$project \
   --key-name undercloud-key \
   --security-group allowall_$project \
   --flavor  m1.medium \
-  --image rhel7 \
+  --image fedora-rawhide \
   --network net21a

@@ -7,7 +7,6 @@ source ~stack/$RCFILE
 cd $( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
 
 mkdir -p ~stack/rcfiles/
-sed -i 's/\/\/v3/\/v3/g' ~stack/overcloudrc
 
 ./new_identity.sh $project
 

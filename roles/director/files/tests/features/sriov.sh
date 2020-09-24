@@ -15,5 +15,5 @@ openstack server create rawhide-$project \
   --key-name undercloud-key \
   --security-group allowall_$project \
   --flavor epa.medium \
-  --image fedora-rawhide.qcow2 \
+  --image fedora-rawhide \
   --nic port-id=$(openstack port list | grep $portname"\ " | awk '{print $2}')

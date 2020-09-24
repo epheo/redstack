@@ -123,7 +123,7 @@ openstack security group create no-ingress
 openstack port create nfs-port0 --network shares --security-group no-ingress
 
 
-openstack server create  test-manila-1 --wait  --hint group=$ID_antiaff --user-data /home/stack/user-data-scripts/userdata-cephnfsshare1 --key-name undercloud-key --security-group allowall  --flavor  m1.small --image fedora30 --nic net-id=$(openstack network list -f value | grep redhat-internal | awk '{print$1}') --nic port-id=$(openstack port show nfs-port0 -c id -f value)
+openstack server create  test-manila-1 --wait  --hint group=$ID_antiaff --user-data /home/stack/user-data-scripts/userdata-cephnfsshare1 --key-name undercloud-key --security-group allowall  --flavor  m1.small --image fedora-rawhide --nic net-id=$(openstack network list -f value | grep redhat-internal | awk '{print$1}') --nic port-id=$(openstack port show nfs-port0 -c id -f value)
 
 
 LAST_FIP=$(openstack floating ip create --subnet floating floating -f value -c floating_ip_address )
