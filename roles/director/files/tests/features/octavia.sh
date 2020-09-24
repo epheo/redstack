@@ -16,7 +16,7 @@ fi
 
 if ! openstack router list |grep external-$project  ; then
   idrouter=$(openstack router create external-$project -c id -f value)
-  openstack router set $idrouter --external-gateway external_datacentre
+  openstack router set $idrouter --external-gateway public
   openstack router add subnet $idrouter subnet22
   openstack subnet set --dns-nameserver {{ dns_ip }} subnet22
 fi
@@ -36,14 +36,14 @@ openstack server create  test-lb-member1 \
   --config-drive true \
   --user-data /home/stack/user-data-scripts/userdata-webserver-$project \
   --key-name undercloud-key --security-group allowall_octavia-lb  \
-  --flavor  m1.medium --image rhel7 \
+  --flavor  m1.medium --image fedora-rawhide \
   --nic net-id=$(openstack network list -f value | grep net22 | awk '{print$1}')
 
 openstack server create  test-lb-member2 --wait \
   --config-drive true \
   --user-data /home/stack/user-data-scripts/userdata-webserver-$project \
   --key-name undercloud-key --security-group allowall_octavia-lb  \
-  --flavor  m1.medium --image rhel7 \
+  --flavor  m1.medium --image fedora-rawhide \
   --nic net-id=$(openstack network list -f value | grep net22 | awk '{print$1}')
 
 openstack loadbalancer create --name test-loadbalancer --vip-subnet-id subnet22

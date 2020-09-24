@@ -6,9 +6,5 @@
   roles:
     - common
     - hypervisor
-  vars:
-    cleanup_networks: true
-  vars_files:
-    - roles/hypervisor/vars/infrastructure.yaml
   tasks:
     - include_tasks: roles/hypervisor/tasks/cleanup.yaml

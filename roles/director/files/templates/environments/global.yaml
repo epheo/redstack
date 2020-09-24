@@ -1,14 +1,14 @@
 parameter_defaults:
 
-  CloudDomain: {{ customer_name }}.{{ customer_extention }}
-  CloudName: {{ cloud_name }}.{{ customer_name }}.{{ customer_extention }}
+  CloudDomain: {{ cloud.customer_name }}.{{ cloud.customer_extention }}
+  CloudName: {{ cloud.name }}.{{ customer_name }}.{{ cloud.customer_extention }}
 
   ControllerHostnameFormat: 'controller-%index%'
   ControllerCount: 1
   OvercloudControllerFlavor: control
 
-  ComputeOvsDpdkSriovRTHostnameFormat: 'compute-%index%'
-  ComputeOvsDpdkSriovRTCount: 2
-  OvercloudComputeOvsDpdkSriovRTFlavor: compute
+  ComputeHostnameFormat: 'compute-%index%'
+  ComputeCount: 1
+  OvercloudComputeFlavor: compute
 
-  #GlanceBackend: file
+  GlanceBackend: file

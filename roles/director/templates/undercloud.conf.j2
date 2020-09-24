@@ -1,6 +1,6 @@
 [DEFAULT]
 
-overcloud_domain_name = {{ customer_name }}.lab
+overcloud_domain_name = {{ cloud.customer_name }}.{{ cloud.customer_extention }}
 
 local_ip = {{ undercloud.ip }}/{{ undercloud.netmask }}
 local_interface = {{ undercloud.br_nic }}

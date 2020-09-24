@@ -22,7 +22,7 @@ openstack server create  test-port-security \
   --user-data /home/stack/user-data-scripts/userdata-enableroot \
   --key-name undercloud-key \
   --flavor  m1.medium \
-  --image rhel7  \
+  --image fedora-rawhide  \
   --nic port-id=$(neutron port-list | grep allow_icmp | awk '{print $2}') \
   --nic port-id=$(neutron port-list | grep no_icmp | awk '{print $2}') 
 
@@ -31,5 +31,5 @@ openstack server create test-port-security \
   --key-name undercloud-key \
   --flavor  m1.medium \
   --security-group allowall_$project \
-  --image rhel7  \
+  --image fedora-rawhide  \
   --network private

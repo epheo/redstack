@@ -191,39 +191,28 @@ resources:
                   list_concat_unique:
                     - get_param: ControlPlaneStaticRoutes
 
-              # NIC 2 - Control Group
-              - type: interface
-                name: ens1f0
-                mtu: 9000
-                use_dhcp: false
-                defroute: false
-
               - type: vlan
                 mtu: {get_param: InternalApiMtu}
                 vlan_id: {get_param: InternalApiNetworkVlanID}
-                device: ens1f0
+                device: nic1
                 addresses:
                 - ip_netmask: {get_param: InternalApiIpSubnet}
                 routes:
                   list_concat_unique:
                     - get_param: InternalApiInterfaceRoutes
 
-              - type: vlan
-                mtu: {get_param: StorageMgmtMtu}
-                vlan_id: {get_param: StorageMgmtNetworkVlanID}
-                device: ens1f0
-                addresses:
-                - ip_netmask: {get_param: StorageMgmtIpSubnet}
-                routes:
-                  list_concat_unique:
-                    - get_param: StorageMgmtInterfaceRoutes
-
-
+              - type: ovs_bridge
+                name: bridge_name
+                dns_servers: {get_param: DnsServers}
+                use_dhcp: false
+                members:
+                - type: interface
+                  name: nic2
 
               - type: vlan
+                device: nic2
                 mtu: {get_param: ExternalMtu}
                 vlan_id: {get_param: ExternalNetworkVlanID}
-                device: ens1f0
                 addresses:
                 - ip_netmask: {get_param: ExternalIpSubnet}
                 routes:
@@ -233,44 +222,29 @@ resources:
                         next_hop:
                           get_param: ExternalInterfaceDefaultRoute
 
-              # NIC 3 - External; Storage
-              - type: ovs_bridge
-                name: br-data
-                mtu: 9000
-                dns_servers: {get_param: DnsServers}
-                use_dhcp: false
-                members:
+              - type: vlan
+                device: nic2
+                mtu: {get_param: TenantMtu}
+                vlan_id: {get_param: TenantNetworkVlanID}
+                addresses:
+                - ip_netmask: {get_param: ExternalIpSubnet}
+                routes:
+                  list_concat_unique:
+                    - get_param: ExternalInterfaceRoutes
+                    - - default: true
+                        next_hop:
+                          get_param: ExternalInterfaceDefaultRoute
 
-                - type: interface
-                  name: ens1f1
-                  primary: true
-
-                - type: vlan
-                  mtu: 9000
-                  vlan_id: {get_param: TenantNetworkVlanID}
-                  device: ens1f1
-                  addresses:
-                  - ip_netmask: {get_param: TenantIpSubnet}
-                  routes:
-                    list_concat_unique:
-                      - get_param: TenantInterfaceRoutes
-
-                - type: vlan
-                  mtu: 9000
-                  vlan_id: {get_param: StorageNetworkVlanID}
-                  device: ens1f0
-                  addresses:
-                  - ip_netmask: {get_param: StorageIpSubnet}
-                  routes:
-                    list_concat_unique:
-                      - get_param: StorageInterfaceRoutes
-
-               # UNUSED
-              - type: interface
-                name: nic4
-                use_dhcp: false
-                defroute: false
-
+              - type: vlan
+                device: nic2
+                mtu: {get_param: StorageMtu}
+                vlan_id: {get_param: StorageNetworkVlanID}
+                addresses:
+                - ip_netmask: {get_param: StorageIpSubnet}
+                routes:
+                  list_concat_unique:
+                    - get_param: StorageInterfaceRoutes
+                    
 outputs:
   OS::stack_id:
     description: The OsNetConfigImpl resource.

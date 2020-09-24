@@ -11,7 +11,7 @@ echo "Creating images for DATA PROCESSING"
 
   mkdir -p /home/stack/user-images/sahara
   cp /home/stack/user-images/centos7.qcow2 /home/stack/user-images/sahara/sahara-hortonworks-2.5.qcow2
-#  cp /usr/share/rhel-guest-image-7/rhel-guest-image-7.2-20160302.0.x86_64.qcow2 /home/stack/user-images/sahara/rhel7-sahara.qcow2
+#  cp /usr/share/rhel-guest-image-7/rhel-guest-image-7.2-20160302.0.x86_64.qcow2 /home/stack/user-images/sahara/fedora-rawhide-sahara.qcow2
 
 sudo yum install openstack-sahara-image-pack -y
 

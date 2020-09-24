@@ -29,7 +29,7 @@
   ip_subnet: '{{ storage_net.subnet }}'
   allocation_pools: [{'start': '{{ storage_net.pool_start }}', 'end': '{{ storage_net.pool_end }}'}]
 
-{% if enable_ceph is sameas true %}
+{% if storage_mgmt is defined %}
 - name: StorageMgmt
   name_lower: storage_mgmt
   vip: true

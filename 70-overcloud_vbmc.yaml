@@ -4,14 +4,8 @@
   roles:
     - common
     - hypervisor
-  vars_files:
-    - roles/hypervisor/vars/openstack.yaml
   tasks:
     - block:
-      - include_tasks: roles/hypervisor/tasks/deploy_libvirt_nets.yaml
-      - include_tasks: roles/hypervisor/tasks/create_libvirt_volumes.yaml
-      - include_tasks: roles/hypervisor/tasks/generate_cloudinit.yaml
-      - include_tasks: roles/hypervisor/tasks/deploy_libvirt_guests.yaml
       - include_tasks: roles/hypervisor/tasks/configure_virtual_bmc.yaml
       rescue:
         - set_fact: 

@@ -7,45 +7,50 @@
       echo '{{ lookup("template", "roles/hypervisor/templates/storage_pool.xml.j2") }}' > pool.xml
       virsh pool-define pool.xml
     fi
-  loop: '{{ libvirt_storage_pools }}'
+  loop: '{{ libvirt.storage_pools }}'
   register: command_result
   changed_when: "command_result.stdout != ''"
+  when: libvirt.storage_pools is defined
 
 - name: Start Storage pools
   shell: |
     if [ -z "$(virsh pool-list |grep {{ item.name }})" ]; then
       virsh pool-start {{ item.name }}
     fi
-  loop: '{{ libvirt_storage_pools }}'
+  loop: '{{ libvirt.storage_pools }}'
   register: command_result
   changed_when: "command_result.stdout != ''"
+  when: libvirt.storage_pools is defined
 
 - name: Copy guest image
   copy: 
     remote_src: True
     src: '{{ item.localpath }}'
-    dest: '{{ guests_rootdisk_pool_path }}/{{ item.name }}'
-  loop: '{{ guests_rootimg }}'
+    dest: '{{ guests.rootdisk.pool_path }}/{{ item.name }}'
+  loop: '{{ guests.rootimgs }}'
+  when: libvirt.storage_pools is defined
 
 - name: Refresh Image pool
   shell: |
-    virsh pool-refresh --pool {{ guests_rootdisk_pool }}
+    virsh pool-refresh --pool {{ guests.rootdisk.pool }}
+  when: libvirt.storage_pools is defined
 
 - name: Create Qcow2 Root volumes
   shell: |
     {% if item.root is defined %}
-    if [ -z "$(virsh vol-list --pool {{ guests_rootdisk_pool }} |grep \ {{ item.name }}-root )" ]; then
-      qemu-img create -f qcow2 -o backing_file={{ guests_rootdisk_pool_path }}/{{ item.root }} {{ guests_rootdisk_pool_path }}/{{ item.name }}-root {{ guests_rootdisk_size }}G
-      virsh pool-refresh --pool {{ guests_rootdisk_pool }}
+    if [ -z "$(virsh vol-list --pool {{ guests.rootdisk.pool }} |grep \ {{ item.name }}-root )" ]; then
+      qemu-img create -f qcow2 -o backing_file={{ guests.rootdisk.pool_path }}/{{ item.root }} {{ guests.rootdisk.pool_path }}/{{ item.name }}-root {{ guests.rootdisk.size }}G
+      virsh pool-refresh --pool {{ guests.rootdisk.pool }}
     fi
     {% else %}
     true
     {% endif %}
-  loop: '{{ libvirt_guests }}'
+  loop: '{{ libvirt.guests }}'
   register: command_result
   changed_when: "command_result.stdout != ''"
   tags:
     - guests
+  when: item.root is defined
 
 - name: Create Qcow2 volumes
   shell: |
@@ -58,8 +63,9 @@
     {% else %}
     true
     {% endif %}
-  loop: '{{ libvirt_guests }}'
+  loop: '{{ libvirt.guests }}'
   register: command_result
   changed_when: "command_result != ''"
   tags:
     - guests
+  when: item.volumes is defined

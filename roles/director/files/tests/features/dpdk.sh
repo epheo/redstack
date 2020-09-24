@@ -12,7 +12,7 @@ hyperid=$(openstack server create dpdk-$project \
   --user-data /home/stack/user-data-scripts/userdata-enableroot  \
   --key-name undercloud-key \
   --flavor epa.medium \
-  --image rhel7 \
+  --image fedora-rawhide \
   --network dpdk_test_net \
   --network private \
   --availability-zone NFVI \

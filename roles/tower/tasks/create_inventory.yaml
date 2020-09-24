@@ -10,7 +10,7 @@
     body: 
       {
         "organization": "{{ org_id }}",
-        "name": "{{ customer_name }}_inventory",
+        "name": "{{ cloud.customer_name }}_inventory",
         "variables" : ""
       }
     validate_certs: False
@@ -19,7 +19,7 @@
   register: res
   changed_when: res.status == 201
 - uri:
-    url: "https://localhost/api/v2/inventories/?name={{ customer_name }}_inventory"
+    url: "https://localhost/api/v2/inventories/?name={{ cloud.customer_name }}_inventory"
     user: "{{ tower.user }}"
     password: "{{ tower.password }}"
     method: GET

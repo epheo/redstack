@@ -7,7 +7,6 @@ source ~stack/$RCFILE
 cd $( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
 
 mkdir -p ~stack/rcfiles/
-sed -i 's/\/\/v3/\/v3/g' ~stack/overcloudrc
 
 ./new_identity.sh $project
 
@@ -27,10 +26,10 @@ ssh_pwauth: True
 users:
   - name: stack
     sudo: ALL=(ALL) NOPASSWD:ALL
-    ssh_authorized_keys: {{ guests_pubkey }}
+    ssh_authorized_keys: {{ guests.pubkey }}
 chpasswd:
   list: |
-    stack:{{ guests_passwd }}
+    stack:{{ guests.passwd }}
   expire: False
 runcmd:
   - sed -i'.orig' -e's/without-password/yes/' /etc/ssh/sshd_config
@@ -43,7 +42,7 @@ export https_proxy=http://{{ proxy_url }}
 export no_proxy={{ undercloud.ip }}
 {% endif %}
 
-{% for image in guests_rootimg %}
+{% for image in guests.rootimgs %}
 if ! openstack image list | grep {{ image.name }}\  ; then
 openstack image create {{ image.name }} --file ~stack/{{ image.localpath }} --disk-format qcow2 --container-format bare --public
 fi

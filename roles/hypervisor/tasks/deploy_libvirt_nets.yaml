@@ -6,15 +6,17 @@
       echo '{{ lookup("template", "roles/hypervisor/templates/network.xml.j2") }}' > net.xml
       virsh net-define net.xml
     fi
-  loop: '{{ libvirt_networks }}'
+  loop: '{{ libvirt.networks }}'
   register: command_result
   changed_when: "command_result.stdout != ''"
+  when: libvirt.networks is defined
 
 - name: Start Networks
   shell: |
     if [ -z "$(virsh net-list |grep \ {{ item.name }}\ )" ]; then
       virsh net-start {{ item.name }}
     fi
-  loop: '{{ libvirt_networks }}'
+  loop: '{{ libvirt.networks }}'
   register: command_result
   changed_when: "command_result.stdout != ''"
+  when: libvirt.networks is defined

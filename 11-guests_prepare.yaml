@@ -4,8 +4,6 @@
   roles:
     - common
     - hypervisor
-  vars_files:
-    - roles/hypervisor/vars/infrastructure.yaml
   gather_facts: no
   tasks:
     - block:

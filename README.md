@@ -4,190 +4,111 @@ Deployment Automation for Red Hat Solutions
 
 ansible-playbook -i inventory.lab -e @secrets/lab.yaml playbook.yml
 
+## Variables
+
 The following variables can be set:
 
 ```
+   ## Global
    telegram:
      token: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
      chat_id: -xxxxxxxxx
    
-   ## Undercloud
-   customer_name: xxxxxxxxxxxxxxx
-   
-   rh_service:
-     username: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-     token: xxxxxxxxxxxxx
-   
-   undercloud_br_nic: nic1
-   undercloud.ip: 'xxxxxxxxxxxx'
-   undercloud_admin: 'xxxxxxxxxxxx'
-   undercloud_public: 'xxxxxxxxxxxx'
-   
-   dns_ip: '1.1.1.1'
-   ntp_ip: 'xxxxxxxxxxxx'
-   
-   hypervisor_ip: 'xxxxxxxxxxxxx'
-   
-   guests_pubkey: 
-     - 'ssh-rsa AAAAxxxxxxx'
-   guests_passwd: xxxxxxxxxxx
+   hypervisor_ip: 'xxx.xxx.xxx.xxx'
    
    subscription:
      org: xxxxxxxx
      activation_key: 'xxxxxxxxxxxxxxxx'
-   '
    
    private_cdn:
      url: https://xxxxxxxxxxxxxxxx/
      username: 'xxxxxx'
      password: 'xxxxxx'
    
-   guests_rootimg:
-     - localpath: Downloads/rhel-8.1.qcow2
-       name: rhel-8.1.qcow2 
-     - localpath: Downloads/rhel-8.2.qcow2
-       name: rhel-8.2.qcow2 
-     - localpath: Downloads/fedora-32.qcow2
-       name: fedora-32.qcow2 
-     - localpath: Downloads/fedora-rawhide.qcow2
-       name: fedora-rawhide.qcow2 
-   guests_rootdisk_pool: slow
-   guests_rootdisk_pool_path: '/home/kvm/libvirt/'
-   guests_rootdisk_size: 100
+   guests:
+     rootimgs:
+       - localpath: Downloads/rhel-8.1.qcow2
+         name: rhel-8.1.qcow2 
+       - localpath: Downloads/rhel-8.2.qcow2
+         name: rhel-8.2.qcow2 
+       - localpath: Downloads/fedora-32.qcow2
+         name: fedora-32.qcow2 
+       - localpath: Downloads/fedora-rawhide.qcow2
+         name: fedora-rawhide.qcow2 
+     rootdisk:
+       pool: fast
+       pool_path: '/var/lib/libvirt/images/'
+       size: 100
+     pubkey: 
+       - 'ssh-rsa AAAAXXXXXXXXXXXXX'
+     passwd: xxxxxxxxxxx
    
-   libvirt_storage_pools:
-     - name: fast
-       path: '/var/lib/libvirt/ssd/'
-     - name: slow
-       path: '/home/kvm/libvirt/'
-   libvirt_networks:
-     - name: hypervisor_internal
-       gateway: xxxxxxxxx
-       netmask: xxxxxxxxxxxxx
+   libvirt:
+     storage_pools:
+       - name: fast
+         path: '/var/lib/libvirt/images/'
+       - name: slow
+         path: '/mnt/data/vm_storage/'
+     networks:
+       - name: internal
+       - name: external
+       - name: hypervisor
+         gateway: 10.0.42.1
+         netmask: 255.255.255.0
+     guests:
+       - name: director16
+         root: rhel-8.2.qcow2 
+         cloudinit: user-data
+         ram: 32768000
+         vcpu: 4
+         ports:
+           - name: eth0
+             network: internal
+           - name: eth1
+             network: external
+           - name: eth2
+             network: hypervisor
+         network:
+           version: 2
+           ethernets:
+             eth0: { addresses: [ '172.16.0.10/24' ] }
+             eth2:
+               addresses: [ '10.0.42.10/24' ]
+               gateway4: 10.0.42.1
+               nameservers: { addresses: [ '1.1.1.1' ] }
+           vlans: 
+             vlan14:
+               id: 14
+               link: eth1
+               addresses: [ '172.16.14.10/24' ]
    
-   libvirt_guests:
-     - name: director16
-       root: rhel-8.1.qcow2 
-       cloudinit: user-data
-       ram: 32768000
-       vcpu: 4
-       ports:
-         - name: nic1
-           direct: nic1
-         - name: nic2
-           direct: nic2
-         - name: nic3
-           network: hypervisor_internal
-       # https://cloudinit.readthedocs.io/en/latest/topics/network-config-format-v2.html
-       network:
-         version: 2
-         ethernets:
-           eth0: 
-             addresses: [ 'xxxxxxxxxxxxx/xx' ]
-             routes:
-               - to: 'xxxxxxxxxxxxx/xx'
-                 via: xxxxxxxxxxxxx
-           eth1: { addresses: [ 'xxxxxxxxxxxx/xx' ] }
-           eth2:
-             addresses: [ 'xxxxxxxxxx/xx' ]
-             gateway4: xxxxxxxxx
-             nameservers: { addresses: [ '1.1.1.1' ] }
-     - name: idm
-       root: rhel-8.2.qcow2 
-       cloudinit: user-data
-       ram: 20480000
-       vcpu: 4
-       volumes:
-         - name: idm-data
-           target: sdb
-           size: 100
-           pool: slow
-       ports:
-         - name: nic1
-           direct: nic1
-         - name: nic2
-           direct: nic2
-         - name: nic3
-           network: hypervisor_internal
-       network:
-         version: 2
-         ethernets:
-           eth0: 
-             addresses: [ 'xxxxxxxxxxxxx/xx' ]
-             routes:
-               - to: 'xxxxxxxxxxxxx/xx'
-                 via: xxxxxxxxxxxxx
-           eth1: { addresses: [ 'xxxxxxxxxxxx/xx' ] }
-           eth2:
-             addresses: [ 'xxxxxxxxxx/xx' ]
-             gateway4: xxxxxxxxx
-             nameservers: { addresses: [ '1.1.1.1' ] }
-     - name: onboarding
-       root: rhel-8.2.qcow2 
-       cloudinit: user-data
-       ram: 20480000
-       vcpu: 2
-       ports:
-         - name: nic1
-           direct: nic1
-         - name: nic2
-           direct: nic2
-         - name: nic3
-           network: hypervisor_internal
-       # https://cloudinit.readthedocs.io/en/latest/topics/network-config-format-v2.html
-       volumes:
-         - name: onboarding-data
-           target: sdb
-           size: 100
-           pool: slow
-       network:
-         version: 2
-         ethernets:
-           eth0: 
-             addresses: [ 'xxxxxxxxxxxxx/xx' ]
-             routes:
-               - to: 'xxxxxxxxxxxxx/xx'
-                 via: xxxxxxxxxxxxx
-           eth1: { addresses: [ 'xxxxxxxxxxxx/xx' ] }
-           eth2:
-             addresses: [ 'xxxxxxxxxx/xr' ]
-             gateway4: xxxxxxxxx
-             nameservers: { addresses: [ '1.1.1.1' ] }
    
-   bmc_username: xxxxxx
-   bmc_password: xxxxxxxx
-   bmc_type: ipmi
-   enable_uefi: false
+   ## OpenStack - Undercloud
+   undercloud:
+     br_nic: eth0
+     ip: '172.16.0.10'
+     netmask: 24
+     admin_ip: '172.16.0.8'
+     public_ip: '172.16.0.9'
    
-   instack_vars:
-     - node: xxxx-control
-       mac: xxxxxxxxxxxxxxxxx
-       addr: xxxxxxxxxxxxx
-     - node: xxxx-control
-       mac: xxxxxxxxxxxxxxxxx
-       addr: xxxxxxxxxxxxx
-     - node: xxxx-control
-       mac: xxxxxxxxxxxxxxxxx
-       addr: xxxxxxxxxxxxx
-     - node: xxxx-compute
-       mac: xxxxxxxxxxxxxxxxx
-       addr: xxxxxxxxxxxxx
-     - node: xxxx-comphci
-       mac: xxxxxxxxxxxxxxxxx
-       addr: xxxxxxxxxxxxx
-     - node: xxxx-comphci
-       mac: xxxxxxxxxxxxxxxxx
-       addr: xxxxxxxxxxxxx
-     - node: xxxx-comphci
-       mac: xxxxxxxxxxxxxxxxx
-       addr: xxxxxxxxxxxxx
+   dns_ip: '1.1.1.1'
+   ntp_ip: '0.rhel.pool.ntp.org'
    
-   ## Overcloud
+   rh_service:
+     username: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+     token: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
    
-   enable_ceph: True
+   
+   ## OpenStack - OverCloud
+   cloud:
+     name: cloud
+     customer_name: epheo
+     customer_extention: lab
+   
+   enable_ceph: False
    enable_ceph_external: False
    enable_dpdk: False
-   enable_sriov: True
+   enable_sriov: False
    enable_ssl: True
    enable_stf: False
    enable_fencing: False
@@ -196,79 +117,114 @@ The following variables can be set:
    enable_pcipassthrough: False
    enable_ironic: False
    enable_telemetry: False
+   enable_uefi: True
    
-   nic_config: 'nic-config.xxxx'
+   bmc_username: xxxx
+   bmc_password: 'xxxxxxx'
+   bmc_type: ipmi
    
-   overcloud_vip: xxxxxxxxxxxxx
+   nic_config: 'nic-config'
    
    neutron:
-     vlan_ranges: 'physnet0:1:4000'
-     bridge_mappings: 'physnet0:br-data'
+     vlan_ranges: 'physnet0:0:4000'
+     bridge_mappings: 'physnet0:br-ex'
      flat_networks: 'physnet0'
    
    ctlplane_net:
-     subnet: 'xxxxxxxxxxx/xx'
-     dhcp_start: 'xxxxxxxxxxxx'
-     dhcp_end: 'xxxxxxxxxxxxx'
-     inspection_iprange: 'xxxxxxxxxxxxx,xxxxxxxxxxxxx'
-     gateway: xxxxxxxxxxxx
+     subnet: '172.16.0.0/24'
+     dhcp_start: '172.16.0.100'
+     dhcp_end: '172.16.0.200'
+     inspection_iprange: '172.16.0.201,172.16.0.250'
+     gateway: 172.16.0.10
    
    internal_net:
-     vlanid: xxx
-     subnet: 'xxxxxxxxxxxxx/xx'
-     pool_start: 'xxxxxxxxxxxxxx'
-     pool_end: 'xxxxxxxxxxxxxxx'
+     vlanid: 11
+     subnet: '172.16.11.0/24'
+     pool_start: '172.16.11.100'
+     pool_end: '172.16.11.200'
    
    storage_net:
-     vlanid: xxx
-     subnet: 'xxxxxxxxxxxxx/xx'
-     pool_start: 'xxxxxxxxxxxxxx'
-     pool_end: 'xxxxxxxxxxxxxxx'
-   
-   storagemgmt_net:
-     vlanid: xxx
-     subnet: 'xxxxxxxxxxxxx/xx'
-     pool_start: 'xxxxxxxxxxxxxx'
-     pool_end: 'xxxxxxxxxxxxxxx'
+     vlanid: 12
+     subnet: '172.16.12.0/24'
+     pool_start: '172.16.12.100'
+     pool_end: '172.16.12.200'
    
    tenant_net:
-     vlanid: xxx
-     subnet: 'xxxxxxxxxxxxx/xx'
-     pool_start: 'xxxxxxxxxxxxxx'
-     pool_end: 'xxxxxxxxxxxxxxx'
+     vlanid: 13
+     subnet: '172.16.13.0/24'
+     pool_start: '172.16.13.100'
+     pool_end: '172.16.13.200'
    
    external_net:
-     vlanid: xx
-     subnet: 'xxxxxxxxxxxxx/xx'
-     gateway: 'xxxxxxxxxxxxx'
-     pool_start: 'xxxxxxxxxxxxx'
-     pool_end: 'xxxxxxxxxxxxx'
+     vlanid: 14
+     subnet: '172.16.14.0/24'
+     gateway: '172.16.14.10'
+     pool_start: '172.16.14.100'
+     pool_end: '172.16.14.200'
      physnet: physnet0
-     fip_pool_start: 'xxxxxxxxxxxxx'
-     fip_pool_end: 'xxxxxxxxxxxxx'
-   
-   provider_net:
-     vlanid: xx
-     subnet: 'xxxxxxxxxxx/xx'
-     gateway: 'xxxxxxxxxxx'
-     pool_start: 'xxxxxxxxxxxx'
-     pool_end: 'xxxxxxxxxxxxx'
-     physnet: physnet0
-   
-   sriov_test_net:
-     vlanid: xx
-     subnet: 'xxxxxxxxxxxxx/xx'
-     gateway: 'xxxxxxxxxxxxx'
-     pool_start: 'xxxxxxxxxxxxx'
-     pool_end: 'xxxxxxxxxxxxx'
-     physnet: physnet0
+     fip_pool_start: '172.16.14.201'
+     fip_pool_end: '172.16.14.250'
+     vip: 172.16.14.5
    
    ssl:
-     countryname: 'xx'
-     provincename: 'xxxxxxxx'
-     localityname: 'xxxxxx'
-     orgname: 'xxxx'
-     orgunit: 'xxxxxxxxx'
-     commonname: 'xxxxx'
-     emailaddress: 'xxx@xxxxxxxxxxxxxxxxx.lab'
+     countryname: 'FR'
+     provincename: 'IdF'
+     localityname: 'Paris'
+     orgname: 'RedHat'
+     orgunit: 'SSA'
+     commonname: 'redhat'
+     emailaddress: 'xxx@xxxxxx.xxx'
+```
+
+## Play
+
+Delete the existing
+---
+
+```
+
+   ansible-playbook -i inventory.lab -e @secrets/lab.yaml \
+     79-overcloud_delete.yaml
+
+   ansible-playbook -i inventory.lab -e @secrets/lab.yaml \
+     -e @roles/director/vars/overcloud-reducedscale.yaml  \
+     12-guests_delete.yaml
+
+   ansible-playbook -i inventory.lab -e @secrets/lab.yaml \
+     12-guests_delete.yaml
+
+```
+
+Deploy the Undercloud
+---
+
+```
+
+   ansible-playbook -i inventory.lab -e @secrets/lab.yaml \
+     01-download_bits.yaml
+   
+   ansible-playbook -i inventory.lab -e @secrets/lab.yaml \
+     10-hypervisor_prepare.yaml
+   
+   ansible-playbook -i inventory.lab -e @secrets/lab.yaml \
+     11-guests_prepare.yaml
+   
+   ansible-playbook -i inventory.lab -e @secrets/lab.yaml \
+     60-undercloud_install.yaml
+   
+   ansible-playbook -i inventory.lab -e @secrets/lab.yaml \
+     61-undercloud_prepare_templates.yaml
+   
+   ansible-playbook -i inventory.lab -e @secrets/lab.yaml \
+     -e @roles/director/vars/overcloud-reducedscale.yaml  \
+     11-guests_prepare.yaml
+
+   ansible-playbook -i inventory.lab -e @secrets/lab.yaml \
+     -e @roles/director/vars/overcloud-reducedscale.yaml  \
+     70-overcloud_vbmc.yaml
+   
+   ansible-playbook -i inventory.lab -e @secrets/lab.yaml \
+     -e @roles/director/vars/overcloud-reducedscale.yaml  \
+     71-overcloud_baremetal_prepare.yaml
+
 ```

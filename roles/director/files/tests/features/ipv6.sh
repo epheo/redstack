@@ -127,7 +127,7 @@ openstack server create $project'_slaac_1' \
   --user-data /home/stack/user-data-scripts/userdata-slaac-$project \
   --key-name undercloud-key \
   --flavor m1.medium \
-  --image rhel7 \
+  --image fedora-rawhide \
   --security-group allowall_$project \
   --network ipv6_slaac
 
@@ -136,7 +136,7 @@ openstack server create $project'_slaac_2' \
   --user-data /home/stack/user-data-scripts/userdata-slaac-$project \
   --key-name undercloud-key \
   --flavor m1.medium \
-  --image rhel7 \
+  --image fedora-rawhide \
   --security-group allowall_$project \
   --network ipv6_slaac
 
@@ -146,7 +146,7 @@ openstack server create $project'_dualstack_1' \
   --user-data /home/stack/user-data-scripts/userdata-dualstack-$project \
   --key-name undercloud-key \
   --flavor m1.medium \
-  --image rhel7 \
+  --image fedora-rawhide \
   --security-group allowall_$project \
   --network dualstack
 
@@ -155,7 +155,7 @@ openstack server create $project'_dualstack_2' \
   --user-data /home/stack/user-data-scripts/userdata-dualstack-$project \
   --key-name undercloud-key \
   --flavor m1.medium \
-  --image rhel7 \
+  --image fedora-rawhide \
   --security-group allowall_$project \
   --network dualstack
 
@@ -165,7 +165,7 @@ openstack server create $project'_dhcpv6_1' \
   --user-data /home/stack/user-data-scripts/userdata-dhcpv6-$project \
   --key-name undercloud-key \
   --flavor  m1.medium \
-  --image rhel7 \
+  --image fedora-rawhide \
   --security-group allowall_$project \
   --network ipv6_dhcpv6
 
@@ -174,6 +174,6 @@ openstack server create $project'_dhcpv6_2' \
   --user-data /home/stack/user-data-scripts/userdata-dhcpv6-$project \
   --key-name undercloud-key \
   --flavor m1.medium \
-  --image rhel7 \
+  --image fedora-rawhide \
   --security-group allowall_$project \
   --network ipv6_dhcpv6

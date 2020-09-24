@@ -1,1 +1,3 @@
+{% if item.network is defined %}
 {{ item.network | to_nice_yaml(indent=8, width=1337)  }}
+{% endif %}

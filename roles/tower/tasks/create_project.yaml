@@ -9,8 +9,8 @@
     body_format: json
     body: 
       {
-        "description": "{{ customer_name }} organisation",
-        "name": "{{ customer_name }}"
+        "description": "{{ cloud.customer_name }} organisation",
+        "name": "{{ cloud.customer_name }}"
       }
     validate_certs: False
     force_basic_auth: yes
@@ -18,7 +18,7 @@
   register: org_res
   changed_when: org_res.status == 201
 - uri:
-    url: "https://localhost/api/v2/organizations/?name={{ customer_name }}"
+    url: "https://localhost/api/v2/organizations/?name={{ cloud.customer_name }}"
     user: "{{ tower.user }}"
     password: "{{ tower.password }}"
     method: GET

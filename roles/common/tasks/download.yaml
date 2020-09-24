@@ -7,18 +7,6 @@
   tags: 
     - always
 
-- name: Download Rhel 8.1 Qcow2 Image
-  get_url:
-    url: "{{ private_cdn.url }}/rhel-8.1-x86_64-kvm.qcow2"
-    dest: Downloads/rhel-8.1.qcow2
-    force_basic_auth: yes
-    url_username: "{{ private_cdn.username }}"
-    url_password: "{{ private_cdn.password }}"
-    checksum: "sha1:f1bff27c16a71ba4a4e83d84f860f243d25a4413"
-  tags: 
-    - rhel
-    - rhel81
-
 - name: Download Rhel 8.2 Qcow2 Image
   get_url:
     url: "{{ private_cdn.url }}/rhel-8.2-x86_64-kvm.qcow2"

@@ -1,0 +1,40 @@
+---
+
+vbmc:
+  ports:
+    - { name: controller , port: 6231 }
+    - { name: compute , port: 6234 }
+  ip: 10.0.42.1
+
+libvirt:
+  guests:
+    - name: controller
+      ram: 64000000
+      vcpu: 4
+      ports:
+        - name: eth0
+          network: internal
+        - name: eth1
+          network: external
+      volumes:
+        - name: controller0-root
+          target: sda
+          size: 100
+          pool: fast
+        - name: controller0-data
+          target: sdb
+          size: 100
+          pool: slow
+    - name: compute
+      ram: 16000000
+      vcpu: 4
+      ports:
+        - name: eth0
+          network: internal
+        - name: eth1
+          network: external
+      volumes:
+        - name: compute0-root
+          target: sda
+          size: 100
+          pool: fast

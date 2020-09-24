@@ -80,7 +80,7 @@ openstack server create trunk_1 \
   --user-data /home/stack/user-data-scripts/userdata-trunk \
   --key-name undercloud-key \
   --flavor  m1.medium \
-  --image rhel7 \
+  --image fedora-rawhide \
   --security-group allowall_trunk \
   --nic port-id=trunk1
 
@@ -89,6 +89,6 @@ openstack server create trunk_2 \
   --user-data /home/stack/user-data-scripts/userdata-trunk \
   --key-name undercloud-key \
   --flavor  m1.medium \
-  --image rhel7 \
+  --image fedora-rawhide \
   --security-group allowall_trunk \
   --nic port-id=trunk2

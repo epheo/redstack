@@ -8,7 +8,7 @@
     enable_repos:
       - rhel-8-for-x86_64-baseos-rpms
       - rhel-8-for-x86_64-appstream-rpms
-      - ansible-2.8-for-rhel-8-x86_64-rpms
+      - ansible-2.9-for-rhel-8-x86_64-rpms
   tasks:
     - block:
       - include_tasks: roles/common/tasks/predeploy.yaml

@@ -1,0 +1,12 @@
+---
+
+- name: Create the Mac Address mapping
+  set_fact:
+    instack_vars: "{{ instack_vars|default([]) + 
+      [ { 'node': item.stdout.split('=')[0],
+          'mac': item.stdout.split('=')[1], 
+          'port': node_port_map[item.stdout.split('=')[0]],
+          'addr': vbmc.ip }
+      ] }}"
+  loop: "{{ node_mac_map.results }}"
+  listen: generate_instack_vars

@@ -1,5 +1,7 @@
 ---
 
+#ipmitool -H 10.0.42.1 -v -I lanplus -U root -P 'xxxxx!' -p 6231 chassis power status
+
 - name: Prepare baremetal nodes
   shell: |
     source ~/stackrc
@@ -36,3 +38,11 @@
 #    mode: pull
 #    src: /home/stack/introspection/
 #    dest: ./introspection/
+
+
+- name: Set UEFI to flavor capabilities
+  shell: |
+    source ~stack/stackrc
+    openstack flavor set --property capabilities:boot_mode='uefi' control                                 
+    openstack flavor set --property capabilities:boot_mode='uefi' compute
+  when: enable_uefi is sameas true
