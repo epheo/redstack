@@ -7,7 +7,9 @@
     state: directory
     owner: stack
     group: stack
-  tags: ssl
+  tags: 
+    - ssl
+    - csr
 
 - name: Create Template directory
   file:
@@ -15,7 +17,9 @@
     state: directory
     owner: stack
     group: stack
-  tags: ssl
+  tags: 
+    - ssl
+    - csr
 
 - name: Create index and serial files
   shell: |
@@ -25,7 +29,9 @@
     fi
   register: command_result
   changed_when: "command_result.stdout != ''"
-  tags: ssl
+  tags: 
+    - ssl
+    - csr
 
 - name: Creating a Certificate Authority
   become: yes
@@ -37,7 +43,9 @@
     fi
   register: command_result
   changed_when: "command_result.stdout != ''"
-  tags: ssl
+  tags: 
+    - ssl
+    - csr
 
 - name: Adding the Certificate Authority to Clients
   become: yes
@@ -45,7 +53,9 @@
     cd ~stack/ssl
     cp ca.crt.pem /etc/pki/ca-trust/source/anchors/
     update-ca-trust extract
-  tags: ssl
+  tags: 
+    - ssl
+    - csr
 
 - name: Creating an SSL/TLS Key
   shell: |
@@ -55,13 +65,17 @@
     fi
   register: command_result
   changed_when: "command_result.stdout != ''"
-  tags: ssl
+  tags: 
+    - ssl
+    - csr
 
 - name: Creating an SSL/TLS Certificate Signing Request
   template:
     src: ../templates/openssl.cnf.j2
     dest: /home/stack/ssl/openssl.cnf
-  tags: ssl
+  tags: 
+    - ssl
+    - csr
 
 - name: Generating certificate signing request
   shell: |
@@ -71,7 +85,9 @@
     fi
   register: command_result
   changed_when: "command_result.stdout != ''"
-  tags: ssl
+  tags: 
+    - ssl
+    - csr
 
 - name: Creating the SSL/TLS Certificate
   shell: |
@@ -86,32 +102,44 @@
 - name: Get SSLCertificate value
   shell: cat ~stack/ssl/server.crt.pem |sed -n -e '/BEGIN/,$p'
   register: ssl_crt
-  tags: ssl
+  tags: 
+    - ssl
+    - sslimportcert
   
 - name: Get SSLKey value
   shell: cat ~stack/ssl/server.key.pem
   register: ssl_key
-  tags: ssl
+  tags: 
+    - ssl
+    - sslimportcert
   
 - name: Get ca.crt.pem value
   shell: cat ~stack/ssl/ca.crt.pem
   register: root_certificate
-  tags: ssl
+  tags: 
+    - ssl
+    - sslimportcert
 
 - name: Get undercloud cacert
   ignore_errors: yes
   shell: cat /etc/pki/ca-trust/source/anchors/cm-local-ca.pem
   register: undercloud_cacert
-  tags: ssl
+  tags: 
+    - ssl
+    - sslimportcert
 
 - name: Copy enable-tls.yaml
   template:
     src: ../templates/enable-tls.yaml.j2
     dest: /home/stack/templates/environments/enable-tls.yaml
-  tags: ssl
+  tags: 
+    - ssl
+    - sslimportcert
 
 - name: Copy inject-trust-anchor.yaml.j2
   template:
     src: ../templates/inject-trust-anchor.yaml.j2
     dest: /home/stack/templates/environments/inject-trust-anchor.yaml
-  tags: ssl
+  tags: 
+    - ssl
+    - sslimportcert

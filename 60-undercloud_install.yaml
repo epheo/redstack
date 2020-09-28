@@ -23,7 +23,10 @@
         - include_tasks: roles/director/tasks/set_hostname.yaml
         - include_tasks: roles/common/tasks/subscribe_rhsm.yaml
         - include_tasks: roles/director/tasks/generate_certs.yaml
-          tags: ssl
+          tags: 
+            - ssl
+            - csr
+            - sslimportcert
         - include_tasks: roles/director/tasks/install.yaml
         - set_fact: 
             message: "OSP Undercloud have been deployed"

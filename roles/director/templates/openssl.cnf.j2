@@ -358,4 +358,4 @@ ess_cert_id_chain	= no	# Must the ESS cert id chain be included?
 
 [alt_names]
 IP.1 = {{ external_net.vip }}
-DNS.1 = rhosp.{{ cloud.customer_name }}.{{ cloud.customer_extention }}
+DNS.1 = {{ cloud.name }}.{{ cloud.customer_name }}.{{ cloud.customer_extention }}

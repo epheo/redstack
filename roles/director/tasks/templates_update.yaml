@@ -1,5 +1,8 @@
 ---
 
+# Write python script to process all
+# 
+
 - name: TEMPLATES; Copy and jinja2 processing 
   file:
     path: /home/stack/templates
@@ -24,8 +27,12 @@
     dest: /home/stack/answers.yaml
   tags: [ 'templates' ]
 - copy:
-    src: ../files/deploy.sh
-    dest: /home/stack/deploy.sh
+    src: ../files/stack-create.sh
+    dest: /home/stack/stack-create.sh
+  tags: [ 'templates' ]
+- copy:
+    src: ../files/config-download.sh
+    dest: /home/stack/config-download.sh
   tags: [ 'templates' ]
 
 - name: Nic-Config; Copy 

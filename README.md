@@ -2,13 +2,15 @@
 Deployment Automation for Red Hat Solutions 
 
 
-ansible-playbook -i inventory.lab -e @secrets/lab.yaml playbook.yml
+ansible-playbook -i inventory.lab -e @secrets/lab.yaml playbook.yaml
+
 
 ## Variables
 
 The following variables can be set:
 
 ```
+
    ## Global
    telegram:
      token: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -174,26 +176,11 @@ The following variables can be set:
      orgunit: 'SSA'
      commonname: 'redhat'
      emailaddress: 'xxx@xxxxxx.xxx'
+
 ```
+
 
 ## Play
-
-Delete the existing
----
-
-```
-
-   ansible-playbook -i inventory.lab -e @secrets/lab.yaml \
-     79-overcloud_delete.yaml
-
-   ansible-playbook -i inventory.lab -e @secrets/lab.yaml \
-     -e @roles/director/vars/overcloud-reducedscale.yaml  \
-     12-guests_delete.yaml
-
-   ansible-playbook -i inventory.lab -e @secrets/lab.yaml \
-     12-guests_delete.yaml
-
-```
 
 Deploy the Undercloud
 ---
@@ -214,7 +201,14 @@ Deploy the Undercloud
    
    ansible-playbook -i inventory.lab -e @secrets/lab.yaml \
      61-undercloud_prepare_templates.yaml
-   
+
+```
+
+Deploy the OverCloud
+---
+
+```
+
    ansible-playbook -i inventory.lab -e @secrets/lab.yaml \
      -e @roles/director/vars/overcloud-reducedscale.yaml  \
      11-guests_prepare.yaml
@@ -226,5 +220,22 @@ Deploy the Undercloud
    ansible-playbook -i inventory.lab -e @secrets/lab.yaml \
      -e @roles/director/vars/overcloud-reducedscale.yaml  \
      71-overcloud_baremetal_prepare.yaml
+
+```
+
+Delete the existing
+---
+
+```
+
+   ansible-playbook -i inventory.lab -e @secrets/lab.yaml \
+     79-overcloud_delete.yaml
+
+   ansible-playbook -i inventory.lab -e @secrets/lab.yaml \
+     -e @roles/director/vars/overcloud-reducedscale.yaml  \
+     12-guests_delete.yaml
+
+   ansible-playbook -i inventory.lab -e @secrets/lab.yaml \
+     12-guests_delete.yaml
 
 ```

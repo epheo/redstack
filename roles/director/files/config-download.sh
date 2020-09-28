@@ -17,11 +17,7 @@ ansible-playbook \
   --become \
   ~/config-download/deploy_steps_playbook.yaml
 
-openstack action execution run \
-  --save-result \
-  --run-sync \
-  tripleo.deployment.overcloudrc \
-  '{"container":"overcloud"}' \
-  | jq -r '.["result"]["overcloudrc.v3"]' > ~stack/overcloudrc.v3
-
 cd -
+
+
+

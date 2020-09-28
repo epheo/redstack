@@ -1,7 +1,7 @@
 parameter_defaults:
 
   CloudDomain: {{ cloud.customer_name }}.{{ cloud.customer_extention }}
-  CloudName: {{ cloud.name }}.{{ customer_name }}.{{ cloud.customer_extention }}
+  CloudName: {{ cloud.name }}.{{ cloud.customer_name }}.{{ cloud.customer_extention }}
 
   ControllerHostnameFormat: 'controller-%index%'
   ControllerCount: 1
