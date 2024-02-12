@@ -1,0 +1,23 @@
+---
+
+- name: Provision Networks
+  shell: |
+    source ~/stackrc
+    openstack overcloud network provision \
+    --output /home/stack/templates/overcloud-networks-deployed.yaml \
+    network_data.yaml
+
+- name: Provision VIPs
+  shell: |
+    source ~/stackrc
+    openstack overcloud network vip provision \
+    --output /home/stack/templates/overcloud-vip-deployed.yaml \
+    vip_data.yaml
+
+- name: Provision Baremetal Nodes
+  shell: |
+    source ~/stackrc
+    openstack overcloud node provision \
+    --output /home/stack/templates/overcloud-baremetal-deployed.yaml \
+    --netwotk-config \
+    baremetal_data.yaml

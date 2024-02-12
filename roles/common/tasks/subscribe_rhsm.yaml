@@ -31,23 +31,23 @@
 - debug:
     var: already_defined_subs.stdout
 
-- name: Get Pool ID
-  become: yes
-  shell: |
-    subscription-manager list \
-      --available --all \
-      --matches="Red Hat OpenStack" |grep "Pool ID" |awk '{print $3}' |head -n1
-  register: pool_id
-  when: already_defined_subs.stdout == ""
-
-- debug:
-    var: pool_id
-
-- name: Attach Pool ID
-  become: yes
-  shell: |
-    subscription-manager attach --pool={{ pool_id.stdout }}
-  when: already_defined_subs.stdout == ""
+# - name: Get Pool ID
+#   become: yes
+#   shell: |
+#     subscription-manager list \
+#       --available --all \
+#       --matches="Red Hat OpenStack" |grep "Pool ID" |awk '{print $3}' |head -n1
+#   register: pool_id
+#   when: already_defined_subs.stdout == ""
+# 
+# - debug:
+#     var: pool_id
+# 
+# - name: Attach Pool ID
+#   become: yes
+#   shell: |
+#     subscription-manager attach --pool={{ pool_id.stdout }}
+#   when: already_defined_subs.stdout == ""
 
 - name: Disable all and subscribe repositories
   become: yes

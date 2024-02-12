@@ -162,5 +162,3 @@ openstack dataprocessing job template create --type Spark \
 openstack dataprocessing job execute  \
    --job-template sparkexamplejob --cluster test-cluster-1 \
    --configs edp.java.main_class:sahara.edp.spark.SparkWordCount edp.spark.adapt_for_swift:true fs.swift.service.sahara.password:redhat fs.swift.service.sahara.username:redhat  --args  swift://test-sahara/input-spark swift://test-sahara/output-spark
-
-

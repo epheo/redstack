@@ -121,7 +121,7 @@
     - sslimportcert
 
 - name: Get undercloud cacert
-  ignore_errors: yes
+  ignore_errors: yes # why ? 
   shell: cat /etc/pki/ca-trust/source/anchors/cm-local-ca.pem
   register: undercloud_cacert
   tags: 

@@ -1,5 +1,6 @@
 echo "TESTING BARBICAN..."
 echo "**********************************"
+
 openstack role create creator
 openstack role add --user redhat --project redhat creator
 openstack role add --user redhat --project admin creator

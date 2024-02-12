@@ -53,4 +53,3 @@ runcmd:
  - 'systemctl restart network'
  - 'ifup $interface'
 EOF
-

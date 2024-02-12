@@ -1,0 +1,83 @@
+- name: Controller
+  count: 3
+  defaults:
+    networks:
+    - network: ctlplane
+      vif: true
+    - network: external
+      subnet: external_subnet
+    - network: internal_api
+      subnet: internal_api_subnet
+    - network: storage
+      subnet: storage_subnet
+    - network: tenant
+      subnet: tenant_subnet
+    network_config:
+        template: /home/stack/templates/nic-config/controller.j2
+        net_config_data_lookup:
+          ost-mon-1:
+            nic1: "EC:XX:BB:D6:63:XX"
+            nic2: "EC:XX:BB:D6:63:XX"
+          ost-mon-2:
+            nic1: "EC:XX:BB:D6:5E:XX"
+            nic2: "EC:XX:BB:D6:5E:XX"
+          ost-mon-3:
+            nic1: "2C:XX:7F:4D:34:XX"
+            nic2: "2C:XX:7F:4D:34:XX" 
+        default_route_network:
+        - external
+    resource_class: baremetal.CONTROL
+  instances:
+  - hostname: overcloud-controller-0
+    name: ost-mon-1
+  - hostname: overcloud-controller-1
+    name: ost-mon-2
+  - hostname: overcloud-controller-2
+    name: ost-mon-3
+
+- name: Compute
+  count: 2
+  defaults:
+    networks:
+    - network: ctlplane
+      vif: true
+    - network: internal_api
+      subnet: internal_api_subnet
+    - network: tenant
+      subnet: tenant_subnet
+    - network: storage
+      subnet: storage_subnet
+    network_config:
+      template: /home/stack/templates/nic-config/compute.j2
+      net_config_data_lookup:
+        ost-com-1-1:
+          nic1: "40:XX:B7:6B:41:XX"
+          nic2: "40:XX:B7:6B:41:XX"
+          nic3: "40:XX:B7:6B:41:XX"
+          nic4: "40:XX:B7:6B:41:XX"
+          nic5: "84:XX:0C:C1:41:XX"
+          nic6: "84:XX:0C:C1:41:XX"
+        ost-com-1-2:
+          nic1: "40:XX:B7:6B:46:XX"
+          nic2: "40:XX:B7:6B:46:XX"
+          nic3: "40:XX:B7:6B:46:XX"
+          nic4: "40:XX:B7:6B:46:XX"
+          nic5: "84:XX:0C:C1:52:XX"
+          nic6: "84:XX:0C:C1:52:XX"
+        ost-com-1-3:
+          nic1: "40:XX:B7:6B:41:XX"
+          nic2: "40:XX:B7:6B:41:XX"
+          nic3: "40:XX:B7:6B:41:XX"
+          nic4: "40:XX:B7:6B:41:XX"
+          nic5: "84:XX:0C:C1:40:XX"
+          nic6: "84:XX:0C:C1:40:XX"
+    resource_class: baremetal.COMPUTE
+  instances:
+  - hostname: overcloud-novacompute-0
+    name: ost-com-1-1
+  - hostname: overcloud-novacompute-1
+    name: ost-com-1-2
+  - hostname: overcloud-novacompute-2
+    name: ost-com-1-3
+
+

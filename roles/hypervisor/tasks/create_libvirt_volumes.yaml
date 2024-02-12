@@ -36,10 +36,11 @@
   when: libvirt.storage_pools is defined
 
 - name: Create Qcow2 Root volumes
+  #debugger: on_skipped
   shell: |
     {% if item.root is defined %}
-    if [ -z "$(virsh vol-list --pool {{ guests.rootdisk.pool }} |grep \ {{ item.name }}-root )" ]; then
-      qemu-img create -f qcow2 -o backing_file={{ guests.rootdisk.pool_path }}/{{ item.root }} {{ guests.rootdisk.pool_path }}/{{ item.name }}-root {{ guests.rootdisk.size }}G
+    if [ -z "$(virsh vol-list --pool {{ guests.rootdisk.pool }} |grep \ {{ item.name }}-root.qcow2 )" ]; then
+      qemu-img create -f qcow2 -F qcow2 -b {{ guests.rootdisk.pool_path }}/{{ item.root }} {{ guests.rootdisk.pool_path }}/{{ item.name }}-root.qcow2 {{ guests.rootdisk.size }}G
       virsh pool-refresh --pool {{ guests.rootdisk.pool }}
     fi
     {% else %}
