@@ -1,4 +1,6 @@
 #!/bin/bash
+set -euxo pipefail
+
 project="ipv6"
 
 cd $( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )

@@ -1,4 +1,6 @@
 #!/bin/bash
+set -euxo pipefail
+
 project='sriov'
 
 cd $( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )

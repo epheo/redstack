@@ -31,6 +31,7 @@
 
 - name: Tag nodes 
   shell: |
+    openstack baremetal node set --resource-class baremetal controller-0
     bash ~/scripts/undercloud_add_baremetal_metadata.sh
 
 #- name: Synchronize the introspection results on Director host

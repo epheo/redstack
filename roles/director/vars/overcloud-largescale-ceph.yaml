@@ -7,6 +7,9 @@ vbmc:
     - { name: controller-2 , port: 6233 }
     - { name: compute-0 , port: 6234 }
     - { name: compute-1 , port: 6235 }
+    - { name: ceph-0 , port: 6236 }
+    - { name: ceph-1 , port: 6237 }
+    - { name: ceph-2 , port: 6238 }
   ip: 10.0.42.1
 
 libvirt:
@@ -91,3 +94,60 @@ libvirt:
       ports:
         - network: internal
         - network: external
+
+    - name: ceph-0
+      ram: 8192000
+      vcpu: 1
+      volumes:
+        - name: ceph0-root
+          target: sda
+          size: 100
+          pool: fast
+        - name: ceph0-journals
+          target: sdb
+          size: 50
+          pool: fast
+        - name: ceph0-osd
+          target: sdc
+          size: 200
+          pool: slow
+      ports:
+        - network: internal
+
+    - name: ceph-1
+      ram: 8192000
+      vcpu: 1
+      volumes:
+        - name: ceph1-root
+          target: sda
+          size: 100
+          pool: fast
+        - name: ceph1-journals
+          target: sdb
+          size: 50
+          pool: fast
+        - name: ceph1-osd
+          target: sdc
+          size: 200
+          pool: slow
+      ports:
+        - network: internal
+
+    - name: ceph-2
+      ram: 8192000
+      vcpu: 1
+      volumes:
+        - name: ceph2-root
+          target: sda
+          size: 100
+          pool: fast
+        - name: ceph2-journals
+          target: sdb
+          size: 50
+          pool: fast
+        - name: ceph2-osd
+          target: sdc
+          size: 200
+          pool: slow
+      ports:
+        - network: internal

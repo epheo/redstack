@@ -3,37 +3,62 @@
 - name: InternalApi
   name_lower: internal_api
   vip: true
-  vlan: '{{ internal_net.vlanid }}'
-  ip_subnet: '{{ internal_net.subnet }}'
-  allocation_pools: [{'start': '{{ internal_net.pool_start }}', 'end': '{{ internal_net.pool_end }}'}]
+  mtu: 1500
+  subnets:
+    internal_api_subnet:
+      ip_subnet: '{{ internal_net.subnet }}'
+      allocation_pools:
+        - start: '{{ internal_net.pool_start }}'
+          end: '{{ internal_net.pool_end }}'
+      vlan: '{{ internal_net.vlanid }}'
 
 - name: Tenant
+  vip: false  # Tenant network does not use VIPs
+  mtu: 1500
   name_lower: tenant
-  vip: false
-  vlan: '{{ tenant_net.vlanid }}'
-  ip_subnet: '{{ tenant_net.subnet }}'
-  allocation_pools: [{'start': '{{ tenant_net.pool_start }}', 'end': '{{ tenant_net.pool_end }}'}]
+  subnets:
+    tenant_subnet:
+      ip_subnet: '{{ tenant_net.subnet }}'
+      allocation_pools:
+        - start: '{{ tenant_net.pool_start }}'
+          end: '{{ tenant_net.pool_end }}'
+      vlan: '{{ tenant_net.vlanid }}'
 
 - name: External
   name_lower: external
   vip: true
-  vlan: '{{ external_net.vlanid }}'
-  ip_subnet: '{{ external_net.subnet }}'
-  allocation_pools: [{'start': '{{ external_net.pool_start }}', 'end': '{{ external_net.pool_end }}'}]
-  gateway_ip: '{{ external_net.gateway }}'
+  mtu: 1500
+  subnets:
+    external_subnet:
+      ip_subnet: '{{ external_net.subnet }}'
+      allocation_pools:
+        - start: '{{ external_net.pool_start }}'
+          end: '{{ external_net.pool_end }}'
+      gateway_ip: '{{ external_net.gateway }}'
+      vlan: '{{ external_net.vlanid }}'
 
 - name: Storage
   name_lower: storage
   vip: true
-  vlan: '{{ storage_net.vlanid }}'
-  ip_subnet: '{{ storage_net.subnet }}'
-  allocation_pools: [{'start': '{{ storage_net.pool_start }}', 'end': '{{ storage_net.pool_end }}'}]
+  mtu: 1500
+  subnets:
+    storage_subnet:
+      ip_subnet: '{{ storage_net.subnet }}'
+      allocation_pools:
+        - start: '{{ storage_net.pool_start }}'
+          end: '{{ storage_net.pool_end }}'
+      vlan: '{{ storage_net.vlanid }}'
 
 {% if storage_mgmt is defined %}
 - name: StorageMgmt
   name_lower: storage_mgmt
   vip: true
-  vlan: '{{ storagemgmt_net.vlanid }}'
-  ip_subnet: '{{ storagemgmt_net.subnet }}'
-  allocation_pools: [{'start': '{{ storagemgmt_net.pool_start }}', 'end': '{{ storagemgmt_net.pool_end }}'}]
+  mtu: 1500
+  subnets:
+    storage_mgmt_subnet:
+      ip_subnet: '{{ storagemgmt_net.subnet }}'
+      allocation_pools:
+        - start: '{{ storagemgmt_net.pool_start }}'
+          end: '{{ storagemgmt_net.pool_end }}'
+      vlan: '{{ storagemgmt_net.vlanid }}'
 {% endif %}

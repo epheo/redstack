@@ -1,4 +1,6 @@
 #!/bin/bash
+set -euxo pipefail
+
 project='redhat'
 
 RCFILE=overcloudrc
@@ -13,7 +15,7 @@ mkdir -p ~stack/rcfiles/
 source ~stack/$RCFILE
 openstack role add --user redhat --project admin admin
 
-source ~stack/rcfiles/$project'rc'
+source ~stack/rcfiles/${project}rc
 
 echo "Creating user data files..."
 

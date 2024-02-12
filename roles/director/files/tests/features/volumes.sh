@@ -1,4 +1,6 @@
 #!/bin/bash
+set -euxo pipefail
+
 project='volumes'
 
 cd $( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
@@ -18,9 +20,6 @@ openstack volume create --size 1 --type LuksEncryptor-Template-256 'Encrypted-Te
 sleep 15
 
 openstack server add volume test Encrypted-Test-Volume
-
-
-
 
 #echo "Creating instance  boot from volume"
 

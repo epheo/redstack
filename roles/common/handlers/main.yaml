@@ -21,12 +21,16 @@
   delegate_to: localhost
   listen: "reboot"
 
-- name: telegram
+- name: Send notify to Telegram
   delegate_to: localhost
-  telegram:
+  community.general.telegram:
     token: '{{ telegram.token }}'
-    chat_id: '{{ telegram.chat_id }}'
-    msg: "{{ message }}"
+    api_args:
+      chat_id: '{{ telegram.chat_id }}'
+      parse_mode: "markdown"
+      text: "{{ message }}"
+      disable_web_page_preview: true
+      disable_notification: true
   when: telegram is defined
 
 - name: get_rhn_status

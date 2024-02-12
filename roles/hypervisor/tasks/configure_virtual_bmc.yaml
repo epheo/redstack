@@ -1,9 +1,12 @@
 ---
 
 - name: Install packages
-  package:
-    state: latest
-    name: python3-virtualbmc
+  shell: pip3 install virtualbmc 
+  # package:
+  #   state: latest
+  #   name: python3-virtualbmc
+
+  # Need to write systemd unit for vbmcd
 
 - name: Create etc directory
   file:
@@ -27,8 +30,8 @@
 
 - name: Configure vbmc ports
   shell: |
-    if [ -z "$(vbmc list |grep \ {{ item.name }}\ )" ]; then
-      vbmc add {{ item.name  }} --port {{ item.port }} --username {{ bmc_username }} --password {{ bmc_password }} --address {{ vbmc.ip }} --libvirt-uri qemu:///system
+    if [ -z "$(/usr/local/bin/vbmc list |grep \ {{ item.name }}\ )" ]; then
+      /usr/local/bin/vbmc add {{ item.name  }} --port {{ item.port }} --username {{ bmc_username }} --password {{ bmc_password }} --address {{ vbmc.ip }} --libvirt-uri qemu:///system
     fi
   loop: "{{ vbmc.ports }}"
   register: command_result
@@ -54,7 +57,7 @@
     chmod +x /usr/local/sbin/vbmc-ports.sh
 
 - name: Configure vbmc-ports.sh content
-  shell: "echo 'vbmc start {{ item.name  }}' >> /usr/local/sbin/vbmc-ports.sh"
+  shell: "echo '/usr/local/bin/vbmc start {{ item.name  }}' >> /usr/local/sbin/vbmc-ports.sh"
   loop: "{{ vbmc.ports }}"
 
 - name: Open firewalld vbmc ports

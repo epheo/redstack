@@ -133,6 +133,3 @@ openstack floating ip set --port $PORT_TO_FIP $LAST_FIP
 
 
 echo "Try to connect to $LAST_FIP"
-
-
-

@@ -11,7 +11,7 @@
 - name: Get existing BMC ports
   delegate_to: hypervisor
   shell: |
-     vbmc list | awk '$4 ~ /(running|down)/ {print $2"="$8}'
+     /usr/local/bin/vbmc list | awk '$4 ~ /(running|down)/ {print $2"="$8}'
   register: bmc_list
   changed_when: false
   when: instack_vars is not defined

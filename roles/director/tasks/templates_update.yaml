@@ -27,12 +27,8 @@
     dest: /home/stack/answers.yaml
   tags: [ 'templates' ]
 - copy:
-    src: ../files/stack-create.sh
-    dest: /home/stack/stack-create.sh
-  tags: [ 'templates' ]
-- copy:
-    src: ../files/config-download.sh
-    dest: /home/stack/config-download.sh
+    src: ../files/deploy.sh
+    dest: /home/stack/deploy.sh
   tags: [ 'templates' ]
 
 - name: Nic-Config; Copy 
@@ -83,7 +79,7 @@
 - shell: |
     chmod +x -R ~/scripts/
     chmod +x -R ~/tests/
-    chmod +x ~/deploy.sh
+    chmod +x ~/stack-create.sh
   ignore_errors: yes
   tags: [ 'scripts', 'tests', 'templates' ]
 

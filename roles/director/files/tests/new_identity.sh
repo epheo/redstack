@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euxo pipefail
 
 RCFILE=overcloudrc
 source ~stack/$RCFILE
@@ -20,24 +21,24 @@ do if [ $i == $project ];
    fi;
 done
 
-echo "Creating new identity ..."
+echo "Creating new identity."
 
 openstack project create $project
 
 openstack user create --project $project --password redhat $project
 openstack role add --user $project --project $project admin
 
-
 cp ~stack/$RCFILE ~stack/rcfiles/$project'rc'
 sed -i -- "s/OS_USERNAME=admin/OS_USERNAME=$project/g" ~stack/rcfiles/$project'rc'
-sed -i  '/OS_PASSWORD/d' ~stack/rcfiles/$project'rc' ;  echo export OS_PASSWORD=redhat >> ~stack/rcfiles/$project'rc'
+sed -i  '/OS_PASSWORD/d' ~stack/rcfiles/$project'rc'
+echo export OS_PASSWORD=redhat >> ~stack/rcfiles/$project'rc'
 sed -i -- "s/OS_TENANT_NAME=admin/OS_TENANT_NAME=$project/g" ~stack/rcfiles/$project'rc'
 sed -i -- "s/OS_PROJECT_NAME=admin/OS_PROJECT_NAME=$project/g" ~stack/rcfiles/$project'rc'
 echo "export project=$project" >> ~stack/rcfiles/$project'rc'
 
 source ~stack/rcfiles/$project'rc'
 
-openstack quota set --cores 100 --instances 50 --ram 131072 --floating-ips 50  $project
+openstack quota set --cores 100 --instances 50 --ram 131072 --floating-ips 50 $project
 
 openstack keypair create --public-key ~stack/.ssh/id_rsa.pub undercloud-key
 

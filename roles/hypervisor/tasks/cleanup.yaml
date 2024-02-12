@@ -11,7 +11,7 @@
   ignore_errors: yes
   shell: |
     {% if item.root is defined %}
-    virsh vol-delete --pool {{ guests.rootdisk.pool }} {{ item.name }}-root
+    virsh vol-delete --pool {{ guests.rootdisk.pool }} {{ item.name }}-root.qcow2
     {% else %}
     true
     {% endif %}

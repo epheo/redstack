@@ -1,0 +1,49 @@
+- name: Controller
+  count: 3
+  defaults:
+    networks:
+    - network: ctlplane
+      vif: true
+    - network: external
+      subnet: external_subnet
+    - network: internal_api
+      subnet: internal_api_subnet
+    - network: storage
+      subnet: storage_subnet
+    - network: tenant
+      subnet: tenant_subnet
+    network_config:
+        template: /home/stack/templates/nic-config/controller.j2
+        default_route_network:
+        - external
+    resource_class: baremetal.CONTROL
+  instances:
+  - hostname: overcloud-controller-0
+    name: controller-0
+  - hostname: overcloud-controller-1
+    name: controller-1
+  - hostname: overcloud-controller-2
+    name: controller-2
+
+- name: Compute
+  count: 2
+  defaults:
+    networks:
+    - network: ctlplane
+      vif: true
+    - network: internal_api
+      subnet: internal_api_subnet
+    - network: tenant
+      subnet: tenant_subnet
+    - network: storage
+      subnet: storage_subnet
+    network_config:
+      template: /home/stack/templates/nic-config/compute.j2
+    resource_class: baremetal.COMPUTE
+  instances:
+  - hostname: overcloud-novacompute-0
+    name: compute-0
+  - hostname: overcloud-novacompute-1
+    name: compute-1
+
+

@@ -30,4 +30,3 @@ runcmd:
  -  sed -i'.orig' -e's/without-password/yes/' /etc/ssh/sshd_config
  -  service sshd restart
 EOF
-

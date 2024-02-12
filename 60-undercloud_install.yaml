@@ -6,19 +6,15 @@
     - director
   vars:
     enable_repos:
-      - rhel-8-for-x86_64-baseos-eus-rpms
-      - rhel-8-for-x86_64-appstream-eus-rpms
-      - rhel-8-for-x86_64-highavailability-eus-rpms
-      - rhceph-4-tools-for-rhel-8-x86_64-rpms
-      - rhel-8-for-x86_64-nfv-rpms
-      - ansible-2.9-for-rhel-8-x86_64-rpms
-      - openstack-16.1-for-rhel-8-x86_64-rpms
-      - advanced-virt-for-rhel-8-x86_64-rpms
-      - fast-datapath-for-rhel-8-x86_64-rpms
+      - rhel-9-for-x86_64-baseos-rpms
+      - rhel-9-for-x86_64-appstream-rpms
+      - rhel-9-for-x86_64-highavailability-rpms
+      - openstack-17.1-for-rhel-9-x86_64-rpms
+      - fast-datapath-for-rhel-9-x86_64-rpms
   tasks:
     - block:
         - become: yes
-          shell: subscription-manager release --set=8.2
+          shell: subscription-manager release --set=9.2
         - include_tasks: roles/common/tasks/predeploy.yaml
         - include_tasks: roles/director/tasks/set_hostname.yaml
         - include_tasks: roles/common/tasks/subscribe_rhsm.yaml
@@ -28,6 +24,11 @@
             - csr
             - sslimportcert
         - include_tasks: roles/director/tasks/install.yaml
+          tags: 
+            - install
+            - images
+            - dns
+            - nfv
         - set_fact: 
             message: "OSP Undercloud have been deployed"
           changed_when: True
